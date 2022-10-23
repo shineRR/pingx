@@ -1,5 +1,5 @@
 import XCTest
-import pingx
+//import pingx
 
 class Tests: XCTestCase {
     
