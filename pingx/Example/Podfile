@@ -1,0 +1,13 @@
+use_frameworks!
+
+platform :ios, '10.0'
+
+target 'pingx_Example' do
+  pod 'pingx', :path => '../'
+
+  target 'pingx_Tests' do
+    inherit! :search_paths
+
+    
+  end
+end
