@@ -131,9 +131,7 @@
 		1A51D063A67A16CA042698C86ED25967 /* pingx */ = {
 			isa = PBXGroup;
 			children = (
-				CA1206B62905B88E004C70EE /* Dependency */,
-				CA1206B12905B832004C70EE /* Manager */,
-				CA1206A429059A6E004C70EE /* Core */,
+				CA08CF122906A54000AF7628 /* Source */,
 				9644FF8ABBF5FFDE7172EBB9466B53C3 /* Pod */,
 				BD92A00051F62EB3B3D22A8EEB9F6FC7 /* Support Files */,
 			);
@@ -222,6 +220,16 @@
 			);
 			name = "Support Files";
 			path = "Example/Pods/Target Support Files/pingx";
+			sourceTree = "<group>";
+		};
+		CA08CF122906A54000AF7628 /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				CA1206A429059A6E004C70EE /* Core */,
+				CA1206B12905B832004C70EE /* Manager */,
+				CA1206B62905B88E004C70EE /* Dependency */,
+			);
+			path = Source;
 			sourceTree = "<group>";
 		};
 		CA1206A429059A6E004C70EE /* Core */ = {
