@@ -10,5 +10,6 @@
 import Foundation
 
 public protocol SocketProviderInterface {
-    func create(request: Request) -> CFSocket?
+    func create(socketInfo: SocketInfo) throws -> CFSocket
+    func invalidate(socket: CFSocket)
 }

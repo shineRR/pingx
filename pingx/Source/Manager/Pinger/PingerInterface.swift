@@ -9,6 +9,6 @@
 import Foundation
 
 public protocol PingerInterface {
-    func ping(address: IPAddress)
+//    func ping(address: IPAddress)
     func ping(address: String)
 }

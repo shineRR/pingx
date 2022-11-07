@@ -10,9 +10,11 @@
 import Foundation
 
 public final class SocketProvider: SocketProviderInterface {
-    public func create(request: Request) -> CFSocket? {
-        let requestInfo = Unmanaged.passRetained(request)
-        var context = CFSocketContext(version: .zero, info: requestInfo.toOpaque(), retain: nil, release: nil, copyDescription: nil)
+    public init() { }
+    
+    public func create(socketInfo: SocketInfo) throws -> CFSocket {
+        let socketInfo = Unmanaged.passRetained(socketInfo)
+        var context = CFSocketContext(version: .zero, info: socketInfo.toOpaque(), retain: nil, release: nil, copyDescription: nil)
         let socket = CFSocketCreate(
             kCFAllocatorDefault,
             AF_INET,
@@ -24,12 +26,32 @@ public final class SocketProvider: SocketProviderInterface {
                       let info = info,
                       (callbackType as CFSocketCallBackType) == CFSocketCallBackType.dataCallBack
                 else { return }
+                let socketInfo = Unmanaged<SocketInfo>.fromOpaque(info).takeUnretainedValue()
                 let cfdata = Unmanaged<CFData>.fromOpaque(data).takeUnretainedValue()
-
+                socketInfo.pinger?.receivedData(from: socket, cfdata as Data)
             },
             &context
         )
+
+        let runLoopRef = CFSocketCreateRunLoopSource(
+            kCFAllocatorDefault,
+            socket,
+            .zero
+        )
+
+        CFRunLoopAddSource(
+            CFRunLoopGetCurrent(),
+            runLoopRef,
+            .commonModes
+        )
+    
+        guard let socket = socket else { throw SocketProviderError.createError }
         
         return socket
+    }
+    
+    public func invalidate(socket: CFSocket) {
+        //
+//        CFRunLoopSourceInvalidate(socket)
     }
 }
