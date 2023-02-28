@@ -13,6 +13,10 @@
 		836A1E3CDBCB424DAB4FE28F693233C1 /* pingx-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 06FF0E711B23B67508DC5A49310CA1E7 /* pingx-dummy.m */; };
 		9507744A50F5AF9E2FAED578B92AA05B /* Pods-pingx_Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = BA1E7ED09DCCF9BAD0E212BCAA9B2A94 /* Pods-pingx_Example-dummy.m */; };
 		A31D770CEE609C893FC96DC118E610DF /* Pods-pingx_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 84916C2E55405BA8BB6739EDAA280094 /* Pods-pingx_Tests-dummy.m */; };
+		CA08CF142906BE1F00AF7628 /* SocketProviderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA08CF132906BE1F00AF7628 /* SocketProviderError.swift */; };
+		CA08CF172906C67600AF7628 /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA08CF162906C67600AF7628 /* Data+Extensions.swift */; };
+		CA08CF192906C72F00AF7628 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA08CF182906C72F00AF7628 /* String+Extensions.swift */; };
+		CA08CF1C2906CF3F00AF7628 /* SocketInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA08CF1B2906CF3F00AF7628 /* SocketInfo.swift */; };
 		CA1206A629059A7E004C70EE /* ICMPHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1206A529059A7E004C70EE /* ICMPHeader.swift */; };
 		CA1206A829059AF6004C70EE /* ICMPType.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1206A729059AF6004C70EE /* ICMPType.swift */; };
 		CA1206B02905B4D4004C70EE /* IPHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1206AF2905B4D4004C70EE /* IPHeader.swift */; };
@@ -28,6 +32,8 @@
 		CA1206C92905C1E6004C70EE /* PingerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1206C82905C1E6004C70EE /* PingerDelegate.swift */; };
 		CA1206CC2905C5B1004C70EE /* SocketProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1206CB2905C5B1004C70EE /* SocketProvider.swift */; };
 		CA1206CE2905C5DE004C70EE /* SocketProviderInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1206CD2905C5DE004C70EE /* SocketProviderInterface.swift */; };
+		CAD06A3129193F7A0034FFA3 /* PingerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAD06A3029193F7A0034FFA3 /* PingerError.swift */; };
+		CAD06A34291940AC0034FFA3 /* ICMPPackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAD06A33291940AC0034FFA3 /* ICMPPackage.swift */; };
 		D7FFA5763B1FF48C0137BCDF7217ECC6 /* pingx-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 9201AA9DC0A43357F7249F56DCADD4EA /* pingx-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		ECA8CE6686E8EA3C29AFF606F9407B1E /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */; };
 		F60F8AB0FE797EE8EA02F0DE26323D79 /* Pods-pingx_Example-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = E3653E2FB23B09D815381C8EA18FDDD1 /* Pods-pingx_Example-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -79,6 +85,10 @@
 		BDE9751700A8BFB6B4C98BA8BA4A54F6 /* Pods-pingx_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-pingx_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		C2322933811CAECDD1895CA4233557CF /* Pods-pingx_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-pingx_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		C6D836614398A0D358FD7606F2E651F5 /* pingx.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = pingx.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		CA08CF132906BE1F00AF7628 /* SocketProviderError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketProviderError.swift; sourceTree = "<group>"; };
+		CA08CF162906C67600AF7628 /* Data+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
+		CA08CF182906C72F00AF7628 /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
+		CA08CF1B2906CF3F00AF7628 /* SocketInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketInfo.swift; sourceTree = "<group>"; };
 		CA1206A529059A7E004C70EE /* ICMPHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICMPHeader.swift; sourceTree = "<group>"; };
 		CA1206A729059AF6004C70EE /* ICMPType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICMPType.swift; sourceTree = "<group>"; };
 		CA1206AF2905B4D4004C70EE /* IPHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPHeader.swift; sourceTree = "<group>"; };
@@ -94,6 +104,8 @@
 		CA1206C82905C1E6004C70EE /* PingerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingerDelegate.swift; sourceTree = "<group>"; };
 		CA1206CB2905C5B1004C70EE /* SocketProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketProvider.swift; sourceTree = "<group>"; };
 		CA1206CD2905C5DE004C70EE /* SocketProviderInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketProviderInterface.swift; sourceTree = "<group>"; };
+		CAD06A3029193F7A0034FFA3 /* PingerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingerError.swift; sourceTree = "<group>"; };
+		CAD06A33291940AC0034FFA3 /* ICMPPackage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICMPPackage.swift; sourceTree = "<group>"; };
 		CB3B3DBE732891B0CF005E67C8101435 /* pingx.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = pingx.modulemap; sourceTree = "<group>"; };
 		DCB25BEEC489A21FDCD3BA6B98ABFEE0 /* Pods-pingx_Tests-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-pingx_Tests-Info.plist"; sourceTree = "<group>"; };
 		E3653E2FB23B09D815381C8EA18FDDD1 /* Pods-pingx_Example-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-pingx_Example-umbrella.h"; sourceTree = "<group>"; };
@@ -232,9 +244,27 @@
 			path = Source;
 			sourceTree = "<group>";
 		};
+		CA08CF152906C66700AF7628 /* Extensions */ = {
+			isa = PBXGroup;
+			children = (
+				CA08CF162906C67600AF7628 /* Data+Extensions.swift */,
+				CA08CF182906C72F00AF7628 /* String+Extensions.swift */,
+			);
+			path = Extensions;
+			sourceTree = "<group>";
+		};
+		CA08CF1A2906CF3500AF7628 /* Socket */ = {
+			isa = PBXGroup;
+			children = (
+				CA08CF1B2906CF3F00AF7628 /* SocketInfo.swift */,
+			);
+			path = Socket;
+			sourceTree = "<group>";
+		};
 		CA1206A429059A6E004C70EE /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				CA08CF152906C66700AF7628 /* Extensions */,
 				CA1206AD2905B4B9004C70EE /* Model */,
 			);
 			path = Core;
@@ -245,6 +275,7 @@
 			children = (
 				CA1206A729059AF6004C70EE /* ICMPType.swift */,
 				CA1206A529059A7E004C70EE /* ICMPHeader.swift */,
+				CAD06A33291940AC0034FFA3 /* ICMPPackage.swift */,
 			);
 			path = ICMP;
 			sourceTree = "<group>";
@@ -252,6 +283,7 @@
 		CA1206AD2905B4B9004C70EE /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				CA08CF1A2906CF3500AF7628 /* Socket */,
 				CA1206C32905BDD4004C70EE /* Request & Response */,
 				CA1206AC2905B4B5004C70EE /* ICMP */,
 				CA1206AE2905B4BF004C70EE /* IP */,
@@ -291,6 +323,7 @@
 			isa = PBXGroup;
 			children = (
 				CA1206B22905B83A004C70EE /* Pinger.swift */,
+				CAD06A3029193F7A0034FFA3 /* PingerError.swift */,
 				CA1206C82905C1E6004C70EE /* PingerDelegate.swift */,
 				CA1206B42905B842004C70EE /* PingerInterface.swift */,
 			);
@@ -319,6 +352,7 @@
 			isa = PBXGroup;
 			children = (
 				CA1206CB2905C5B1004C70EE /* SocketProvider.swift */,
+				CA08CF132906BE1F00AF7628 /* SocketProviderError.swift */,
 				CA1206CD2905C5DE004C70EE /* SocketProviderInterface.swift */,
 			);
 			path = Socket;
@@ -510,17 +544,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CAD06A34291940AC0034FFA3 /* ICMPPackage.swift in Sources */,
 				CA1206B82905B8A0004C70EE /* IPAddressConverter.swift in Sources */,
 				CA1206C52905BDE1004C70EE /* Request.swift in Sources */,
 				CA1206CC2905C5B1004C70EE /* SocketProvider.swift in Sources */,
+				CA08CF172906C67600AF7628 /* Data+Extensions.swift in Sources */,
 				CA1206A829059AF6004C70EE /* ICMPType.swift in Sources */,
+				CA08CF142906BE1F00AF7628 /* SocketProviderError.swift in Sources */,
 				CA1206C92905C1E6004C70EE /* PingerDelegate.swift in Sources */,
 				CA1206B32905B83A004C70EE /* Pinger.swift in Sources */,
+				CA08CF1C2906CF3F00AF7628 /* SocketInfo.swift in Sources */,
 				836A1E3CDBCB424DAB4FE28F693233C1 /* pingx-dummy.m in Sources */,
 				CA1206BC2905BAE7004C70EE /* IPAddressConverterError.swift in Sources */,
 				CA1206C72905BDE9004C70EE /* Response.swift in Sources */,
 				CA1206C22905BC3D004C70EE /* PingerConfigurationInterface.swift in Sources */,
 				CA1206C02905BC30004C70EE /* PingerConfiguration.swift in Sources */,
+				CA08CF192906C72F00AF7628 /* String+Extensions.swift in Sources */,
+				CAD06A3129193F7A0034FFA3 /* PingerError.swift in Sources */,
 				CA1206BA2905B8B6004C70EE /* IPAddressConverterInterface.swift in Sources */,
 				CA1206A629059A7E004C70EE /* ICMPHeader.swift in Sources */,
 				CA1206CE2905C5DE004C70EE /* SocketProviderInterface.swift in Sources */,

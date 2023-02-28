@@ -12,10 +12,12 @@ public class Request {
 
     // MARK: - Properties
     let identifier = UUID().uuidString
-    let destinationAddress: IPAddress
+    let ipv4Address: Data
+    let destinationAddress: String
 
     // MARK: - Init
-    init(destinationAddress: IPAddress) {
+    init(destinationAddress: String) {
+        self.ipv4Address = destinationAddress.socketAddressData
         self.destinationAddress = destinationAddress
     }
 }

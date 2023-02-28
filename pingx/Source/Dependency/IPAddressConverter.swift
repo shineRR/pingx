@@ -17,7 +17,15 @@ public final class IPAddressConverter: IPAddressConverterInterface {
             .union(CharacterSet(charactersIn: "."))
     }
     
+    public init() { }
+    
     // MARK: - Methods
+    public func isValid(address: String) -> Bool {
+        let allowedAddress = address.trimmingCharacters(in: Consts.allowedCharacters.inverted)
+        let components = allowedAddress.components(separatedBy: ".").compactMap { UInt8($0) }
+        return components.count == Consts.ipv4Components
+    }
+    
     public func convert(address: String) throws -> IPAddress {
         let allowedAddress = address.trimmingCharacters(in: Consts.allowedCharacters.inverted)
         let components = allowedAddress.components(separatedBy: ".").compactMap { UInt8($0) }

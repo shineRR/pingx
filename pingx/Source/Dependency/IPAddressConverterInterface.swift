@@ -9,5 +9,6 @@
 import Foundation
 
 public protocol IPAddressConverterInterface {
+    func isValid(address: String) -> Bool
     func convert(address: String) throws -> IPAddress
 }
