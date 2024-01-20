@@ -8,30 +8,35 @@
 
 /* Begin PBXBuildFile section */
 		0F29DA7FEF36EAFBAB7AA82995E2FB16 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */; };
+		142525422A37508000574387 /* PacketSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 142525412A37508000574387 /* PacketSender.swift */; };
+		142525442A37509D00574387 /* PacketSenderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 142525432A37509D00574387 /* PacketSenderProtocol.swift */; };
+		142525472A37510000574387 /* PacketType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 142525462A37510000574387 /* PacketType.swift */; };
+		142525522A3756EB00574387 /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = 142525512A3756EB00574387 /* Request.swift */; };
+		1446970C2B5AC69E008F5E19 /* CommandBlock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1446970B2B5AC69E008F5E19 /* CommandBlock.swift */; };
+		1449ED482B5C61DF007B0ED2 /* ICMPChecksum.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1449ED472B5C61DF007B0ED2 /* ICMPChecksum.swift */; };
+		1449ED4E2B5C63BB007B0ED2 /* PacketFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1449ED4D2B5C63BB007B0ED2 /* PacketFactory.swift */; };
+		1449ED512B5C6446007B0ED2 /* Packet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1449ED502B5C6446007B0ED2 /* Packet.swift */; };
+		1449ED532B5C648B007B0ED2 /* PacketFactoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1449ED522B5C648B007B0ED2 /* PacketFactoryImpl.swift */; };
+		1449ED562B5C7DEA007B0ED2 /* PacketSenderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1449ED552B5C7DEA007B0ED2 /* PacketSenderDelegate.swift */; };
+		14A1AD192B04D3FF00ADCC33 /* IPv4Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A1AD182B04D3FF00ADCC33 /* IPv4Address.swift */; };
 		733F2D6C91ED4557A33FAA7619650986 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */; };
 		81ECEA2E67CD6721BA850611CCF6E03E /* Pods-pingx_Tests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 016A98C80FAF580431DB66ED4BB3BA9F /* Pods-pingx_Tests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		836A1E3CDBCB424DAB4FE28F693233C1 /* pingx-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 06FF0E711B23B67508DC5A49310CA1E7 /* pingx-dummy.m */; };
 		9507744A50F5AF9E2FAED578B92AA05B /* Pods-pingx_Example-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = BA1E7ED09DCCF9BAD0E212BCAA9B2A94 /* Pods-pingx_Example-dummy.m */; };
 		A31D770CEE609C893FC96DC118E610DF /* Pods-pingx_Tests-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 84916C2E55405BA8BB6739EDAA280094 /* Pods-pingx_Tests-dummy.m */; };
-		CA08CF142906BE1F00AF7628 /* SocketProviderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA08CF132906BE1F00AF7628 /* SocketProviderError.swift */; };
-		CA08CF172906C67600AF7628 /* Data+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA08CF162906C67600AF7628 /* Data+Extensions.swift */; };
 		CA08CF192906C72F00AF7628 /* String+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA08CF182906C72F00AF7628 /* String+Extensions.swift */; };
-		CA08CF1C2906CF3F00AF7628 /* SocketInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA08CF1B2906CF3F00AF7628 /* SocketInfo.swift */; };
 		CA1206A629059A7E004C70EE /* ICMPHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1206A529059A7E004C70EE /* ICMPHeader.swift */; };
 		CA1206A829059AF6004C70EE /* ICMPType.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1206A729059AF6004C70EE /* ICMPType.swift */; };
 		CA1206B02905B4D4004C70EE /* IPHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1206AF2905B4D4004C70EE /* IPHeader.swift */; };
-		CA1206B32905B83A004C70EE /* Pinger.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1206B22905B83A004C70EE /* Pinger.swift */; };
-		CA1206B52905B842004C70EE /* PingerInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1206B42905B842004C70EE /* PingerInterface.swift */; };
-		CA1206B82905B8A0004C70EE /* IPAddressConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1206B72905B8A0004C70EE /* IPAddressConverter.swift */; };
-		CA1206BA2905B8B6004C70EE /* IPAddressConverterInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1206B92905B8B6004C70EE /* IPAddressConverterInterface.swift */; };
+		CA1206B32905B83A004C70EE /* SinglePinger.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1206B22905B83A004C70EE /* SinglePinger.swift */; };
+		CA1206B52905B842004C70EE /* Pinger.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1206B42905B842004C70EE /* Pinger.swift */; };
+		CA1206B82905B8A0004C70EE /* IPAddressConverterImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1206B72905B8A0004C70EE /* IPAddressConverterImpl.swift */; };
+		CA1206BA2905B8B6004C70EE /* IPv4AddressConverter.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1206B92905B8B6004C70EE /* IPv4AddressConverter.swift */; };
 		CA1206BC2905BAE7004C70EE /* IPAddressConverterError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1206BB2905BAE7004C70EE /* IPAddressConverterError.swift */; };
-		CA1206C02905BC30004C70EE /* PingerConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1206BF2905BC30004C70EE /* PingerConfiguration.swift */; };
-		CA1206C22905BC3D004C70EE /* PingerConfigurationInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1206C12905BC3D004C70EE /* PingerConfigurationInterface.swift */; };
-		CA1206C52905BDE1004C70EE /* Request.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1206C42905BDE1004C70EE /* Request.swift */; };
 		CA1206C72905BDE9004C70EE /* Response.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1206C62905BDE9004C70EE /* Response.swift */; };
 		CA1206C92905C1E6004C70EE /* PingerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1206C82905C1E6004C70EE /* PingerDelegate.swift */; };
-		CA1206CC2905C5B1004C70EE /* SocketProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1206CB2905C5B1004C70EE /* SocketProvider.swift */; };
-		CA1206CE2905C5DE004C70EE /* SocketProviderInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1206CD2905C5DE004C70EE /* SocketProviderInterface.swift */; };
+		CA1206CC2905C5B1004C70EE /* SocketFactoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1206CB2905C5B1004C70EE /* SocketFactoryImpl.swift */; };
+		CA1206CE2905C5DE004C70EE /* SocketFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA1206CD2905C5DE004C70EE /* SocketFactory.swift */; };
 		CAD06A3129193F7A0034FFA3 /* PingerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAD06A3029193F7A0034FFA3 /* PingerError.swift */; };
 		CAD06A34291940AC0034FFA3 /* ICMPPackage.swift in Sources */ = {isa = PBXBuildFile; fileRef = CAD06A33291940AC0034FFA3 /* ICMPPackage.swift */; };
 		D7FFA5763B1FF48C0137BCDF7217ECC6 /* pingx-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 9201AA9DC0A43357F7249F56DCADD4EA /* pingx-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -61,6 +66,17 @@
 		043F8FB5A5A46A2B5A5EB7EBB54A5F54 /* Pods-pingx_Example.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = "Pods-pingx_Example.modulemap"; sourceTree = "<group>"; };
 		06FF0E711B23B67508DC5A49310CA1E7 /* pingx-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "pingx-dummy.m"; sourceTree = "<group>"; };
 		0E9BCD21C60BD3B58D3B4D91634A2325 /* Pods-pingx_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-pingx_Example.release.xcconfig"; sourceTree = "<group>"; };
+		142525412A37508000574387 /* PacketSender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketSender.swift; sourceTree = "<group>"; };
+		142525432A37509D00574387 /* PacketSenderProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketSenderProtocol.swift; sourceTree = "<group>"; };
+		142525462A37510000574387 /* PacketType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketType.swift; sourceTree = "<group>"; };
+		142525512A3756EB00574387 /* Request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
+		1446970B2B5AC69E008F5E19 /* CommandBlock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandBlock.swift; sourceTree = "<group>"; };
+		1449ED472B5C61DF007B0ED2 /* ICMPChecksum.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICMPChecksum.swift; sourceTree = "<group>"; };
+		1449ED4D2B5C63BB007B0ED2 /* PacketFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketFactory.swift; sourceTree = "<group>"; };
+		1449ED502B5C6446007B0ED2 /* Packet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Packet.swift; sourceTree = "<group>"; };
+		1449ED522B5C648B007B0ED2 /* PacketFactoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketFactoryImpl.swift; sourceTree = "<group>"; };
+		1449ED552B5C7DEA007B0ED2 /* PacketSenderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketSenderDelegate.swift; sourceTree = "<group>"; };
+		14A1AD182B04D3FF00ADCC33 /* IPv4Address.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPv4Address.swift; sourceTree = "<group>"; };
 		193F6391997BB57CA0451D27F892B978 /* Pods-pingx_Tests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-pingx_Tests-acknowledgements.markdown"; sourceTree = "<group>"; };
 		1E052B14908BED5B850764416544E54E /* Pods-pingx_Example-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-pingx_Example-acknowledgements.markdown"; sourceTree = "<group>"; };
 		2011B9763816A77504CFD51C9B673A33 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
@@ -85,25 +101,19 @@
 		BDE9751700A8BFB6B4C98BA8BA4A54F6 /* Pods-pingx_Tests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-pingx_Tests.debug.xcconfig"; sourceTree = "<group>"; };
 		C2322933811CAECDD1895CA4233557CF /* Pods-pingx_Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Pods-pingx_Example.debug.xcconfig"; sourceTree = "<group>"; };
 		C6D836614398A0D358FD7606F2E651F5 /* pingx.podspec */ = {isa = PBXFileReference; explicitFileType = text.script.ruby; includeInIndex = 1; indentWidth = 2; path = pingx.podspec; sourceTree = "<group>"; tabWidth = 2; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
-		CA08CF132906BE1F00AF7628 /* SocketProviderError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketProviderError.swift; sourceTree = "<group>"; };
-		CA08CF162906C67600AF7628 /* Data+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Extensions.swift"; sourceTree = "<group>"; };
 		CA08CF182906C72F00AF7628 /* String+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Extensions.swift"; sourceTree = "<group>"; };
-		CA08CF1B2906CF3F00AF7628 /* SocketInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketInfo.swift; sourceTree = "<group>"; };
 		CA1206A529059A7E004C70EE /* ICMPHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICMPHeader.swift; sourceTree = "<group>"; };
 		CA1206A729059AF6004C70EE /* ICMPType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICMPType.swift; sourceTree = "<group>"; };
 		CA1206AF2905B4D4004C70EE /* IPHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPHeader.swift; sourceTree = "<group>"; };
-		CA1206B22905B83A004C70EE /* Pinger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pinger.swift; sourceTree = "<group>"; };
-		CA1206B42905B842004C70EE /* PingerInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingerInterface.swift; sourceTree = "<group>"; };
-		CA1206B72905B8A0004C70EE /* IPAddressConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPAddressConverter.swift; sourceTree = "<group>"; };
-		CA1206B92905B8B6004C70EE /* IPAddressConverterInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPAddressConverterInterface.swift; sourceTree = "<group>"; };
+		CA1206B22905B83A004C70EE /* SinglePinger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SinglePinger.swift; sourceTree = "<group>"; };
+		CA1206B42905B842004C70EE /* Pinger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Pinger.swift; sourceTree = "<group>"; };
+		CA1206B72905B8A0004C70EE /* IPAddressConverterImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPAddressConverterImpl.swift; sourceTree = "<group>"; };
+		CA1206B92905B8B6004C70EE /* IPv4AddressConverter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPv4AddressConverter.swift; sourceTree = "<group>"; };
 		CA1206BB2905BAE7004C70EE /* IPAddressConverterError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPAddressConverterError.swift; sourceTree = "<group>"; };
-		CA1206BF2905BC30004C70EE /* PingerConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingerConfiguration.swift; sourceTree = "<group>"; };
-		CA1206C12905BC3D004C70EE /* PingerConfigurationInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingerConfigurationInterface.swift; sourceTree = "<group>"; };
-		CA1206C42905BDE1004C70EE /* Request.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Request.swift; sourceTree = "<group>"; };
 		CA1206C62905BDE9004C70EE /* Response.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Response.swift; sourceTree = "<group>"; };
 		CA1206C82905C1E6004C70EE /* PingerDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingerDelegate.swift; sourceTree = "<group>"; };
-		CA1206CB2905C5B1004C70EE /* SocketProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketProvider.swift; sourceTree = "<group>"; };
-		CA1206CD2905C5DE004C70EE /* SocketProviderInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketProviderInterface.swift; sourceTree = "<group>"; };
+		CA1206CB2905C5B1004C70EE /* SocketFactoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketFactoryImpl.swift; sourceTree = "<group>"; };
+		CA1206CD2905C5DE004C70EE /* SocketFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketFactory.swift; sourceTree = "<group>"; };
 		CAD06A3029193F7A0034FFA3 /* PingerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingerError.swift; sourceTree = "<group>"; };
 		CAD06A33291940AC0034FFA3 /* ICMPPackage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ICMPPackage.swift; sourceTree = "<group>"; };
 		CB3B3DBE732891B0CF005E67C8101435 /* pingx.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.module; path = pingx.modulemap; sourceTree = "<group>"; };
@@ -140,6 +150,221 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		142525402A37507700574387 /* PacketSender */ = {
+			isa = PBXGroup;
+			children = (
+				142525552A37575500574387 /* Api */,
+				1449ED542B5C7DDF007B0ED2 /* Delegate */,
+				144696FF2B5AB5AB008F5E19 /* Impl */,
+			);
+			path = PacketSender;
+			sourceTree = "<group>";
+		};
+		142525482A37565B00574387 /* Error */ = {
+			isa = PBXGroup;
+			children = (
+				CAD06A3029193F7A0034FFA3 /* PingerError.swift */,
+			);
+			path = Error;
+			sourceTree = "<group>";
+		};
+		1425254A2A37566400574387 /* Api */ = {
+			isa = PBXGroup;
+			children = (
+				CA1206B42905B842004C70EE /* Pinger.swift */,
+			);
+			path = Api;
+			sourceTree = "<group>";
+		};
+		1425254B2A37566A00574387 /* Delegate */ = {
+			isa = PBXGroup;
+			children = (
+				CA1206C82905C1E6004C70EE /* PingerDelegate.swift */,
+			);
+			path = Delegate;
+			sourceTree = "<group>";
+		};
+		1425254F2A37568800574387 /* Api */ = {
+			isa = PBXGroup;
+			children = (
+				CA1206CD2905C5DE004C70EE /* SocketFactory.swift */,
+			);
+			path = Api;
+			sourceTree = "<group>";
+		};
+		142525502A3756E200574387 /* Request */ = {
+			isa = PBXGroup;
+			children = (
+				142525512A3756EB00574387 /* Request.swift */,
+			);
+			path = Request;
+			sourceTree = "<group>";
+		};
+		142525552A37575500574387 /* Api */ = {
+			isa = PBXGroup;
+			children = (
+				142525432A37509D00574387 /* PacketSenderProtocol.swift */,
+			);
+			path = Api;
+			sourceTree = "<group>";
+		};
+		142525562A3757B100574387 /* Packets */ = {
+			isa = PBXGroup;
+			children = (
+				CA1206AC2905B4B5004C70EE /* ICMP */,
+				1449ED4F2B5C6440007B0ED2 /* Packet */,
+			);
+			path = Packets;
+			sourceTree = "<group>";
+		};
+		144696FD2B5AB10F008F5E19 /* Converter */ = {
+			isa = PBXGroup;
+			children = (
+				144697002B5AB5CA008F5E19 /* Api */,
+				144697022B5AB5D2008F5E19 /* Error */,
+				144697012B5AB5CE008F5E19 /* Impl */,
+			);
+			path = Converter;
+			sourceTree = "<group>";
+		};
+		144696FE2B5AB599008F5E19 /* PacketType */ = {
+			isa = PBXGroup;
+			children = (
+				142525462A37510000574387 /* PacketType.swift */,
+			);
+			path = PacketType;
+			sourceTree = "<group>";
+		};
+		144696FF2B5AB5AB008F5E19 /* Impl */ = {
+			isa = PBXGroup;
+			children = (
+				142525412A37508000574387 /* PacketSender.swift */,
+			);
+			path = Impl;
+			sourceTree = "<group>";
+		};
+		144697002B5AB5CA008F5E19 /* Api */ = {
+			isa = PBXGroup;
+			children = (
+				CA1206B92905B8B6004C70EE /* IPv4AddressConverter.swift */,
+			);
+			path = Api;
+			sourceTree = "<group>";
+		};
+		144697012B5AB5CE008F5E19 /* Impl */ = {
+			isa = PBXGroup;
+			children = (
+				CA1206B72905B8A0004C70EE /* IPAddressConverterImpl.swift */,
+			);
+			path = Impl;
+			sourceTree = "<group>";
+		};
+		144697022B5AB5D2008F5E19 /* Error */ = {
+			isa = PBXGroup;
+			children = (
+				CA1206BB2905BAE7004C70EE /* IPAddressConverterError.swift */,
+			);
+			path = Error;
+			sourceTree = "<group>";
+		};
+		144697032B5AB5F0008F5E19 /* Impl */ = {
+			isa = PBXGroup;
+			children = (
+				CA1206CB2905C5B1004C70EE /* SocketFactoryImpl.swift */,
+			);
+			path = Impl;
+			sourceTree = "<group>";
+		};
+		144697042B5AB609008F5E19 /* Impl */ = {
+			isa = PBXGroup;
+			children = (
+				CA1206B22905B83A004C70EE /* SinglePinger.swift */,
+			);
+			path = Impl;
+			sourceTree = "<group>";
+		};
+		144697052B5AB7E8008F5E19 /* IPv4 */ = {
+			isa = PBXGroup;
+			children = (
+				14A1AD182B04D3FF00ADCC33 /* IPv4Address.swift */,
+			);
+			path = IPv4;
+			sourceTree = "<group>";
+		};
+		144697062B5AB7F0008F5E19 /* IPHeader */ = {
+			isa = PBXGroup;
+			children = (
+				CA1206AF2905B4D4004C70EE /* IPHeader.swift */,
+			);
+			path = IPHeader;
+			sourceTree = "<group>";
+		};
+		144697092B5ABB62008F5E19 /* Factory */ = {
+			isa = PBXGroup;
+			children = (
+				1449ED492B5C6286007B0ED2 /* PacketFactory */,
+				CA1206CA2905C5A9004C70EE /* SocketFactory */,
+			);
+			path = Factory;
+			sourceTree = "<group>";
+		};
+		1446970A2B5AC68F008F5E19 /* CommandBlock */ = {
+			isa = PBXGroup;
+			children = (
+				1446970B2B5AC69E008F5E19 /* CommandBlock.swift */,
+			);
+			path = CommandBlock;
+			sourceTree = "<group>";
+		};
+		1449ED422B5C60BB007B0ED2 /* Checksum */ = {
+			isa = PBXGroup;
+			children = (
+				1449ED472B5C61DF007B0ED2 /* ICMPChecksum.swift */,
+			);
+			path = Checksum;
+			sourceTree = "<group>";
+		};
+		1449ED492B5C6286007B0ED2 /* PacketFactory */ = {
+			isa = PBXGroup;
+			children = (
+				1449ED4A2B5C6297007B0ED2 /* Api */,
+				1449ED4B2B5C629A007B0ED2 /* Impl */,
+			);
+			path = PacketFactory;
+			sourceTree = "<group>";
+		};
+		1449ED4A2B5C6297007B0ED2 /* Api */ = {
+			isa = PBXGroup;
+			children = (
+				1449ED4D2B5C63BB007B0ED2 /* PacketFactory.swift */,
+			);
+			path = Api;
+			sourceTree = "<group>";
+		};
+		1449ED4B2B5C629A007B0ED2 /* Impl */ = {
+			isa = PBXGroup;
+			children = (
+				1449ED522B5C648B007B0ED2 /* PacketFactoryImpl.swift */,
+			);
+			path = Impl;
+			sourceTree = "<group>";
+		};
+		1449ED4F2B5C6440007B0ED2 /* Packet */ = {
+			isa = PBXGroup;
+			children = (
+				1449ED502B5C6446007B0ED2 /* Packet.swift */,
+			);
+			path = Packet;
+			sourceTree = "<group>";
+		};
+		1449ED542B5C7DDF007B0ED2 /* Delegate */ = {
+			isa = PBXGroup;
+			children = (
+				1449ED552B5C7DEA007B0ED2 /* PacketSenderDelegate.swift */,
+			);
+			path = Delegate;
+			sourceTree = "<group>";
+		};
 		1A51D063A67A16CA042698C86ED25967 /* pingx */ = {
 			isa = PBXGroup;
 			children = (
@@ -237,9 +462,13 @@
 		CA08CF122906A54000AF7628 /* Source */ = {
 			isa = PBXGroup;
 			children = (
-				CA1206A429059A6E004C70EE /* Core */,
-				CA1206B12905B832004C70EE /* Manager */,
-				CA1206B62905B88E004C70EE /* Dependency */,
+				1449ED422B5C60BB007B0ED2 /* Checksum */,
+				144696FD2B5AB10F008F5E19 /* Converter */,
+				CA08CF152906C66700AF7628 /* Extensions */,
+				144697092B5ABB62008F5E19 /* Factory */,
+				CA1206AD2905B4B9004C70EE /* Model */,
+				142525402A37507700574387 /* PacketSender */,
+				CA1206BD2905BC13004C70EE /* Pinger */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -247,27 +476,9 @@
 		CA08CF152906C66700AF7628 /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
-				CA08CF162906C67600AF7628 /* Data+Extensions.swift */,
 				CA08CF182906C72F00AF7628 /* String+Extensions.swift */,
 			);
 			path = Extensions;
-			sourceTree = "<group>";
-		};
-		CA08CF1A2906CF3500AF7628 /* Socket */ = {
-			isa = PBXGroup;
-			children = (
-				CA08CF1B2906CF3F00AF7628 /* SocketInfo.swift */,
-			);
-			path = Socket;
-			sourceTree = "<group>";
-		};
-		CA1206A429059A6E004C70EE /* Core */ = {
-			isa = PBXGroup;
-			children = (
-				CA08CF152906C66700AF7628 /* Extensions */,
-				CA1206AD2905B4B9004C70EE /* Model */,
-			);
-			path = Core;
 			sourceTree = "<group>";
 		};
 		CA1206AC2905B4B5004C70EE /* ICMP */ = {
@@ -283,10 +494,13 @@
 		CA1206AD2905B4B9004C70EE /* Model */ = {
 			isa = PBXGroup;
 			children = (
-				CA08CF1A2906CF3500AF7628 /* Socket */,
-				CA1206C32905BDD4004C70EE /* Request & Response */,
-				CA1206AC2905B4B5004C70EE /* ICMP */,
+				1446970A2B5AC68F008F5E19 /* CommandBlock */,
 				CA1206AE2905B4BF004C70EE /* IP */,
+				144697062B5AB7F0008F5E19 /* IPHeader */,
+				142525562A3757B100574387 /* Packets */,
+				144696FE2B5AB599008F5E19 /* PacketType */,
+				142525502A3756E200574387 /* Request */,
+				CA1206C32905BDD4004C70EE /* Response */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -294,68 +508,37 @@
 		CA1206AE2905B4BF004C70EE /* IP */ = {
 			isa = PBXGroup;
 			children = (
-				CA1206AF2905B4D4004C70EE /* IPHeader.swift */,
+				144697052B5AB7E8008F5E19 /* IPv4 */,
 			);
 			path = IP;
-			sourceTree = "<group>";
-		};
-		CA1206B12905B832004C70EE /* Manager */ = {
-			isa = PBXGroup;
-			children = (
-				CA1206CA2905C5A9004C70EE /* Socket */,
-				CA1206BD2905BC13004C70EE /* Pinger */,
-				CA1206BE2905BC1A004C70EE /* PingerConfiguration */,
-			);
-			path = Manager;
-			sourceTree = "<group>";
-		};
-		CA1206B62905B88E004C70EE /* Dependency */ = {
-			isa = PBXGroup;
-			children = (
-				CA1206B72905B8A0004C70EE /* IPAddressConverter.swift */,
-				CA1206BB2905BAE7004C70EE /* IPAddressConverterError.swift */,
-				CA1206B92905B8B6004C70EE /* IPAddressConverterInterface.swift */,
-			);
-			path = Dependency;
 			sourceTree = "<group>";
 		};
 		CA1206BD2905BC13004C70EE /* Pinger */ = {
 			isa = PBXGroup;
 			children = (
-				CA1206B22905B83A004C70EE /* Pinger.swift */,
-				CAD06A3029193F7A0034FFA3 /* PingerError.swift */,
-				CA1206C82905C1E6004C70EE /* PingerDelegate.swift */,
-				CA1206B42905B842004C70EE /* PingerInterface.swift */,
+				1425254A2A37566400574387 /* Api */,
+				1425254B2A37566A00574387 /* Delegate */,
+				142525482A37565B00574387 /* Error */,
+				144697042B5AB609008F5E19 /* Impl */,
 			);
 			path = Pinger;
 			sourceTree = "<group>";
 		};
-		CA1206BE2905BC1A004C70EE /* PingerConfiguration */ = {
+		CA1206C32905BDD4004C70EE /* Response */ = {
 			isa = PBXGroup;
 			children = (
-				CA1206BF2905BC30004C70EE /* PingerConfiguration.swift */,
-				CA1206C12905BC3D004C70EE /* PingerConfigurationInterface.swift */,
-			);
-			path = PingerConfiguration;
-			sourceTree = "<group>";
-		};
-		CA1206C32905BDD4004C70EE /* Request & Response */ = {
-			isa = PBXGroup;
-			children = (
-				CA1206C42905BDE1004C70EE /* Request.swift */,
 				CA1206C62905BDE9004C70EE /* Response.swift */,
 			);
-			path = "Request & Response";
+			path = Response;
 			sourceTree = "<group>";
 		};
-		CA1206CA2905C5A9004C70EE /* Socket */ = {
+		CA1206CA2905C5A9004C70EE /* SocketFactory */ = {
 			isa = PBXGroup;
 			children = (
-				CA1206CB2905C5B1004C70EE /* SocketProvider.swift */,
-				CA08CF132906BE1F00AF7628 /* SocketProviderError.swift */,
-				CA1206CD2905C5DE004C70EE /* SocketProviderInterface.swift */,
+				1425254F2A37568800574387 /* Api */,
+				144697032B5AB5F0008F5E19 /* Impl */,
 			);
-			path = Socket;
+			path = SocketFactory;
 			sourceTree = "<group>";
 		};
 		CF1408CF629C7361332E53B88F7BD30C = {
@@ -545,26 +728,31 @@
 			buildActionMask = 2147483647;
 			files = (
 				CAD06A34291940AC0034FFA3 /* ICMPPackage.swift in Sources */,
-				CA1206B82905B8A0004C70EE /* IPAddressConverter.swift in Sources */,
-				CA1206C52905BDE1004C70EE /* Request.swift in Sources */,
-				CA1206CC2905C5B1004C70EE /* SocketProvider.swift in Sources */,
-				CA08CF172906C67600AF7628 /* Data+Extensions.swift in Sources */,
+				1449ED4E2B5C63BB007B0ED2 /* PacketFactory.swift in Sources */,
+				CA1206B82905B8A0004C70EE /* IPAddressConverterImpl.swift in Sources */,
+				CA1206CC2905C5B1004C70EE /* SocketFactoryImpl.swift in Sources */,
+				142525422A37508000574387 /* PacketSender.swift in Sources */,
 				CA1206A829059AF6004C70EE /* ICMPType.swift in Sources */,
-				CA08CF142906BE1F00AF7628 /* SocketProviderError.swift in Sources */,
 				CA1206C92905C1E6004C70EE /* PingerDelegate.swift in Sources */,
-				CA1206B32905B83A004C70EE /* Pinger.swift in Sources */,
-				CA08CF1C2906CF3F00AF7628 /* SocketInfo.swift in Sources */,
+				CA1206B32905B83A004C70EE /* SinglePinger.swift in Sources */,
+				142525472A37510000574387 /* PacketType.swift in Sources */,
 				836A1E3CDBCB424DAB4FE28F693233C1 /* pingx-dummy.m in Sources */,
+				14A1AD192B04D3FF00ADCC33 /* IPv4Address.swift in Sources */,
 				CA1206BC2905BAE7004C70EE /* IPAddressConverterError.swift in Sources */,
+				1446970C2B5AC69E008F5E19 /* CommandBlock.swift in Sources */,
 				CA1206C72905BDE9004C70EE /* Response.swift in Sources */,
-				CA1206C22905BC3D004C70EE /* PingerConfigurationInterface.swift in Sources */,
-				CA1206C02905BC30004C70EE /* PingerConfiguration.swift in Sources */,
+				142525522A3756EB00574387 /* Request.swift in Sources */,
 				CA08CF192906C72F00AF7628 /* String+Extensions.swift in Sources */,
+				1449ED532B5C648B007B0ED2 /* PacketFactoryImpl.swift in Sources */,
 				CAD06A3129193F7A0034FFA3 /* PingerError.swift in Sources */,
-				CA1206BA2905B8B6004C70EE /* IPAddressConverterInterface.swift in Sources */,
+				CA1206BA2905B8B6004C70EE /* IPv4AddressConverter.swift in Sources */,
+				142525442A37509D00574387 /* PacketSenderProtocol.swift in Sources */,
 				CA1206A629059A7E004C70EE /* ICMPHeader.swift in Sources */,
-				CA1206CE2905C5DE004C70EE /* SocketProviderInterface.swift in Sources */,
-				CA1206B52905B842004C70EE /* PingerInterface.swift in Sources */,
+				CA1206CE2905C5DE004C70EE /* SocketFactory.swift in Sources */,
+				1449ED562B5C7DEA007B0ED2 /* PacketSenderDelegate.swift in Sources */,
+				1449ED482B5C61DF007B0ED2 /* ICMPChecksum.swift in Sources */,
+				1449ED512B5C6446007B0ED2 /* Packet.swift in Sources */,
+				CA1206B52905B842004C70EE /* Pinger.swift in Sources */,
 				CA1206B02905B4D4004C70EE /* IPHeader.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

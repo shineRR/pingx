@@ -1,51 +1,77 @@
-//
-//  ViewController.swift
-//  pingx
-//
-//  Created by shineRR on 10/23/2022.
-//  Copyright (c) 2022 shineRR. All rights reserved.
-//
-
 import UIKit
-import pingx
 
-class ViewController: UIViewController {
+// MARK: - ViewController
 
-    // MARK: - Consts
-    private enum Consts {
-        static let destinationAddress = "8.8.8.8"
+final class ViewController: UIViewController {
+    
+    // MARK: UI Components
+    
+    private lazy var sendButton: UIButton = {
+        let button = UIButton(type: .system)
+        
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setTitle("Send", for: .normal)
+        button.addTarget(self, action: #selector(didTapButton), for: .touchUpInside)
+        
+        return button
+    }()
+    
+    // MARK: Properties
+    
+    private let presenter: Presenter
+
+    // MARK: Initializer
+    
+    init(presenter: Presenter) {
+        self.presenter = presenter
+        super.init(nibName: nil, bundle: nil)
     }
     
-    // MARK: - Properties
-    private var pinger: Pinger?
-    
-    // MARK: - Override
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        self.test()
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
-
-    // MARK: - Methods
-    private func test() {
-        let pinger = Pinger(
-            configuration: PingerConfiguration(timeoutInterval: 1000, packetsCount: 1),
-            socketProvider: SocketProvider(),
-            converter: IPAddressConverter(),
-            delegate: self
-        )
-        pinger.ping(address: Consts.destinationAddress)
-        self.pinger = pinger
-    }
-
 }
 
-// MARK: - PingerDelegate
-extension ViewController: PingerDelegate {
-    func pinger(_ pinger: PingerInterface, request: Request, didReceive: Response) {
-        print("didReceive")
+// MARK: - Override
+
+extension ViewController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        setUp()
+    }
+}
+
+// MARK: - PingxView
+
+extension ViewController: PingxView {}
+
+// MARK: - Actions Extension
+
+private extension ViewController {
+    @objc
+    func didTapButton() {
+        presenter.didTapSendButton()
+    }
+}
+
+// MARK: - UI Extension
+
+private extension ViewController {
+    func setUp() {
+        setUpHierarchy()
+        setUpConstraints()
     }
     
-    func pinger(_ pinger: PingerInterface, request: Request, didCompleteWithError: Error) {
-        print("didCompleteWithError")
+    func setUpHierarchy() {
+        view.backgroundColor = .white
+        view.addSubview(sendButton)
+    }
+    
+    func setUpConstraints() {
+        NSLayoutConstraint.activate([
+            sendButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            sendButton.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
     }
 }
