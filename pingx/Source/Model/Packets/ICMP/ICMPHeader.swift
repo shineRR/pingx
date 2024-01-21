@@ -9,7 +9,8 @@ struct ICMPHeader {
     private(set) var checksum: UInt16
     let identifier: UInt16
     let sequenceNumber: UInt16
-    let payload: uuid_t
+    /// 16 bytes.
+    let payload: Payload
     
     // MARK: Initializer
     
@@ -19,7 +20,7 @@ struct ICMPHeader {
         checksum: UInt16 = .zero,
         identifier: UInt16,
         sequenceNumber: UInt16,
-        payload: uuid_t
+        payload: Payload
     ) {
         self.type = type.rawValue
         self.code = code

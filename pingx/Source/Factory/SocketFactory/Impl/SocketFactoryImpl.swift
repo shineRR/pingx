@@ -10,7 +10,7 @@ final class SocketFactoryImpl {
 // MARK: - SocketFactory
 
 extension SocketFactoryImpl: SocketFactory {
-    func create(command: SocketCommand) throws -> CFSocket {
+    func create(command: SocketCommand) throws -> PingxSocket<SocketCommand> {
         let unmanaged = Unmanaged.passRetained(command)
         var context = CFSocketContext(
             version: .zero,
@@ -40,12 +40,11 @@ extension SocketFactoryImpl: SocketFactory {
         )
         
         guard let socket = socket else { throw PingerError.socketFailed }
-        
-        let runLoopRef = CFSocketCreateRunLoopSource(
+        guard let runLoopRef = CFSocketCreateRunLoopSource(
             kCFAllocatorDefault,
             socket,
             .zero
-        )
+        ) else { throw PingerError.socketFailed }
         
         CFRunLoopAddSource(
             CFRunLoopGetCurrent(),
@@ -53,6 +52,10 @@ extension SocketFactoryImpl: SocketFactory {
             .commonModes
         )
     
-        return socket
+        return PingxSocket(
+            socket: socket,
+            socketSource: runLoopRef,
+            unmanaged: unmanaged
+        )
     }
 }

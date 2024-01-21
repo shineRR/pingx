@@ -3,7 +3,7 @@
 struct ICMPPackage {
     
     // MARK: Properties
-    private var ipHeader: IPHeader
-    private var icmpHeader: ICMPHeader
-    private let data: Data
+    
+    let ipHeader: IPHeader
+    let icmpHeader: ICMPHeader
 }

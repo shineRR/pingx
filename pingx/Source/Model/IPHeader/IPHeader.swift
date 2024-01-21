@@ -13,7 +13,7 @@ public struct IPHeader {
     public let flagsAndFragmentOffset: UInt16 // Ripped from the IP protocol.
     public let timeToLive: UInt8
     public let `protocol`: UInt8
-    public var headerChecksum: UInt16
+    public let headerChecksum: UInt16
     public let sourceAddress: IPv4Address
     public let destinationAddress: IPv4Address
     

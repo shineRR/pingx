@@ -20,7 +20,7 @@ final class PresenterImpl {
 
 extension PresenterImpl: Presenter {
     func didTapSendButton() {
-        let request = Request(type: .icmp, destination: Constants.destinationAddress)
+        let request = Request(destination: Constants.destinationAddress)
         pinger.ping(request: request)
     }
 }
@@ -31,7 +31,7 @@ extension PresenterImpl: PingerDelegate {
         request: Request,
         didReceive response: Response
     ) {
-        print(response)
+        print("Destination: \(request.destination)\nResponse: \(response)")
     }
     
     func pinger(
@@ -39,7 +39,7 @@ extension PresenterImpl: PingerDelegate {
         request: Request,
         didCompleteWithError error: PingerError
     ) {
-        print(error)
+        print("Destination: \(request.destination)\nError: \(error)")
     }
 }
 

@@ -2,18 +2,23 @@
 
 final class PacketSender {
 
+    // MARK: Typealias
+    
+    private typealias Instance = SocketFactoryImpl.SocketCommand
+    
     // MARK: Delegate
     
     weak var delegate: PacketSenderDelegate?
     
     // MARK: Properties
     
-    private var socket: CFSocket!
     private let socketFactory: SocketFactory
     private let packetFactory: PacketFactory
+    private var pingxSocket: PingxSocket<Instance>!
     
     // MARK: Initializer
     
+    // TODO: Add queue/thread
     init(
         socketFactory: SocketFactory = SocketFactoryImpl(),
         packetFactory: PacketFactory = PacketFactoryImpl()
@@ -27,14 +32,14 @@ final class PacketSender {
 
 private extension PacketSender {
     func checkSocketCreation() throws {
-        guard socket == nil else { return }
+        guard pingxSocket == nil else { return }
         
         let command: CommandBlock<Data> = CommandBlock { [weak self] data in
             guard let self else { return }
             self.delegate?.packetSender(packetSender: self, didReceive: data)
         }
         
-        socket = try socketFactory.create(command: command)
+        pingxSocket = try socketFactory.create(command: command)
     }
 }
 
@@ -46,13 +51,21 @@ extension PacketSender: PacketSenderProtocol {
         
         let packet = try packetFactory.create(type: request.type)
         let error = CFSocketSendData(
-            socket,
+            pingxSocket.socket,
             request.destination.socketAddress as CFData,
             packet.data as CFData,
             request.timeoutInterval
         )
         
         try handleSocketError(error)
+    }
+    
+    func invalidate() {
+        guard pingxSocket != nil else { return }
+        CFRunLoopSourceInvalidate(pingxSocket.socketSource)
+        CFSocketInvalidate(pingxSocket.socket)
+        pingxSocket.unmanaged.release()
+        pingxSocket = nil
     }
     
     private func handleSocketError(_ error: CFSocketError) throws {

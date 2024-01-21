@@ -1,23 +1,28 @@
 // MARK: - Request
 
-public struct Request: Identifiable {
+public struct Request {
     
     // MARK: Properties
     
-    public let id: String = UUID().uuidString
-    public let type: PacketType
+    let type: PacketType = .icmp
     public let destination: IPv4Address
     public let timeoutInterval: TimeInterval
+    private(set) var timeRemainingUntilDeadline: TimeInterval
     
     // MARK: Initializer
     
     public init(
-        type: PacketType, 
         destination: IPv4Address,
         timeoutInterval: TimeInterval = 120
     ) {
-        self.type = type
         self.destination = destination
         self.timeoutInterval = timeoutInterval
+        self.timeRemainingUntilDeadline = timeoutInterval
+    }
+    
+    // MARK: Methods
+    
+    mutating func setTimeRemainingUntilDeadline(_ timeRemainingUntilDeadline: TimeInterval) {
+        self.timeRemainingUntilDeadline = timeRemainingUntilDeadline
     }
 }

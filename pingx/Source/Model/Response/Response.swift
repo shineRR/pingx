@@ -1,6 +1,12 @@
 // MARK: - Response
 
 public struct Response {
-    let destinationAddress: IPv4Address
+    
+    // MARK: Properties
+    
+    /// Destination address.
+    let destination: IPv4Address
+    
+    /// ms.
     let duration: TimeInterval
 }

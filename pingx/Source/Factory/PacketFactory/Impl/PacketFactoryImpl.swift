@@ -21,9 +21,9 @@ private extension PacketFactoryImpl {
             type: .echoRequest,
             identifier: CFSwapInt16HostToBig(UInt16.random(in: 0..<UInt16.max)),
             sequenceNumber: CFSwapInt16HostToBig(UInt16.random(in: 0..<UInt16.max)),
-            payload: UUID().uuid
+            payload: Payload()
         )
-        let checksum = try ICMPChecksum()(header: icmpHeader)
+        let checksum = ICMPChecksum()(header: icmpHeader)
         
         icmpHeader.setChecksum(checksum)
         
