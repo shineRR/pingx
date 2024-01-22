@@ -49,7 +49,7 @@ extension PacketSender: PacketSenderProtocol {
     func send(_ request: Request) throws {
         try checkSocketCreation()
         
-        let packet = try packetFactory.create(type: request.type)
+        let packet = packetFactory.create(type: request.type)
         let error = CFSocketSendData(
             pingxSocket.socket,
             request.destination.socketAddress as CFData,
@@ -71,7 +71,7 @@ extension PacketSender: PacketSenderProtocol {
     private func handleSocketError(_ error: CFSocketError) throws {
         switch error {
         case .success:
-            break
+            return
         case .error:
             throw PingerError.socketFailed
         case .timeout:

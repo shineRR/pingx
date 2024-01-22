@@ -23,6 +23,7 @@
 		1449ED532B5C648B007B0ED2 /* PacketFactoryImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1449ED522B5C648B007B0ED2 /* PacketFactoryImpl.swift */; };
 		1449ED562B5C7DEA007B0ED2 /* PacketSenderDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1449ED552B5C7DEA007B0ED2 /* PacketSenderDelegate.swift */; };
 		14A1AD192B04D3FF00ADCC33 /* IPv4Address.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14A1AD182B04D3FF00ADCC33 /* IPv4Address.swift */; };
+		14F5A0992B5E9485006B274C /* ContinuousPinger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 14F5A0982B5E9485006B274C /* ContinuousPinger.swift */; };
 		733F2D6C91ED4557A33FAA7619650986 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73010CC983E3809BECEE5348DA1BB8C6 /* Foundation.framework */; };
 		81ECEA2E67CD6721BA850611CCF6E03E /* Pods-pingx_Tests-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 016A98C80FAF580431DB66ED4BB3BA9F /* Pods-pingx_Tests-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		836A1E3CDBCB424DAB4FE28F693233C1 /* pingx-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 06FF0E711B23B67508DC5A49310CA1E7 /* pingx-dummy.m */; };
@@ -85,6 +86,7 @@
 		1449ED522B5C648B007B0ED2 /* PacketFactoryImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketFactoryImpl.swift; sourceTree = "<group>"; };
 		1449ED552B5C7DEA007B0ED2 /* PacketSenderDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketSenderDelegate.swift; sourceTree = "<group>"; };
 		14A1AD182B04D3FF00ADCC33 /* IPv4Address.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IPv4Address.swift; sourceTree = "<group>"; };
+		14F5A0982B5E9485006B274C /* ContinuousPinger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContinuousPinger.swift; sourceTree = "<group>"; };
 		193F6391997BB57CA0451D27F892B978 /* Pods-pingx_Tests-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-pingx_Tests-acknowledgements.markdown"; sourceTree = "<group>"; };
 		1E052B14908BED5B850764416544E54E /* Pods-pingx_Example-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-pingx_Example-acknowledgements.markdown"; sourceTree = "<group>"; };
 		2011B9763816A77504CFD51C9B673A33 /* LICENSE */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
@@ -311,6 +313,7 @@
 		144697042B5AB609008F5E19 /* Impl */ = {
 			isa = PBXGroup;
 			children = (
+				14F5A0982B5E9485006B274C /* ContinuousPinger.swift */,
 				CA1206B22905B83A004C70EE /* SinglePinger.swift */,
 			);
 			path = Impl;
@@ -776,6 +779,7 @@
 				142525472A37510000574387 /* PacketType.swift in Sources */,
 				836A1E3CDBCB424DAB4FE28F693233C1 /* pingx-dummy.m in Sources */,
 				14A1AD192B04D3FF00ADCC33 /* IPv4Address.swift in Sources */,
+				14F5A0992B5E9485006B274C /* ContinuousPinger.swift in Sources */,
 				CA1206BC2905BAE7004C70EE /* IPAddressConverterError.swift in Sources */,
 				1446970C2B5AC69E008F5E19 /* CommandBlock.swift in Sources */,
 				CA1206C72905BDE9004C70EE /* Response.swift in Sources */,

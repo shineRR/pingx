@@ -1,6 +1,6 @@
-// MARK: - SinglePinger
+// MARK: - ContinuousPinger
 
-public class SinglePinger {
+public final class ContinuousPinger {
     
     // MARK: Delegate
     
@@ -11,7 +11,7 @@ public class SinglePinger {
     private let packetSender: PacketSenderProtocol
     
     @Atomic
-    internal var outgoingRequests: [IPv4Address: Request] = [:] {
+    private var outgoingRequests: [IPv4Address: Request] = [:] {
         didSet {
             guard !outgoingRequests.isEmpty else {
                 invalidate()
@@ -35,7 +35,7 @@ public class SinglePinger {
 
 // MARK: - Private API
 
-private extension SinglePinger {
+private extension ContinuousPinger {
     func setUpTimer() {
         timer = Timer(timeInterval: 1.0, repeats: true) { [weak self] timer in
             self?.updateOutgoingRequests()
@@ -66,7 +66,7 @@ private extension SinglePinger {
 
 // MARK: - Pinger
 
-extension SinglePinger: Pinger {
+extension ContinuousPinger: Pinger {
     public func ping(request: Request) {
         guard outgoingRequests[request.destination] == nil else {
             delegate?.pinger(self, request: request, didCompleteWithError: .isOutgoing)
@@ -89,7 +89,7 @@ extension SinglePinger: Pinger {
 
 // MARK: - PacketSenderDelegate
 
-extension SinglePinger: PacketSenderDelegate {
+extension ContinuousPinger: PacketSenderDelegate {
     func packetSender(packetSender: PacketSenderProtocol, didReceive data: Data) {
         do {
             let package = try extractICMPPackage(from: data)
@@ -97,10 +97,12 @@ extension SinglePinger: PacketSenderDelegate {
                 destination: package.ipHeader.sourceAddress,
                 duration: (CFAbsoluteTimeGetCurrent() - package.icmpHeader.payload.timestamp) * 1000
             )
-            guard let request = outgoingRequests[response.destination] else { return }
+            guard var request = outgoingRequests[response.destination] else { return }
             
             outgoingRequests.removeValue(forKey: response.destination)
             delegate?.pinger(self, request: request, didReceive: response)
+            request.setTimeRemainingUntilDeadline(request.timeoutInterval)
+            ping(request: request)
         } catch let error as ICMPResponseValidationError {
             switch error {
             case .checksumMismatch(let ipHeader), .invalidCode(let ipHeader),

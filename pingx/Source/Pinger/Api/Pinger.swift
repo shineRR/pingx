@@ -9,6 +9,7 @@ public protocol Pinger: AnyObject {
     // MARK: Methods
     
     func ping(request: Request)
+    func stop(ipv4Address: IPv4Address)
 }
 
 // MARK: Default Implementation
@@ -34,6 +35,12 @@ extension Pinger {
     }
     
     private func validateICMPPackage(_ icmpPackage: ICMPPackage) throws {
+        let identifier = Payload().identifier
+        
+        guard compareIdentifier(lhs: icmpPackage.icmpHeader.payload.identifier, rhs: identifier) else {
+            throw ICMPResponseValidationError.invalidIdentifier(icmpPackage.ipHeader)
+        }
+        
         let checksum = ICMPChecksum()(header: icmpPackage.icmpHeader)
         
         guard icmpPackage.icmpHeader.checksum == checksum else {
@@ -47,5 +54,16 @@ extension Pinger {
         guard icmpPackage.icmpHeader.code == .zero else {
             throw ICMPResponseValidationError.invalidCode(icmpPackage.ipHeader)
         }
+    }
+    
+    private func compareIdentifier(lhs: Payload.ID, rhs: Payload.ID) -> Bool {
+        lhs.0 == rhs.0 &&
+        lhs.1 == rhs.1 &&
+        lhs.2 == rhs.2 &&
+        lhs.3 == rhs.3 &&
+        lhs.4 == rhs.4 &&
+        lhs.5 == rhs.5 &&
+        lhs.6 == rhs.6 &&
+        lhs.7 == rhs.7
     }
 }

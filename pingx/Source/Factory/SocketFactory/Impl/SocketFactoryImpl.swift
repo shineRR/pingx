@@ -40,21 +40,21 @@ extension SocketFactoryImpl: SocketFactory {
         )
         
         guard let socket = socket else { throw PingerError.socketFailed }
-        guard let runLoopRef = CFSocketCreateRunLoopSource(
+        guard let socketSource = CFSocketCreateRunLoopSource(
             kCFAllocatorDefault,
             socket,
             .zero
         ) else { throw PingerError.socketFailed }
         
         CFRunLoopAddSource(
-            CFRunLoopGetCurrent(),
-            runLoopRef,
+            CFRunLoopGetMain(),
+            socketSource,
             .commonModes
         )
     
         return PingxSocket(
             socket: socket,
-            socketSource: runLoopRef,
+            socketSource: socketSource,
             unmanaged: unmanaged
         )
     }
