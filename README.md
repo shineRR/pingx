@@ -9,20 +9,51 @@
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
 
-## Requirements
-
 ## Installation
 
-pingx is available through [CocoaPods](https://cocoapods.org). To install
-it, simply add the following line to your Podfile:
+### CocoaPods
+
+To integrate pingx into your Xcode project using CocoaPods, add the following line to your Podfile:
 
 ```ruby
 pod 'pingx'
 ```
 
+Then, run the following command:
+
+```ruby
+$ pod install
+```
+
+### Swift Package Manager (SPM)
+
+To integrate pingx into your Xcode project using Swift Package Manager, add the following dependency to your Package.swift file:
+
+```swift
+dependencies: [
+    .package(url: "https://github.com/shineRR/pingx", .upToNextMajor(from: "1.0.0"))
+]
+```
+
+## Integration
+
+Import the pingx module into your Swift code and initialize the Pinger instance.
+
+```swift
+import pingx
+
+let pinger = SinglePinger()
+let destination = IPv4Address(address: (8, 8, 8, 8))
+let request = Request(destination: destination)
+pinger.ping(request: request)
+```
+
 ## Author
 
-shineRR, barykoilyass@gmail.com
+pingx is developed and maintained by [Ilya Baryka](https://www.linkedin.com/in/ilya-baryka/).
+
+* LinkedIn: [@shineRR](https://www.linkedin.com/in/ilya-baryka/)
+* GitHub: [@shineRR](https://github.com/shineRR)
 
 ## License
 

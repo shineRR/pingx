@@ -1,6 +1,0 @@
-framework module pingx {
-  umbrella header "pingx-umbrella.h"
-
-  export *
-  module * { export * }
-}
