@@ -1,0 +1,16 @@
+PODS:
+  - pingx (1.0.0)
+
+DEPENDENCIES:
+  - pingx (from `../`)
+
+EXTERNAL SOURCES:
+  pingx:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  pingx: 2c3c6313289d75cba2fbe1646adff16638a0b981
+
+PODFILE CHECKSUM: 51a1c6604e794a42ac9e68fbc4b6a076498be182
+
+COCOAPODS: 1.14.3
