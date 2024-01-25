@@ -25,6 +25,8 @@ extension PresenterImpl: Presenter {
     }
 }
 
+// MARK: - PingerDelegate
+
 extension PresenterImpl: PingerDelegate {
     func pinger(
         _ pinger: Pinger,
@@ -47,7 +49,6 @@ extension PresenterImpl: PingerDelegate {
 
 private extension PresenterImpl {
     enum Constants {
-        static var destinationAddress: IPv4Address { .init(address: (5, 8, 8, 8)) }
+        static var destinationAddress: IPv4Address { .init(address: (8, 8, 8, 8)) }
     }
 }
-
