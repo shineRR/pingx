@@ -6,11 +6,15 @@ public protocol Pinger: AnyObject {
     
     // MARK: Properties
     
+    /// Notifies of the received event/error.
     var delegate: PingerDelegate? { get set }
     
     // MARK: Methods
     
+    /// Starts pinging a specific IP with a certain demand.
     func ping(request: Request)
+    
+    /// Stops pinging a specific IP.
     func stop(ipv4Address: IPv4Address)
 }
 

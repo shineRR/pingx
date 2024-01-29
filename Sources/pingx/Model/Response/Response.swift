@@ -9,6 +9,6 @@ public struct Response {
     /// Destination address.
     let destination: IPv4Address
     
-    /// ms.
+    /// Time elapsed between the request and the response. (ms)
     let duration: TimeInterval
 }

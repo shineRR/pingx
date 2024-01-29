@@ -1,13 +1,12 @@
 # pingx
 
-[![CI Status](https://img.shields.io/travis/shineRR/pingx.svg?style=flat)](https://travis-ci.org/shineRR/pingx)
 [![Version](https://img.shields.io/cocoapods/v/pingx.svg?style=flat)](https://cocoapods.org/pods/pingx)
 [![License](https://img.shields.io/cocoapods/l/pingx.svg?style=flat)](https://cocoapods.org/pods/pingx)
 [![Platform](https://img.shields.io/cocoapods/p/pingx.svg?style=flat)](https://cocoapods.org/pods/pingx)
 
-## Example
+## Introduction
 
-To run the example project, clone the repo, and run `pod install` from the Example directory first.
+ This ultralight and easy-to-use library is designed to help developers accurately measure and analyze network ping latency in their applications. Whether you're working on a project that requires real-time communication, online gaming, or network performance monitoring, this library provides a seamless solution to assess and optimize ping times.
 
 ## Installation
 
@@ -35,6 +34,10 @@ dependencies: [
 ]
 ```
 
+## Example
+
+To run the example project, clone the repo, and run `pod install` from the Example directory first.
+
 ## Integration
 
 Import the pingx module into your Swift code and initialize the Pinger instance.
@@ -42,18 +45,18 @@ Import the pingx module into your Swift code and initialize the Pinger instance.
 ```swift
 import pingx
 
-let pinger = SinglePinger()
+let pinger = ContinuousPinger()
+pinger.delegate = self
+
 let destination = IPv4Address(address: (8, 8, 8, 8))
-let request = Request(destination: destination)
+let request = Request(destination: destination, demand: .unlimited)
+
 pinger.ping(request: request)
 ```
 
 ## Author
 
-pingx is developed and maintained by [Ilya Baryka](https://www.linkedin.com/in/ilya-baryka/).
-
-* LinkedIn: [@shineRR](https://www.linkedin.com/in/ilya-baryka/)
-* GitHub: [@shineRR](https://github.com/shineRR)
+pingx is developed and maintained by [shineRR](https://github.com/shineRR).
 
 ## License
 
