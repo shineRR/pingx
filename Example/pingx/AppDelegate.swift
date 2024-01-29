@@ -1,15 +1,9 @@
-//
-//  AppDelegate.swift
-//  pingx
-//
-//  Created by shineRR on 10/23/2022.
-//  Copyright (c) 2022 shineRR. All rights reserved.
-//
-
 import UIKit
 
+// MARK: - AppDelegate
+
 @UIApplicationMain
-class AppDelegate: UIResponder, UIApplicationDelegate {
+final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
@@ -24,4 +18,3 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return true
     }
 }
-

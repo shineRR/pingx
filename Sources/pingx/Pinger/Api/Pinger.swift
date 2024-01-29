@@ -17,7 +17,7 @@ public protocol Pinger: AnyObject {
 // MARK: Default Implementation
 
 extension Pinger {
-    func extractICMPPackage(from data: Data) throws -> ICMPPackage {
+    func extractICMPPackage(from data: Data) throws -> ICMPPacket {
         guard data.count >= MemoryLayout<IPHeader>.size + MemoryLayout<ICMPHeader>.size else {
             guard data.count >= MemoryLayout<IPHeader>.size else {
                 throw ICMPResponseValidationError.missedIpHeader
@@ -29,24 +29,18 @@ extension Pinger {
         let ipHeader = data.withUnsafeBytes { $0.load(as: IPHeader.self) }
         let offset = data.count - MemoryLayout<ICMPHeader>.size
         let icmpHeader = data.withUnsafeBytes { $0.loadUnaligned(fromByteOffset: offset, as: ICMPHeader.self) }
-        let icmpPackage = ICMPPackage(ipHeader: ipHeader, icmpHeader: icmpHeader)
+        let icmpPackage = ICMPPacket(ipHeader: ipHeader, icmpHeader: icmpHeader)
         
         try validateICMPPackage(icmpPackage)
         
         return icmpPackage
     }
     
-    private func validateICMPPackage(_ icmpPackage: ICMPPackage) throws {
+    private func validateICMPPackage(_ icmpPackage: ICMPPacket) throws {
         let identifier = Payload().identifier
         
         guard compareIdentifier(lhs: icmpPackage.icmpHeader.payload.identifier, rhs: identifier) else {
             throw ICMPResponseValidationError.invalidIdentifier(icmpPackage.ipHeader)
-        }
-        
-        let checksum = ICMPChecksum()(header: icmpPackage.icmpHeader)
-        
-        guard icmpPackage.icmpHeader.checksum == checksum else {
-            throw ICMPResponseValidationError.checksumMismatch(icmpPackage.ipHeader)
         }
         
         guard icmpPackage.icmpHeader.type == ICMPType.echoReply.rawValue else {
@@ -55,6 +49,12 @@ extension Pinger {
         
         guard icmpPackage.icmpHeader.code == .zero else {
             throw ICMPResponseValidationError.invalidCode(icmpPackage.ipHeader)
+        }
+        
+        let checksum = ICMPChecksum()(header: icmpPackage.icmpHeader)
+        
+        guard icmpPackage.icmpHeader.checksum == checksum else {
+            throw ICMPResponseValidationError.checksumMismatch(icmpPackage.ipHeader)
         }
     }
     

@@ -1,6 +1,6 @@
-// MARK: - ICMPPackage
+// MARK: - ICMPPacket
 
-struct ICMPPackage {
+struct ICMPPacket {
     
     // MARK: Properties
     

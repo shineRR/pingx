@@ -1,7 +1,5 @@
-
 // MARK: - IPHeader
 
-/// https://book.huihoo.com/iptables-tutorial/x1078.htm
 public struct IPHeader {
     
     // MARK: Properties

@@ -10,9 +10,9 @@ final class PresenterImpl {
     
     // MARK: Initializer
     
-    init(pinger: Pinger = SinglePinger()) {
+    init(pinger: Pinger = ContinuousPinger()) {
         self.pinger = pinger
-        self.pinger.delegate = self
+        pinger.delegate = self
     }
 }
 
@@ -20,7 +20,7 @@ final class PresenterImpl {
 
 extension PresenterImpl: Presenter {
     func didTapSendButton() {
-        let request = Request(destination: Constants.destinationAddress)
+        let request = Request(destination: Constants.destinationAddress, demand: .max(1))
         pinger.ping(request: request)
     }
 }

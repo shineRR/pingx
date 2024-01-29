@@ -1,8 +1,8 @@
 import Foundation
 
-// MARK: - PacketSender
+// MARK: - PacketSenderImpl
 
-final class PacketSender {
+final class PacketSenderImpl {
 
     // MARK: Typealias
     
@@ -16,11 +16,10 @@ final class PacketSender {
     
     private let socketFactory: SocketFactory
     private let packetFactory: PacketFactory
-    private var pingxSocket: PingxSocket<Instance>!
+    private var pingxSocket: (any PingxSocket)!
     
     // MARK: Initializer
-    
-    // TODO: Add queue/thread
+
     init(
         socketFactory: SocketFactory = SocketFactoryImpl(),
         packetFactory: PacketFactory = PacketFactoryImpl()
@@ -28,11 +27,15 @@ final class PacketSender {
         self.socketFactory = socketFactory
         self.packetFactory = packetFactory
     }
+    
+    deinit {
+        invalidate()
+    }
 }
 
 // MARK: - Private API
 
-private extension PacketSender {
+private extension PacketSenderImpl {
     func checkSocketCreation() throws {
         guard pingxSocket == nil else { return }
         
@@ -45,18 +48,17 @@ private extension PacketSender {
     }
 }
 
-// MARK: - IPacketSender
+// MARK: - PacketSender
 
-extension PacketSender: PacketSenderProtocol {
+extension PacketSenderImpl: PacketSender {
     func send(_ request: Request) throws {
         try checkSocketCreation()
         
         let packet = packetFactory.create(type: request.type)
-        let error = CFSocketSendData(
-            pingxSocket.socket,
-            request.destination.socketAddress as CFData,
-            packet.data as CFData,
-            request.timeoutInterval
+        let error = pingxSocket.send(
+            address: request.destination.socketAddress as CFData,
+            data:  packet.data as CFData,
+            timeout: request.timeoutInterval
         )
         
         try handleSocketError(error)
@@ -64,18 +66,16 @@ extension PacketSender: PacketSenderProtocol {
     
     func invalidate() {
         guard pingxSocket != nil else { return }
-        CFRunLoopSourceInvalidate(pingxSocket.socketSource)
-        CFSocketInvalidate(pingxSocket.socket)
-        pingxSocket.unmanaged.release()
+        pingxSocket.invalidate()
         pingxSocket = nil
     }
     
     private func handleSocketError(_ error: CFSocketError) throws {
         switch error {
         case .error:
-            throw PingerError.socketFailed
+            throw PacketSenderError.error
         case .timeout:
-            throw PingerError.timeout
+            throw PacketSenderError.timeout
         default:
             return
         }

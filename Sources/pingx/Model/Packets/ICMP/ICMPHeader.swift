@@ -11,7 +11,6 @@ struct ICMPHeader {
     private(set) var checksum: UInt16
     let identifier: UInt16
     let sequenceNumber: UInt16
-    /// 16 bytes.
     let payload: Payload
     
     // MARK: Initializer

@@ -12,7 +12,7 @@ final class SocketFactoryImpl {
 // MARK: - SocketFactory
 
 extension SocketFactoryImpl: SocketFactory {
-    func create(command: SocketCommand) throws -> PingxSocket<SocketCommand> {
+    func create(command: SocketCommand) throws -> any PingxSocket {
         let unmanaged = Unmanaged.passRetained(command)
         var context = CFSocketContext(
             version: .zero,
@@ -41,7 +41,7 @@ extension SocketFactoryImpl: SocketFactory {
             &context
         )
         
-        guard let socket = socket else { throw PingerError.socketFailed }
+        guard let socket = socket else { throw PacketSenderError.socketCreationError }
         guard let socketSource = CFSocketCreateRunLoopSource(
             kCFAllocatorDefault,
             socket,
@@ -54,7 +54,7 @@ extension SocketFactoryImpl: SocketFactory {
             .commonModes
         )
     
-        return PingxSocket(
+        return PingxSocketImpl(
             socket: socket,
             socketSource: socketSource,
             unmanaged: unmanaged
