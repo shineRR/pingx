@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.homepage         = 'https://github.com/shineRR/pingx'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'Ilya Baryka' => 'ilya.baryka@gmail.com' }
-  s.source           = { :git => 'https://github.com/shineRR/pingx.git', :tag => s.version.to_s }
+  s.source           = { :git => 'https://github.com/shineRR/pingx.git', :tag => "v#{s.version}" }
   s.source_files     = 'Sources/pingx/**/*'
   s.swift_version    = '5.1'
 
@@ -14,7 +14,7 @@ Pod::Spec.new do |s|
   s.ios.framework  = 'UIKit'
 
   s.tvos.deployment_target = "12.0"
-  s.tvos.framework  = 'UIKit'
+  s.tvos.framework = 'UIKit'
 
   s.osx.deployment_target = "10.15"
   s.osx.framework  = 'AppKit'
