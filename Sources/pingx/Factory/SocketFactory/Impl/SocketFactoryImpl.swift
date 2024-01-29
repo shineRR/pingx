@@ -42,18 +42,32 @@ extension SocketFactoryImpl: SocketFactory {
         )
         
         guard let socket = socket else { throw PacketSenderError.socketCreationError }
+        
+        let native = CFSocketGetNative(socket)
+        var value: Int32 = 1
+        
+        guard setsockopt(
+            native,
+            SOL_SOCKET,
+            SO_NOSIGPIPE,
+            &value,
+            socklen_t(MemoryLayout.size(ofValue: value))
+        ) == .zero else {
+            throw PacketSenderError.socketCreationError
+        }
+        
         guard let socketSource = CFSocketCreateRunLoopSource(
             kCFAllocatorDefault,
             socket,
             .zero
-        ) else { throw PingerError.socketFailed }
+        ) else { throw PacketSenderError.socketCreationError }
         
         CFRunLoopAddSource(
             CFRunLoopGetMain(),
             socketSource,
             .commonModes
         )
-    
+        
         return PingxSocketImpl(
             socket: socket,
             socketSource: socketSource,

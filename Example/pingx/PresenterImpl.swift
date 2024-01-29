@@ -20,7 +20,7 @@ final class PresenterImpl {
 
 extension PresenterImpl: Presenter {
     func didTapSendButton() {
-        let request = Request(destination: Constants.destinationAddress, demand: .max(1))
+        let request = Request(destination: Constants.destinationAddress, demand: .unlimited)
         pinger.ping(request: request)
     }
 }
