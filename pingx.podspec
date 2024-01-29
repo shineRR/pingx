@@ -6,7 +6,7 @@ Pod::Spec.new do |s|
   s.homepage         = 'https://github.com/shineRR/pingx'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'Ilya Baryka' => 'ilya.baryka@gmail.com' }
-  s.source           = { :git => 'https://github.com/shineRR/pingx.git', :tag => "v#{s.version}" }
+  s.source           = { :git => 'https://github.com/shineRR/pingx.git', :tag => "{s.version}" }
   s.source_files     = 'Sources/pingx/**/*'
   s.swift_version    = '5.1'
 
