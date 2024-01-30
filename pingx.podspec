@@ -1,8 +1,8 @@
 Pod::Spec.new do |s|
   s.name             = 'pingx'
-  s.version          = '1.0.1'
-  s.summary          = 'iOS library for real-time network latency estimation using ICMP packets.'
-  s.description      = 'This ultralight and easy-to-use library is designed to help developers accurately measure and analyze network ping latency in their applications.'
+  s.version          = '1.0.2'
+  s.summary          = 'pingx: iOS library for ping estimation using ICMP packets.'
+  s.description      = 'This ultralight and easy-to-use library is designed to help developers accurately measure and analyze network ping latency in their applications using ICMP packets.'
   s.homepage         = 'https://github.com/shineRR/pingx'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'Ilya Baryka' => 'ilya.baryka@gmail.com' }
