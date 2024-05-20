@@ -3,7 +3,7 @@
 [![Version](https://img.shields.io/cocoapods/v/pingx.svg?style=flat)](https://cocoapods.org/pods/pingx)
 [![License](https://img.shields.io/cocoapods/l/pingx.svg?style=flat)](https://cocoapods.org/pods/pingx)
 [![codecov](https://codecov.io/gh/shineRR/pingx/graph/badge.svg?token=OJSHN8KMHJ)](https://codecov.io/gh/shineRR/pingx)
-[![codebeat badge](https://codebeat.co/badges/624b1a1d-0b2f-4d36-b34a-cd77fdcaceea)](https://codebeat.co/projects/github-com-shinerr-pingx-feature-actions)
+[![codebeat badge](https://codebeat.co/badges/c7617707-3b8c-4c41-9094-aa152757df55)](https://codebeat.co/projects/github-com-shinerr-pingx-main)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/98fb2f3d80c64d7d88ee725e3038a6db)](https://app.codacy.com/gh/shineRR/pingx/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 [![Platform](https://img.shields.io/cocoapods/p/pingx.svg?style=flat)](https://cocoapods.org/pods/pingx)
 
