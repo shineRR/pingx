@@ -44,7 +44,6 @@ extension MockPinger: Pinger {
     }
 }
 
-
 // MARK: - PacketSenderDelegate
 
 extension MockPinger: PacketSenderDelegate {

@@ -172,15 +172,14 @@ extension PingerTests {
         ]
         let request = Request(destination: Constants.ipv4)
         
-        for i in validationErrors.indices {
-            packetSender.validationError = validationErrors[i]
+        for index in validationErrors.indices {
+            packetSender.validationError = validationErrors[index]
             pinger.ping(request: request)
-            XCTAssertEqual(responseReceiver.receivedErrors.count, i + 1)
-            XCTAssertEqual(responseReceiver.receivedErrors[i], .invalidResponseStructure)
+            XCTAssertEqual(responseReceiver.receivedErrors.count, index + 1)
+            XCTAssertEqual(responseReceiver.receivedErrors[index], .invalidResponseStructure)
         }
     }
 }
-
 
 // MARK: - Constants
 

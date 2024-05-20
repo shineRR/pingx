@@ -57,7 +57,7 @@ extension PacketSenderImpl: PacketSender {
         let packet = packetFactory.create(type: request.type)
         let error = pingxSocket.send(
             address: request.destination.socketAddress as CFData,
-            data:  packet.data as CFData,
+            data: packet.data as CFData,
             timeout: request.timeoutInterval
         )
         

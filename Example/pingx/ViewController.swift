@@ -19,7 +19,7 @@ final class ViewController: UIViewController {
     // MARK: Properties
     
     private let presenter: Presenter
-
+    
     // MARK: Initializer
     
     init(presenter: Presenter) {

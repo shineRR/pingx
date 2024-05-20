@@ -38,7 +38,7 @@ final class PacketSenderTests: XCTestCase {
         XCTAssertNotNil(pinger.receivedError)
         
         guard let error = pinger.receivedError as? PacketSenderError else {
-            XCTFail()
+            XCTFail("Expected to have an error")
             return
         }
         
@@ -61,16 +61,16 @@ final class PacketSenderTests: XCTestCase {
         let errors: [CFSocketError] = [.error, .timeout]
         let expectedPacketSenderErrors: [PacketSenderError] = [.error, .timeout]
         
-        for i in errors.indices {
-            socketFactory.socket.error = errors[i]
+        for index in errors.indices {
+            socketFactory.socket.error = errors[index]
             pinger.ping(request: request)
             
             guard let error = pinger.receivedError as? PacketSenderError else {
-                XCTFail()
+                XCTFail("Expected to have an error")
                 return
             }
             
-            XCTAssertEqual(error, expectedPacketSenderErrors[i])
+            XCTAssertEqual(error, expectedPacketSenderErrors[index])
         }
     }
     

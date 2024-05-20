@@ -25,7 +25,7 @@ private extension ICMPChecksum {
     private func arrayPayload(_ payload: Payload) -> [UInt8] {
         let identifier: [UInt8] = [
             payload.identifier.0, payload.identifier.1, payload.identifier.2, payload.identifier.3,
-            payload.identifier.4, payload.identifier.5, payload.identifier.6, payload.identifier.7,
+            payload.identifier.4, payload.identifier.5, payload.identifier.6, payload.identifier.7
         ]
         var timestamp = payload.timestamp
         
