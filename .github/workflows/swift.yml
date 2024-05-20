@@ -11,18 +11,23 @@ on:
 
 jobs:
   build:
-
     runs-on: macos-latest
 
     steps:
     - name: Checkout Code
       uses: actions/checkout@v4
-    - name: Build
+    - name: 🛠️ Build
       run: swift build -v
+      
+  unit-tests:
+    runs-on: macos-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
     - name: 🧪 Run tests
       run: xcodebuild test -scheme "pingx" -testPlan "pingx" -destination "OS=17.2,name=iPhone 15 Pro"
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v4.0.1
       with:
         token: ${{ secrets.CODECOV_TOKEN }}
-        files: info.lcov
