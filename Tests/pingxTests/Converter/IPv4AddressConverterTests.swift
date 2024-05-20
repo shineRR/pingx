@@ -57,7 +57,7 @@ final class IPv4AddressConverterTests: XCTestCase {
             let actualResult = try converter.convert(address: "8.8.8.8")
             XCTAssertEqual(expectedResult, actualResult)
         } catch {
-            XCTFail()
+            XCTFail("Expected to have an expectedResult")
         }
     }
     

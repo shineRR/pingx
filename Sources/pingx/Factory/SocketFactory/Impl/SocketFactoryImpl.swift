@@ -21,13 +21,12 @@ extension SocketFactoryImpl: SocketFactory {
             release: nil,
             copyDescription: nil
         )
-        
         let socket = CFSocketCreate(
             kCFAllocatorDefault,
             AF_INET,
             SOCK_DGRAM,
             IPPROTO_ICMP,
-            CFSocketCallBackType.dataCallBack.rawValue, { _, callbackType, address, data, info in
+            CFSocketCallBackType.dataCallBack.rawValue, { _, callbackType, _, data, info in
                 guard
                     let data = data,
                     let info = info,
@@ -42,7 +41,6 @@ extension SocketFactoryImpl: SocketFactory {
         )
         
         guard let socket = socket else { throw PacketSenderError.socketCreationError }
-        
         let native = CFSocketGetNative(socket)
         var value: Int32 = 1
         

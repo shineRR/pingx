@@ -62,7 +62,7 @@ extension Pinger {
         }
     }
     
-    private func compareIdentifier(lhs: Payload.ID, rhs: Payload.ID) -> Bool {
+    private func compareIdentifier(lhs: Payload.PayloadID, rhs: Payload.PayloadID) -> Bool {
         lhs.0 == rhs.0 &&
         lhs.1 == rhs.1 &&
         lhs.2 == rhs.2 &&
