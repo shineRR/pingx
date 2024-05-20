@@ -19,7 +19,7 @@ jobs:
     - name: Build
       run: swift build -v
     - name: Run tests
-      run: swift test -v
+      run: swift test --enable-code-coverage
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v4.0.1
       with:
