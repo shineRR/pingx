@@ -3,6 +3,7 @@
 [![Version](https://img.shields.io/cocoapods/v/pingx.svg?style=flat)](https://cocoapods.org/pods/pingx)
 [![License](https://img.shields.io/cocoapods/l/pingx.svg?style=flat)](https://cocoapods.org/pods/pingx)
 [![Platform](https://img.shields.io/cocoapods/p/pingx.svg?style=flat)](https://cocoapods.org/pods/pingx)
+[![codecov](https://codecov.io/gh/shineRR/pingx/graph/badge.svg?token=OJSHN8KMHJ)](https://codecov.io/gh/shineRR/pingx)
 
 ## Introduction
 
