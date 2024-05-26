@@ -1,5 +1,5 @@
 PODS:
-  - pingx (1.0.0)
+  - pingx (1.0.4)
 
 DEPENDENCIES:
   - pingx (from `../`)
@@ -9,8 +9,8 @@ EXTERNAL SOURCES:
     :path: "../"
 
 SPEC CHECKSUMS:
-  pingx: 810a49ec1b7666968b1a26d8701576faa497718b
+  pingx: 79bde65bdb1d8501b3dd442a41534aff26b91532
 
 PODFILE CHECKSUM: 51a1c6604e794a42ac9e68fbc4b6a076498be182
 
-COCOAPODS: 1.14.3
+COCOAPODS: 1.15.0

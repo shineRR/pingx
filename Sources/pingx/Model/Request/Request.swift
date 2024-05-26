@@ -55,7 +55,8 @@ public extension Request {
         
         // MARK: Properties
         
-        let max: Int?
+        /// Represents the current demand, which indicates the number of values requested.
+        public let max: Int?
         
         // MARK: Initializer
         
