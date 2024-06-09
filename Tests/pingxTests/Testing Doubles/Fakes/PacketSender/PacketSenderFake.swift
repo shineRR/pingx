@@ -50,8 +50,12 @@ extension PacketSenderFake: PacketSender {
         )
         
         if validationError != .checksumMismatch(ipHeader) {
-            let checksum = ICMPChecksum()(header: icmpHeader)
-            icmpHeader.setChecksum(checksum)
+            do {
+                let checksum = try ICMPChecksum()(header: icmpHeader)
+                icmpHeader.setChecksum(checksum)
+            } catch {
+                throw PacketSenderError.error
+            }
         }
         
         var icmp = ICMPPacket(ipHeader: ipHeader, icmpHeader: icmpHeader)

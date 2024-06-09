@@ -8,6 +8,7 @@ final class PacketSenderTests: XCTestCase {
     // MARK: Properties
     
     private var pinger: MockPinger!
+    private var packetFactory: PacketFactoryFake!
     private var socketFactory: SocketFactoryFake!
     private var packetSender: PacketSenderImpl!
     
@@ -16,7 +17,8 @@ final class PacketSenderTests: XCTestCase {
     override func setUp() {
         super.setUp()
         socketFactory = SocketFactoryFake()
-        packetSender = PacketSenderImpl(socketFactory: socketFactory)
+        packetFactory = PacketFactoryFake()
+        packetSender = PacketSenderImpl(socketFactory: socketFactory, packetFactory: packetFactory)
         pinger = MockPinger(packetSender: packetSender)
     }
     
@@ -84,6 +86,18 @@ final class PacketSenderTests: XCTestCase {
         XCTAssertTrue(socketFactory.socket.sendInvoked)
         XCTAssertTrue(pinger.didReceiveInvoked)
         XCTAssertEqual(pinger.didReceiveData, data)
+    }
+    
+    func testPacketSender_packet_creation_error() {
+        let request = Request(destination: Constants.ipv4)
+        
+        packetFactory.error = ICMPChecksum.ChecksumError.outOfBounds
+        pinger.ping(request: request)
+        
+        XCTAssertFalse(socketFactory.socket.sendInvoked)
+        XCTAssertNotNil(pinger.receivedError)
+        XCTAssertEqual(pinger.receivedError as? PacketSenderError, PacketSenderError.error)
+        XCTAssertNil(pinger.didReceiveData)
     }
 }
 

@@ -1,5 +1,5 @@
 // MARK: - PacketFactory
 
 protocol PacketFactory {
-    func create(type: PacketType) -> Packet
+    func create(type: PacketType) throws -> Packet
 }

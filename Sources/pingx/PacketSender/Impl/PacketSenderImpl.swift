@@ -53,8 +53,14 @@ private extension PacketSenderImpl {
 extension PacketSenderImpl: PacketSender {
     func send(_ request: Request) throws {
         try checkSocketCreation()
+        let packet: Packet
         
-        let packet = packetFactory.create(type: request.type)
+        do {
+            packet = try packetFactory.create(type: request.type)
+        } catch {
+            throw PacketSenderError.error
+        }
+        
         let error = pingxSocket.send(
             address: request.destination.socketAddress as CFData,
             data: packet.data as CFData,

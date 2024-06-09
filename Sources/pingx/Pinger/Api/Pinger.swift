@@ -55,9 +55,13 @@ extension Pinger {
             throw ICMPResponseValidationError.invalidCode(icmpPackage.ipHeader)
         }
         
-        let checksum = ICMPChecksum()(header: icmpPackage.icmpHeader)
-        
-        guard icmpPackage.icmpHeader.checksum == checksum else {
+        do {
+            let checksum = try ICMPChecksum()(header: icmpPackage.icmpHeader)
+            
+            guard icmpPackage.icmpHeader.checksum == checksum else {
+                throw ICMPResponseValidationError.checksumMismatch(icmpPackage.ipHeader)
+            }
+        } catch {
             throw ICMPResponseValidationError.checksumMismatch(icmpPackage.ipHeader)
         }
     }

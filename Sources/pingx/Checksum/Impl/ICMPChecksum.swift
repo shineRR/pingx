@@ -3,7 +3,7 @@ import Foundation
 // MARK: - ICMPChecksum
 
 struct ICMPChecksum {
-    func callAsFunction(header: ICMPHeader) -> UInt16 {
+    func callAsFunction(header: ICMPHeader) throws -> UInt16 {
         let typecode = Data([header.type, header.code]).withUnsafeBytes { $0.load(as: UInt16.self) }
         var sum = UInt64(typecode) + UInt64(header.identifier) + UInt64(header.sequenceNumber)
         let payload = arrayPayload(header.payload)
@@ -15,11 +15,21 @@ struct ICMPChecksum {
         sum = (sum >> 16) + (sum & 0xFFFF)
         sum += sum >> 16
         
+        guard sum >= UInt16.min, sum <= UInt16.max else { throw ChecksumError.outOfBounds }
+        
         return ~UInt16(sum)
     }
 }
 
-// MARK: Private API
+// MARK: - ChecksumError
+
+extension ICMPChecksum {
+    enum ChecksumError: Error {
+        case outOfBounds
+    }
+}
+
+// MARK: - Private API
 
 private extension ICMPChecksum {
     private func arrayPayload(_ payload: Payload) -> [UInt8] {

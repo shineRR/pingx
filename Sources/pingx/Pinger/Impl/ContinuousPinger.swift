@@ -108,9 +108,6 @@ extension ContinuousPinger: Pinger {
         } catch _ as PacketSenderError {
             outgoingRequests.removeValue(forKey: request.destination)
             delegate?.pinger(self, request: request, didCompleteWithError: .socketFailed)
-        } catch let error as PingerError {
-            outgoingRequests.removeValue(forKey: request.destination)
-            delegate?.pinger(self, request: request, didCompleteWithError: error)
         } catch {}
     }
     
