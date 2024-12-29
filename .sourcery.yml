@@ -1,0 +1,9 @@
+sources:
+  - Sources/pingx
+templates:
+  - Tests/Templates/AutoMockable.stencil
+output:
+  Tests/pingxTests/Mocks/Generated.swift
+args:
+  autoMockableTestableImports:
+    - pingx

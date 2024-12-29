@@ -1,5 +1,6 @@
 // MARK: - PingerDelegate
 
+// sourcery: AutoMockable
 public protocol PingerDelegate: AnyObject {
     
     /// Called when a ping request is successful.

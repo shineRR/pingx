@@ -1,5 +1,6 @@
 // MARK: - PacketSender
 
+// sourcery: AutoMockable
 protocol PacketSender: AnyObject {
     
     // MARK: Delegate
