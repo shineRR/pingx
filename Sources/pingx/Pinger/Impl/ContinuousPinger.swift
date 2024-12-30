@@ -12,7 +12,7 @@ public final class ContinuousPinger {
     
     private let pingerQueue = DispatchQueue(
         label: "com.pingx.ContinuousPinger.queue",
-        attributes: .concurrent
+        qos: .utility
     )
     private let configuration: PingerConfiguration
     private let packetSender: PacketSender
