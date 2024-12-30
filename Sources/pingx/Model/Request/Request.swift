@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - Request
 
-public struct Request: Identifiable {
+public struct Request: Identifiable, Hashable {
     
     // MARK: Properties
     
@@ -40,6 +40,10 @@ public struct Request: Identifiable {
     }
     
     // MARK: Methods
+    
+    public static func == (lhs: Request, rhs: Request) -> Bool {
+        lhs.id == rhs.id && lhs.destination == rhs.destination
+    }
     
     mutating func setTimeRemainingUntilDeadline(_ timeRemainingUntilDeadline: TimeInterval) {
         self.timeRemainingUntilDeadline = timeRemainingUntilDeadline

@@ -159,8 +159,6 @@ extension ContinuousPinger: PacketSenderDelegate {
              .invalidIdentifier(let ipHeader):
             
             guard let request = outgoingRequests[ipHeader.sourceAddress] else { return }
-            
-            outgoingRequests.removeValue(forKey: ipHeader.sourceAddress)
             delegate?.pinger(self, request: request, didCompleteWithError: .invalidResponseStructure)
             
         case .missedIpHeader:

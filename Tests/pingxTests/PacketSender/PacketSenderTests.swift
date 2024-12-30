@@ -8,8 +8,8 @@ final class PacketSenderTests: XCTestCase {
     // MARK: Properties
 
     private var socket: PingxSocketMock!
-    private var packetFactory: PacketFactoryMock!
     private var socketFactory: SocketFactoryMock!
+    private var packetFactory: PacketFactoryMock!
     private var packetSenderDelegate: PacketSenderDelegateMock!
     private var packetSender: PacketSenderImpl!
     
@@ -17,6 +17,7 @@ final class PacketSenderTests: XCTestCase {
     
     override func setUp() {
         super.setUp()
+
         socket = PingxSocketMock()
         socket.sendReturnValue = .success
         
@@ -31,7 +32,11 @@ final class PacketSenderTests: XCTestCase {
     
     override func tearDown() {
         super.tearDown()
+
+        socket = nil
         socketFactory = nil
+        packetFactory = nil
+        packetSenderDelegate = nil
         packetSender = nil
     }
     
