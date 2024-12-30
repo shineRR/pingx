@@ -10,6 +10,10 @@ public final class ContinuousPinger {
     
     // MARK: Properties
     
+    private let pingerQueue = DispatchQueue(
+        label: "com.pingx.ContinuousPinger.queue",
+        attributes: .concurrent
+    )
     private let configuration: PingerConfiguration
     private let packetSender: PacketSender
     private let timerFactory: TimerFactory
@@ -18,7 +22,7 @@ public final class ContinuousPinger {
     private var outgoingRequests: [IPv4Address: Request] = [:] {
         didSet {
             guard !outgoingRequests.isEmpty else {
-                invalidate()
+                invalidateTimer()
                 return
             }
             guard timer == nil else { return }
@@ -26,7 +30,7 @@ public final class ContinuousPinger {
             setUpTimer()
         }
     }
-    private var timer: Timer?
+    private var timer: PingxTimer?
     
     // MARK: Initializer
     
@@ -52,7 +56,7 @@ public final class ContinuousPinger {
     }
     
     deinit {
-        invalidate()
+        invalidateTimer()
     }
 }
 
@@ -60,11 +64,10 @@ public final class ContinuousPinger {
 
 private extension ContinuousPinger {
     func setUpTimer() {
-        let timer = timerFactory.create(timeInterval: 1.0, repeats: true) { [weak self] _ in
+        let timer = timerFactory.createDispatchSourceTimer(timeInterval: 1.0) { [weak self] in
             self?.updateOutgoingRequests()
         }
         
-        RunLoop.main.add(timer, forMode: .common)
         self.timer = timer
     }
     
@@ -86,8 +89,8 @@ private extension ContinuousPinger {
         }
     }
     
-    func invalidate() {
-        timer?.invalidate()
+    func invalidateTimer() {
+        timer?.stop()
         timer = nil
     }
 }
@@ -138,7 +141,7 @@ extension ContinuousPinger: PacketSenderDelegate {
                 return
             }
             
-            DispatchQueue.global().asyncAfter(deadline: .now() + configuration.interval) { [weak self] in
+            pingerQueue.asyncAfter(deadline: .now() + configuration.interval) { [weak self] in
                 self?.outgoingRequests.removeValue(forKey: response.destination)
                 self?.ping(request: request)
             }

@@ -24,11 +24,13 @@ public struct Request: Identifiable {
     /// The desired quantity of ping requests to be sent.
     public private(set) var demand: Request.Demand
     
+    let sendTimeout: TimeInterval = .zero
+    
     // MARK: Initializer
     
     public init(
         destination: IPv4Address,
-        timeoutInterval: TimeInterval = 120,
+        timeoutInterval: TimeInterval = 10,
         demand: Request.Demand = .max(1)
     ) {
         self.destination = destination

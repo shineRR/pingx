@@ -6,98 +6,120 @@ import XCTest
 final class PacketSenderTests: XCTestCase {
     
     // MARK: Properties
-    
-    private var pinger: MockPinger!
-    private var packetFactory: PacketFactoryFake!
-    private var socketFactory: SocketFactoryFake!
+
+    private var socket: PingxSocketMock!
+    private var packetFactory: PacketFactoryMock!
+    private var socketFactory: SocketFactoryMock!
+    private var packetSenderDelegate: PacketSenderDelegateMock!
     private var packetSender: PacketSenderImpl!
     
     // MARK: Override
     
     override func setUp() {
         super.setUp()
-        socketFactory = SocketFactoryFake()
-        packetFactory = PacketFactoryFake()
+        socket = PingxSocketMock()
+        socket.sendReturnValue = .success
+        
+        socketFactory = SocketFactoryMock()
+        socketFactory.socketCreateReturnValue = socket
+        
+        packetFactory = PacketFactoryMock()
+        packetSenderDelegate = PacketSenderDelegateMock()
         packetSender = PacketSenderImpl(socketFactory: socketFactory, packetFactory: packetFactory)
-        pinger = MockPinger(packetSender: packetSender)
+        packetSender.delegate = packetSenderDelegate
     }
     
     override func tearDown() {
         super.tearDown()
         socketFactory = nil
         packetSender = nil
-        pinger = nil
     }
     
     // MARK: Tests
     
-    func testPacketSender_socketCreationError() {
+    func test_send_whenResponseReceived_notifiesDelegate() throws {
+        let request = Request(destination: Constants.ipv4)
+        let data = Data()
+        
+        try packetSender.send(request)
+        socketFactory.socketCreateInvocations.last?.closure(data)
+        
+        XCTAssertEqual(socketFactory.socketCreateCalledCount, 1)
+        XCTAssertEqual(packetFactory.packetCreateInvocations, [.icmp])
+        XCTAssertEqual(socket.sendCalledCount, 1)
+        XCTAssertEqual(packetSenderDelegate.packetSenderCalledCount, 1)
+        XCTAssertTrue(packetSenderDelegate.packetSenderInvocations[0].packetSender === packetSender)
+        XCTAssertEqual(packetSenderDelegate.packetSenderInvocations[0].data, data)
+    }
+    
+    func test_send_whenSocketAlreadyCreated_doesNotCreateSocket() throws {
+        let request = Request(destination: Constants.ipv4)
+        
+        try packetSender.send(request)
+        try packetSender.send(request)
+        
+        XCTAssertEqual(socketFactory.socketCreateCalledCount, 1)
+    }
+    
+    func test_send_whenSocketCreationFailed_throwsError() {
+        let request = Request(destination: Constants.ipv4)
+        
         socketFactory.error = .socketCreationError
-        let request = Request(destination: Constants.ipv4)
-        
-        pinger.ping(request: request)
-        
-        XCTAssertNotNil(pinger.receivedError)
-        
-        guard let error = pinger.receivedError as? PacketSenderError else {
-            XCTFail("Expected to have an error")
-            return
+
+        XCTAssertThrowsError(try packetSender.send(request)) { error in
+            guard let error = error as? PacketSenderError else {
+                XCTFail("Expected to have an error")
+                return
+            }
+            
+            XCTAssertEqual(error, .socketCreationError)
+            XCTAssertEqual(socket.sendCalledCount, 0)
         }
-        
-        XCTAssertEqual(error, socketFactory.error)
-        XCTAssertFalse(socketFactory.socket.sendInvoked)
     }
     
-    func testPacketSender_invalidate() {
-        let request = Request(destination: Constants.ipv4)
-        
-        pinger.ping(request: request)
-        pinger = nil
-        packetSender = nil
-        
-        XCTAssertTrue(socketFactory.socket.invalidateInvoked)
-    }
-    
-    func testPacketSender_socketError() {
+    func test_send_whenSocketFailed_throwsError() {
         let request = Request(destination: Constants.ipv4)
         let errors: [CFSocketError] = [.error, .timeout]
         let expectedPacketSenderErrors: [PacketSenderError] = [.error, .timeout]
         
         for index in errors.indices {
-            socketFactory.socket.error = errors[index]
-            pinger.ping(request: request)
+            socket.sendReturnValue = errors[index]
             
-            guard let error = pinger.receivedError as? PacketSenderError else {
+            XCTAssertThrowsError(try packetSender.send(request)) { error in
+                guard let error = error as? PacketSenderError else {
+                    XCTFail("Expected to have an error")
+                    return
+                }
+                
+                XCTAssertEqual(error, expectedPacketSenderErrors[index])
+            }
+        }
+    }
+    
+    func test_send_packetCreationFailed_throwsError() throws {
+        let request = Request(destination: Constants.ipv4)
+        
+        packetFactory.error = ICMPChecksum.ChecksumError.outOfBounds
+        
+        XCTAssertThrowsError(try packetSender.send(request)) { error in
+            guard let error = error as? PacketSenderError else {
                 XCTFail("Expected to have an error")
                 return
             }
             
-            XCTAssertEqual(error, expectedPacketSenderErrors[index])
+            XCTAssertEqual(error, .error)
+            XCTAssertEqual(socket.sendCalledCount, 0)
+            XCTAssertEqual(packetSenderDelegate.packetSenderCalledCount, 0)
         }
     }
     
-    func testPacketSender_commandInvocation() {
+    func test_invalidate() throws {
         let request = Request(destination: Constants.ipv4)
-        let data = Data()
+        try packetSender.send(request)
+
+        packetSender = nil
         
-        pinger.ping(request: request)
-        socketFactory.socket.command?.closure(data)
-        
-        XCTAssertTrue(socketFactory.socket.sendInvoked)
-        XCTAssertTrue(pinger.didReceiveInvoked)
-        XCTAssertEqual(pinger.didReceiveData, data)
-    }
-    
-    func testPacketSender_packet_creation_error() {
-        let request = Request(destination: Constants.ipv4)
-        
-        packetFactory.error = ICMPChecksum.ChecksumError.outOfBounds
-        pinger.ping(request: request)
-        
-        XCTAssertFalse(socketFactory.socket.sendInvoked)
-        XCTAssertNotNil(pinger.receivedError)
-        XCTAssertEqual(pinger.receivedError as? PacketSenderError, PacketSenderError.error)
-        XCTAssertNil(pinger.didReceiveData)
+        XCTAssertEqual(socket.invalidateCalledCount, 1)
     }
 }
 

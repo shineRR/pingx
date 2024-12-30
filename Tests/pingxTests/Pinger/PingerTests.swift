@@ -63,7 +63,7 @@ final class PingerTests: XCTestCase {
         
         pinger.ping(request: request)
         
-        XCTAssertFalse(timerFactory.timer!.isValid)
+        XCTAssertTrue(timerFactory.timer!.isCancelled)
     }
 }
 

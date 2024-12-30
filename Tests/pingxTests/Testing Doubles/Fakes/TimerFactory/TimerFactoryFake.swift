@@ -7,16 +7,15 @@ final class TimerFactoryFake: TimerFactory {
     
     // MARK: Properties
     
-    private(set) var timer: Timer?
+    private(set) var timer: PingxTimer?
     
     // MARK: Methods
     
-    func create(
+    func createDispatchSourceTimer(
         timeInterval: TimeInterval,
-        repeats: Bool,
-        block: @escaping (Timer) -> Void
-    ) -> Timer {
-        let timer = Timer(timeInterval: timeInterval, repeats: repeats, block: block)
+        eventHandler: @escaping () -> Void
+    ) -> PingxTimer {
+        let timer = PingxDispatchSourceTimer(timeInterval: timeInterval, eventHandler: eventHandler)
         self.timer = timer
         return timer
     }

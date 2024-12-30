@@ -33,21 +33,6 @@ final class PacketSenderImpl {
     }
 }
 
-// MARK: - Private API
-
-private extension PacketSenderImpl {
-    func checkSocketCreation() throws {
-        guard pingxSocket == nil else { return }
-        
-        let command: CommandBlock<Data> = CommandBlock { [weak self] data in
-            guard let self else { return }
-            self.delegate?.packetSender(packetSender: self, didReceive: data)
-        }
-        
-        pingxSocket = try socketFactory.create(command: command)
-    }
-}
-
 // MARK: - PacketSender
 
 extension PacketSenderImpl: PacketSender {
@@ -64,7 +49,7 @@ extension PacketSenderImpl: PacketSender {
         let error = pingxSocket.send(
             address: request.destination.socketAddress as CFData,
             data: packet.data as CFData,
-            timeout: request.timeoutInterval
+            timeout: request.sendTimeout
         )
         
         try handleSocketError(error)
@@ -75,8 +60,23 @@ extension PacketSenderImpl: PacketSender {
         pingxSocket.invalidate()
         pingxSocket = nil
     }
+}
+
+// MARK: - Private API
+
+private extension PacketSenderImpl {
+    func checkSocketCreation() throws {
+        guard pingxSocket == nil else { return }
+        
+        let command: CommandBlock<Data> = CommandBlock { [weak self] data in
+            guard let self else { return }
+            self.delegate?.packetSender(packetSender: self, didReceive: data)
+        }
+        
+        pingxSocket = try socketFactory.create(command: command)
+    }
     
-    private func handleSocketError(_ error: CFSocketError) throws {
+    func handleSocketError(_ error: CFSocketError) throws {
         switch error {
         case .error:
             throw PacketSenderError.error

@@ -3,11 +3,13 @@ import Foundation
 // MARK: - TimerFactoryImpl
 
 final class TimerFactoryImpl: TimerFactory {
-    func create(
+    func createDispatchSourceTimer(
         timeInterval: TimeInterval,
-        repeats: Bool,
-        block: @Sendable @escaping (Timer) -> Void
-    ) -> Timer {
-        .init(timeInterval: timeInterval, repeats: repeats, block: block)
+        eventHandler: @escaping () -> Void
+    ) -> PingxTimer {
+        PingxDispatchSourceTimer(
+            timeInterval: timeInterval,
+            eventHandler: eventHandler
+        )
     }
 }
