@@ -13,4 +13,3 @@ final class PacketSenderDelegateMock: PacketSenderDelegate {
         packetSenderInvocations.append((packetSender, data))
     }
 }
-

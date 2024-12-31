@@ -23,6 +23,7 @@ public final class ContinuousPinger {
         didSet {
             guard !outgoingRequests.isEmpty else {
                 invalidateTimer()
+                packetSender.invalidate()
                 return
             }
             guard timer == nil else { return }

@@ -96,21 +96,22 @@ final class PingerTests: XCTestCase {
         XCTAssertTrue(timer.isCancelled)
     }
 
-    func test_stop_invalidatesTimer() {
+    func test_stop_invalidatesTimerAndPacketSender() {
         let request = Request(destination: Constants.ipv4)
         
         pinger.ping(request: request)
         pinger.stop(ipv4Address: request.destination)
         
         XCTAssertTrue(timer.isCancelled)
+        XCTAssertEqual(packetSender.invalidateCalledCount, 1)
     }
     
-    func test_stop_whenResponseReceived_doesNotNotifyDelegate() {
+    func test_stop_whenResponseReceived_doesNotNotifyDelegate() throws {
         let request = Request(destination: Constants.ipv4)
         
         pinger.ping(request: request)
         pinger.stop(ipv4Address: request.destination)
-        simulateValidResponse(for: request)
+        try simulateValidResponse(for: request)
         
         XCTAssertEqual(pingerDelegate.pingerDidReceiveResponseCalledCount, 0)
         XCTAssertEqual(pingerDelegate.pingerDidCompleteWithErrorCalledCount, 0)
@@ -129,17 +130,17 @@ extension PingerTests {
         XCTAssertEqual(pingerDelegate.pingerDidCompleteWithErrorCalledCount, 0)
     }
     
-    func test_demand_whenLimited() {
+    func test_demand_whenLimited() throws {
         let demandValue = 2
         let request = Request(destination: Constants.ipv4, demand: .max(demandValue))
 
         pinger.ping(request: request)
 
         for index in 0...demandValue {
-            simulateValidResponse(for: request)
+            try simulateValidResponse(for: request)
             
-            let doesResponseCountExceedOrEqualDemandValue = (index + 1) >= demandValue
-            if !doesResponseCountExceedOrEqualDemandValue {
+            let isResponseCountSufficient = (index + 1) >= demandValue
+            if !isResponseCountSufficient {
                 let nextSendCalledCount = index + 2
                 let expectation = XCTestExpectation(
                     description: "Wait for sendCalledCount to reach \(nextSendCalledCount)"
@@ -225,7 +226,7 @@ extension PingerTests {
 }
 
 private extension PingerTests {
-    func simulateValidResponse(for request: Request) {
+    func simulateValidResponse(for request: Request) throws {
         let ipHeader = IPHeader(
             totalLength: .zero,
             headerChecksum: .zero,
@@ -239,7 +240,10 @@ private extension PingerTests {
             sequenceNumber: .zero,
             payload: Payload()
         )
-        let checksum = try! ICMPChecksum()(header: icmpHeader)
+        
+        guard let checksum = try? ICMPChecksum()(header: icmpHeader) else {
+            throw NSError(domain: "Checksum calculation failed", code: .zero)
+        }
         icmpHeader.setChecksum(checksum)
         
         var icmpPacket = ICMPPacket(ipHeader: ipHeader, icmpHeader: icmpHeader)
