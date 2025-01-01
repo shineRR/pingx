@@ -10,6 +10,7 @@ final class TimerFactoryMock: TimerFactory {
     
     func createDispatchSourceTimer(
         timeInterval: TimeInterval,
+        eventQueue: DispatchQueue,
         eventHandler: @escaping () -> Void
     ) -> PingxTimer {
         createDispatchSourceTimerCalledCount += 1

@@ -5,6 +5,7 @@ import Foundation
 protocol TimerFactory {
     func createDispatchSourceTimer(
         timeInterval: TimeInterval,
+        eventQueue: DispatchQueue,
         eventHandler: @escaping () -> Void
     ) -> PingxTimer
 }

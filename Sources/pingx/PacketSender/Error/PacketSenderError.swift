@@ -4,6 +4,7 @@ import Foundation
 
 enum PacketSenderError: Error {
     case socketCreationError
+    case unableToCreatePacket
     case error
     case timeout
 }

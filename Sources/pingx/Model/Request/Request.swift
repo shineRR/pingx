@@ -2,12 +2,12 @@ import Foundation
 
 // MARK: - Request
 
-public struct Request: Identifiable, Hashable {
+public final class Request: Identifiable, Equatable {
     
     // MARK: Properties
     
     /// The unique identifier for the request.
-    public let id = UUID()
+    public let id = CFSwapInt16HostToBig(UInt16.random(in: 0..<UInt16.max))
     
     /// The type of protocol used to determine the ping.
     let type: PacketType = .icmp
@@ -45,12 +45,17 @@ public struct Request: Identifiable, Hashable {
         lhs.id == rhs.id && lhs.destination == rhs.destination
     }
     
-    mutating func setTimeRemainingUntilDeadline(_ timeRemainingUntilDeadline: TimeInterval) {
+    func setTimeRemainingUntilDeadline(_ timeRemainingUntilDeadline: TimeInterval) {
         self.timeRemainingUntilDeadline = timeRemainingUntilDeadline
     }
     
-    mutating func setDemand(_ demand: Request.Demand) {
+    func setDemand(_ demand: Request.Demand) {
         self.demand = demand
+    }
+    
+    func decreaseDemandAndUpdateTimeRemainingUntilDeadline() {
+        setDemand(demand - .max(1))
+        setTimeRemainingUntilDeadline(timeoutInterval)
     }
 }
 

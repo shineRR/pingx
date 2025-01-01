@@ -11,16 +11,21 @@ final class PacketSenderMock: PacketSender {
     
     // MARK: Properties
 
-    var sendError: Error?
+    var prepareSocketIfNeededError: Error?
+    private(set) var prepareSocketIfNeededCalledCount: Int = 0
     private(set) var sendCalledCount: Int = 0
     private(set) var sendCalledInvocation: [Request] = []
     private(set) var invalidateCalledCount: Int = 0
     
-    func send(_ request: Request) throws {
+    func prepareSocketIfNeeded() throws {
+        prepareSocketIfNeededCalledCount += 1
+        
+        if let prepareSocketIfNeededError { throw prepareSocketIfNeededError }
+    }
+
+    func send(_ request: Request) {
         sendCalledCount += 1
         sendCalledInvocation.append(request)
-        
-        if let sendError { throw sendError }
     }
     
     func invalidate() {

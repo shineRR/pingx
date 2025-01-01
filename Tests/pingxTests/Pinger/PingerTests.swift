@@ -32,7 +32,7 @@ final class PingerTests: XCTestCase {
         timerFactory.createDispatchSourceTimerReturnValue = timer
 
         pinger = ContinuousPinger(
-            configuration: .init(interval: .seconds(.zero)),
+            configuration: PingerConfiguration(interval: .seconds(.zero)),
             packetSender: packetSender,
             timerFactory: timerFactory
         )
@@ -56,8 +56,8 @@ final class PingerTests: XCTestCase {
 
         pinger.ping(request: request)
         
-        XCTAssertEqual(packetSender.sendCalledInvocation, [request])
-        XCTAssertEqual(timerFactory.createDispatchSourceTimerCalledCount, 1)
+        XCTAssertEventuallyEqual(self.packetSender.sendCalledInvocation, [request])
+        XCTAssertEventuallyEqual(self.timerFactory.createDispatchSourceTimerCalledCount, 1)
     }
     
     func test_start_whenRequestIsOutgoingAndDemandIsGreaterThanZero_returnsIsOutgoingError() {
@@ -66,11 +66,11 @@ final class PingerTests: XCTestCase {
         pinger.ping(request: request)
         pinger.ping(request: request)
         
-        XCTAssertEqual(packetSender.sendCalledInvocation, [request])
+        XCTAssertEventuallyEqual(self.packetSender.sendCalledInvocation, [request])
         XCTAssertEqual(timerFactory.createDispatchSourceTimerCalledCount, 1)
         XCTAssertEqual(pingerDelegate.pingerDidCompleteWithErrorCalledCount, 1)
         XCTAssertTrue(pingerDelegate.pingerDidCompleteWithErrorInvocations[0].pinger === pinger)
-        XCTAssertEqual(pingerDelegate.pingerDidCompleteWithErrorInvocations[0].error, .isOutgoing)
+        XCTAssertEqual(pingerDelegate.pingerDidCompleteWithErrorInvocations[0].error, .pingInProgress)
         XCTAssertEqual(pingerDelegate.pingerDidCompleteWithErrorInvocations[0].request, request)
     }
     
@@ -82,35 +82,30 @@ final class PingerTests: XCTestCase {
         XCTAssertEqual(packetSender.sendCalledCount, 0)
         XCTAssertEqual(timerFactory.createDispatchSourceTimerCalledCount, 0)
     }
-    
-    func test_start_whenSendRequestReturnsError_notifiesDelegate() {
-        let request = Request(destination: Constants.ipv4)
 
-        packetSender.sendError = PacketSenderError.error
-        pinger.ping(request: request)
+    func test_stop_invalidatesTimer() {
+        let request = Request(destination: Constants.ipv4)
         
-        XCTAssertEqual(pingerDelegate.pingerDidCompleteWithErrorCalledCount, 1)
-        XCTAssertTrue(pingerDelegate.pingerDidCompleteWithErrorInvocations[0].pinger === pinger)
-        XCTAssertEqual(pingerDelegate.pingerDidCompleteWithErrorInvocations[0].error, .socketFailed)
-        XCTAssertEqual(pingerDelegate.pingerDidCompleteWithErrorInvocations[0].request, request)
+        pinger.ping(request: request)
+        pinger.stop(request: request)
+        
         XCTAssertTrue(timer.isCancelled)
     }
-
-    func test_stop_invalidatesTimerAndPacketSender() {
+    
+    func test_stopByRequestId_invalidatesTimer() {
         let request = Request(destination: Constants.ipv4)
         
         pinger.ping(request: request)
-        pinger.stop(ipv4Address: request.destination)
+        pinger.stop(requestId: request.id)
         
         XCTAssertTrue(timer.isCancelled)
-        XCTAssertEqual(packetSender.invalidateCalledCount, 1)
     }
     
     func test_stop_whenResponseReceived_doesNotNotifyDelegate() throws {
         let request = Request(destination: Constants.ipv4)
         
         pinger.ping(request: request)
-        pinger.stop(ipv4Address: request.destination)
+        pinger.stop(request: request)
         try simulateValidResponse(for: request)
         
         XCTAssertEqual(pingerDelegate.pingerDidReceiveResponseCalledCount, 0)
@@ -121,16 +116,17 @@ final class PingerTests: XCTestCase {
 // MARK: - Demand Tests
 
 extension PingerTests {
-    func test_demand_whenZero_doesNotNotifyDelegate() {
+    func test_demand_whenZero_throwsError() {
         let request = Request(destination: Constants.ipv4, demand: .none)
         
         pinger.ping(request: request)
         
-        XCTAssertEqual(pingerDelegate.pingerDidReceiveResponseCalledCount, 0)
-        XCTAssertEqual(pingerDelegate.pingerDidCompleteWithErrorCalledCount, 0)
+        XCTAssertEventuallyEqual(self.pingerDelegate.pingerDidReceiveResponseCalledCount, 0)
+        XCTAssertEventuallyEqual(self.pingerDelegate.pingerDidCompleteWithErrorCalledCount, 1)
+        XCTAssertEqual(pingerDelegate.pingerDidCompleteWithErrorInvocations[0].error, .invalidDemand)
     }
     
-    func test_demand_whenLimited() throws {
+    func test_demand_whenLimited_sendsRequestMultipleTimes() throws {
         let demandValue = 2
         let request = Request(destination: Constants.ipv4, demand: .max(demandValue))
 
@@ -139,26 +135,13 @@ extension PingerTests {
         for index in 0...demandValue {
             try simulateValidResponse(for: request)
             
-            let isResponseCountSufficient = (index + 1) >= demandValue
-            if !isResponseCountSufficient {
-                let nextSendCalledCount = index + 2
-                let expectation = XCTestExpectation(
-                    description: "Wait for sendCalledCount to reach \(nextSendCalledCount)"
-                )
-            
-                DispatchQueue.global().async {
-                    while self.packetSender.sendCalledCount != nextSendCalledCount {
-                        usleep(100000) // 100ms
-                    }
-                    expectation.fulfill()
-                }
-                   
-                wait(for: [expectation], timeout: 1)
-            }
+            let expectedDemandValue = demandValue - index - 1
+            let expectedDemand: Request.Demand = expectedDemandValue > 0 ? .max(expectedDemandValue) : .none
+            XCTAssertEventuallyEqual(request.demand, expectedDemand)
         }
         
-        XCTAssertEqual(packetSender.sendCalledCount, 2)
-        XCTAssertEqual(pingerDelegate.pingerDidReceiveResponseCalledCount, 2)
+        XCTAssertEventuallyEqual(self.pingerDelegate.pingerDidReceiveResponseCalledCount, 2)
+        XCTAssertEventuallyEqual(self.packetSender.sendCalledCount, 2)
         XCTAssertEqual(pingerDelegate.pingerDidCompleteWithErrorCalledCount, 0)
     }
 }
@@ -172,12 +155,14 @@ extension PingerTests {
         
         pinger.ping(request: request)
         
+        XCTAssertEventuallyEqual(self.packetSender.sendCalledCount, 1)
+        
         for _ in 0..<Int(timeoutInterval) {
             timerFactory.createDispatchSourceTimerInvocations.last?.eventHandler()
         }
         
         XCTAssertEqual(pingerDelegate.pingerDidReceiveResponseCalledCount, 0)
-        XCTAssertEqual(pingerDelegate.pingerDidCompleteWithErrorCalledCount, 1)
+        XCTAssertEventuallyEqual(self.pingerDelegate.pingerDidCompleteWithErrorCalledCount, 1)
         XCTAssertTrue(pingerDelegate.pingerDidCompleteWithErrorInvocations[0].pinger === pinger)
         XCTAssertEqual(pingerDelegate.pingerDidCompleteWithErrorInvocations[0].request, request)
         XCTAssertEqual(pingerDelegate.pingerDidCompleteWithErrorInvocations[0].error, .timeout)
@@ -192,36 +177,77 @@ extension PingerTests {
         XCTAssertEqual(pingerDelegate.pingerDidReceiveResponseCalledCount, 0)
         XCTAssertEqual(pingerDelegate.pingerDidCompleteWithErrorCalledCount, 0)
     }
+    
+    func test_error_whenValidationFailed_resendsRequest() {
+        let demandValue = 2
+        let request = Request(destination: Constants.ipv4, demand: .max(demandValue))
+        let icmpHeader = ICMPHeader.sample(type: .echoReply, identifier: request.id)
+        
+        pinger.ping(request: request)
+        
+        for index in 0...demandValue {
+            simulateErrorResponse(for: request, error: .invalidPayload(icmpHeader))
+            
+            let expectedDemandValue = demandValue - index - 1
+            let expectedDemand: Request.Demand = expectedDemandValue > 0 ? .max(expectedDemandValue) : .none
+            XCTAssertEventuallyEqual(request.demand, expectedDemand)
+        }
+        
+        XCTAssertEventuallyEqual(self.packetSender.sendCalledCount, 2)
+    }
 
-    func test_error_invalidResponseStructure() {
-        let ipHeader = IPHeader(
-            totalLength: .zero,
-            headerChecksum: .min,
-            sourceAddress: Constants.ipv4,
-            destinationAddress: Constants.ipv4
-        )
-        let validationErrors: [ICMPResponseValidationError] = [
-            .checksumMismatch(ipHeader),
-            .invalidCode(ipHeader),
-            .invalidIdentifier(ipHeader),
-            .invalidType(ipHeader),
-            .missedIcmpHeader(ipHeader)
-        ]
+    func test_error_whenValidationFailed_notifiesDelegateAboutInvalidResponse() {
         let request = Request(destination: Constants.ipv4, demand: .unlimited)
+        let validationErrors: [ICMPResponseValidationError] = [
+            .checksumMismatch(
+                .sample(type: .echoReply, identifier: request.id)
+            ),
+            .invalidCode(
+                .sample(type: .echoReply, code: UInt8.random(in: 200...255), identifier: request.id)
+            ),
+            .invalidPayload(
+                .sample(
+                    type: .echoReply,
+                    identifier: request.id,
+                    payload: Payload(identifier: (0, 0, 0, 0, 0, 0, 0, 0))
+                )
+            ),
+            .invalidType(
+                .sample(type: .routerSolicitation, identifier: request.id)
+            )
+        ]
         
         pinger.ping(request: request)
         
         for (index, error) in validationErrors.enumerated() {
             simulateErrorResponse(for: request, error: error)
 
-            XCTAssertEqual(pingerDelegate.pingerDidCompleteWithErrorCalledCount, index + 1)
+            XCTAssertEventuallyEqual(self.pingerDelegate.pingerDidCompleteWithErrorCalledCount, index + 1)
             XCTAssertTrue(pingerDelegate.pingerDidCompleteWithErrorInvocations[index].pinger === pinger)
             XCTAssertEqual(pingerDelegate.pingerDidCompleteWithErrorInvocations[index].request, request)
-            XCTAssertEqual(
-                pingerDelegate.pingerDidCompleteWithErrorInvocations[index].error,
-                .invalidResponseStructure
-            )
+            XCTAssertEqual(pingerDelegate.pingerDidCompleteWithErrorInvocations[index].error, .invalidResponse)
         }
+    }
+    
+    func test_packetSenderSocketFailure_notifiesDelegate() {
+        let request = Request(destination: Constants.ipv4, demand: .unlimited)
+        
+        pinger.ping(request: request)
+        pinger.packetSender(packetSender: packetSender, request: request, didCompleteWithError: .socketCreationError)
+        
+        XCTAssertEventuallyEqual(self.pingerDelegate.pingerDidCompleteWithErrorCalledCount, 1)
+        XCTAssertTrue(pingerDelegate.pingerDidCompleteWithErrorInvocations[0].pinger === pinger)
+        XCTAssertEqual(pingerDelegate.pingerDidCompleteWithErrorInvocations[0].request, request)
+        XCTAssertEqual(pingerDelegate.pingerDidCompleteWithErrorInvocations[0].error, .socketFailed)
+    }
+    
+    func test_packetSenderSocketFailure_resendsRequest() {
+        let request = Request(destination: Constants.ipv4, demand: .unlimited)
+        
+        pinger.ping(request: request)
+        pinger.packetSender(packetSender: packetSender, request: request, didCompleteWithError: .socketCreationError)
+        
+        XCTAssertEventuallyEqual(self.packetSender.sendCalledCount, 2)
     }
 }
 
@@ -236,7 +262,7 @@ private extension PingerTests {
         var icmpHeader = ICMPHeader(
             type: .echoReply,
             code: .zero,
-            identifier: .zero,
+            identifier: request.id,
             sequenceNumber: .zero,
             payload: Payload()
         )
@@ -253,59 +279,51 @@ private extension PingerTests {
     }
     
     func simulateErrorResponse(for request: Request, error: ICMPResponseValidationError) {
+        let ipHeader = IPHeader(
+            totalLength: .zero,
+            headerChecksum: .min,
+            sourceAddress: request.destination,
+            destinationAddress: request.destination
+        )
         let data: Data
         
         switch error {
-        case .checksumMismatch(let ipHeader):
-            let icmpHeader = ICMPHeader(
-                type: .echoReply,
-                code: .zero,
-                identifier: .zero,
-                sequenceNumber: .zero,
-                payload: Payload()
-            )
-
+        case .checksumMismatch(let icmpHeader):
             var icmp = ICMPPacket(ipHeader: ipHeader, icmpHeader: icmpHeader)
             data = Data(bytes: &icmp, count: MemoryLayout<ICMPPacket>.size)
-        case .invalidCode(let ipHeader):
-            let icmpHeader = ICMPHeader(
-                type: .echoReply,
-                code: UInt8.random(in: 200...255),
-                identifier: .zero,
-                sequenceNumber: .zero,
-                payload: Payload()
-            )
-
+        case .invalidCode(let icmpHeader):
             var icmp = ICMPPacket(ipHeader: ipHeader, icmpHeader: icmpHeader)
             data = Data(bytes: &icmp, count: MemoryLayout<ICMPPacket>.size)
-        case .invalidIdentifier(let ipHeader):
-            let icmpHeader = ICMPHeader(
-                type: .echoReply,
-                code: .zero,
-                identifier: .zero,
-                sequenceNumber: .zero,
-                payload: Payload(identifier: (0, 0, 0, 0, 0, 0, 0, 0))
-            )
-
+        case .invalidPayload(let icmpHeader):
             var icmp = ICMPPacket(ipHeader: ipHeader, icmpHeader: icmpHeader)
             data = Data(bytes: &icmp, count: MemoryLayout<ICMPPacket>.size)
-        case .invalidType(let ipHeader):
-            let icmpHeader = ICMPHeader(
-                type: .routerSolicitation,
-                code: .zero,
-                identifier: .zero,
-                sequenceNumber: .zero,
-                payload: Payload()
-            )
-
+        case .invalidType(let icmpHeader):
             var icmp = ICMPPacket(ipHeader: ipHeader, icmpHeader: icmpHeader)
             data = Data(bytes: &icmp, count: MemoryLayout<ICMPPacket>.size)
-        case .missedIcmpHeader(var ipHeader):
-            data = Data(bytes: &ipHeader, count: MemoryLayout<IPHeader>.size)
-        case .missedIpHeader:
+        case .missedIpHeader, .missedIcmpHeader:
             data = Data()
         }
         
         pinger.packetSender(packetSender: packetSender, didReceive: data)
+    }
+}
+
+private extension ICMPHeader {
+    static func sample(
+        type: ICMPType = .echoReply,
+        code: UInt8 = .zero,
+        checksum: UInt16 = .zero,
+        identifier: UInt16 = .zero,
+        sequenceNumber: UInt16 = .zero,
+        payload: Payload = Payload()
+    ) -> ICMPHeader {
+        ICMPHeader(
+            type: type,
+            code: code,
+            checksum: checksum,
+            identifier: identifier,
+            sequenceNumber: sequenceNumber,
+            payload: payload
+        )
     }
 }
