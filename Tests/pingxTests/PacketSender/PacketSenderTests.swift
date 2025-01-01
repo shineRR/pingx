@@ -53,9 +53,9 @@ final class PacketSenderTests: XCTestCase {
         XCTAssertEqual(packetFactory.packetCreateInvocations[0].identifier, request.id)
         XCTAssertEqual(packetFactory.packetCreateInvocations[0].type, .icmp)
         XCTAssertEqual(socket.sendCalledCount, 1)
-        XCTAssertEqual(packetSenderDelegate.packetSenderDidReceiveDataCalledCount, 1)
-        XCTAssertTrue(packetSenderDelegate.packetSenderDidReceiveDataInvocations[0].packetSender === packetSender)
-        XCTAssertEqual(packetSenderDelegate.packetSenderDidReceiveDataInvocations[0].data, data)
+        XCTAssertEqual(packetSenderDelegate.didReceiveDataCalledCount, 1)
+        XCTAssertTrue(packetSenderDelegate.didReceiveDataInvocations[0].packetSender === packetSender)
+        XCTAssertEqual(packetSenderDelegate.didReceiveDataInvocations[0].data, data)
     }
     
     func test_send_whenSocketAlreadyCreated_doesNotCreateSocket() {
@@ -73,10 +73,10 @@ final class PacketSenderTests: XCTestCase {
         socketFactory.error = .socketCreationError
         packetSender.send(request)
         
-        XCTAssertEqual(packetSenderDelegate.packetSenderDidCompleteWithErrorCalledCount, 1)
-        XCTAssertTrue(packetSenderDelegate.packetSenderDidCompleteWithErrorInvocations[0].packetSender === packetSender)
-        XCTAssertEqual(packetSenderDelegate.packetSenderDidCompleteWithErrorInvocations[0].request, request)
-        XCTAssertEqual(packetSenderDelegate.packetSenderDidCompleteWithErrorInvocations[0].error, .socketCreationError)
+        XCTAssertEqual(packetSenderDelegate.didCompleteWithErrorCalledCount, 1)
+        XCTAssertTrue(packetSenderDelegate.didCompleteWithErrorInvocations[0].packetSender === packetSender)
+        XCTAssertEqual(packetSenderDelegate.didCompleteWithErrorInvocations[0].request, request)
+        XCTAssertEqual(packetSenderDelegate.didCompleteWithErrorInvocations[0].error, .socketCreationError)
         XCTAssertEqual(socket.sendCalledCount, 0)
     }
     
@@ -90,7 +90,7 @@ final class PacketSenderTests: XCTestCase {
             packetSender.send(request)
             
             XCTAssertEqual(
-                packetSenderDelegate.packetSenderDidCompleteWithErrorInvocations[index].error,
+                packetSenderDelegate.didCompleteWithErrorInvocations[index].error,
                 expectedPacketSenderErrors[index]
             )
         }
@@ -102,10 +102,10 @@ final class PacketSenderTests: XCTestCase {
         packetFactory.error = ICMPChecksum.ChecksumError.outOfBounds
         packetSender.send(request)
         
-        XCTAssertEqual(packetSenderDelegate.packetSenderDidCompleteWithErrorCalledCount, 1)
-        XCTAssertTrue(packetSenderDelegate.packetSenderDidCompleteWithErrorInvocations[0].packetSender === packetSender)
-        XCTAssertEqual(packetSenderDelegate.packetSenderDidCompleteWithErrorInvocations[0].request, request)
-        XCTAssertEqual(packetSenderDelegate.packetSenderDidCompleteWithErrorInvocations[0].error, .unableToCreatePacket)
+        XCTAssertEqual(packetSenderDelegate.didCompleteWithErrorCalledCount, 1)
+        XCTAssertTrue(packetSenderDelegate.didCompleteWithErrorInvocations[0].packetSender === packetSender)
+        XCTAssertEqual(packetSenderDelegate.didCompleteWithErrorInvocations[0].request, request)
+        XCTAssertEqual(packetSenderDelegate.didCompleteWithErrorInvocations[0].error, .unableToCreatePacket)
         XCTAssertEqual(socket.sendCalledCount, 0)
     }
     

@@ -152,7 +152,10 @@ extension ContinuousPinger: PacketSenderDelegate {
             
             scheduleNextRequestIfPositiveDemand(request)
         } catch let error as ICMPResponseValidationError {
-            guard let icmpHeader = error.icmpHeader, let request = outgoingRequests[icmpHeader.identifier] else { return }
+            guard
+                let icmpHeader = error.icmpHeader,
+                let request = outgoingRequests[icmpHeader.identifier]
+            else { return }
             request.decreaseDemandAndUpdateTimeRemainingUntilDeadline()
             
             delegate?.pinger(self, request: request, didCompleteWithError: .invalidResponse)
