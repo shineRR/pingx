@@ -3,12 +3,12 @@ import Foundation
 // MARK: - PacketFactoryImpl
 
 final class PacketFactoryImpl: PacketFactory {
-    func create(type: PacketType) throws -> Packet {
+    func create(identifier: UInt16, type: PacketType) throws -> Packet {
         let packet: Packet
         
         switch type {
         case .icmp:
-            packet = try icmpPacket()
+            packet = try icmpPacket(identifier: identifier)
         }
         
         return packet
@@ -18,10 +18,10 @@ final class PacketFactoryImpl: PacketFactory {
 // MARK: - Private API
 
 private extension PacketFactoryImpl {
-    func icmpPacket() throws -> Packet {
+    func icmpPacket(identifier: UInt16) throws -> Packet {
         var icmpHeader = ICMPHeader(
             type: .echoRequest,
-            identifier: CFSwapInt16HostToBig(UInt16.random(in: 0..<UInt16.max)),
+            identifier: identifier,
             sequenceNumber: CFSwapInt16HostToBig(UInt16.random(in: 0..<UInt16.max)),
             payload: Payload()
         )

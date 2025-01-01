@@ -2,7 +2,7 @@ import Foundation
 
 // MARK: - ContinuousPinger
 
-public final class ContinuousPinger {
+public final class ContinuousPinger: Pinger {
     
     // MARK: Delegate
     
@@ -10,23 +10,27 @@ public final class ContinuousPinger {
     
     // MARK: Properties
     
+    private let pingerQueue = DispatchQueue(
+        label: "com.pingx.ContinuousPinger.pingerQueue",
+        qos: .userInitiated
+    )
     private let configuration: PingerConfiguration
     private let packetSender: PacketSender
     private let timerFactory: TimerFactory
-    
+
     @Atomic
-    private var outgoingRequests: [IPv4Address: Request] = [:] {
+    private var outgoingRequests: [UInt16: Request] = [:] {
         didSet {
-            guard !outgoingRequests.isEmpty else {
-                invalidate()
-                return
+            if outgoingRequests.isEmpty {
+                invalidateTimer()
+            } else if timer == nil {
+                setUpTimer()
             }
-            guard timer == nil else { return }
-            
-            setUpTimer()
         }
     }
-    private var timer: Timer?
+
+    @Atomic
+    private var timer: PingxTimer?
     
     // MARK: Initializer
     
@@ -52,7 +56,34 @@ public final class ContinuousPinger {
     }
     
     deinit {
-        invalidate()
+        invalidateTimer()
+    }
+    
+    public func ping(request: Request) {
+        func validateAndSendRequest() {
+            guard outgoingRequests[request.id] == nil else {
+                delegate?.pinger(self, request: request, didCompleteWithError: .pingInProgress)
+                return
+            }
+
+            guard request.demand != .none else {
+                delegate?.pinger(self, request: request, didCompleteWithError: .invalidDemand)
+                return
+            }
+
+            outgoingRequests[request.id] = request
+            packetSender.send(request)
+        }
+        
+        perform(validateAndSendRequest, on: pingerQueue)
+    }
+    
+    public func stop(request: Request) {
+        outgoingRequests.removeValue(forKey: request.id)
+    }
+    
+    public func stop(requestId: Request.ID) {
+        outgoingRequests.removeValue(forKey: requestId)
     }
 }
 
@@ -60,59 +91,43 @@ public final class ContinuousPinger {
 
 private extension ContinuousPinger {
     func setUpTimer() {
-        let timer = timerFactory.create(timeInterval: 1.0, repeats: true) { [weak self] _ in
-            self?.updateOutgoingRequests()
+        timer = timerFactory.createDispatchSourceTimer(timeInterval: 1.0, eventQueue: pingerQueue) { [weak self] in
+            self?.updateTimeoutTimeForOutgoingRequests()
         }
-        
-        RunLoop.main.add(timer, forMode: .common)
-        self.timer = timer
     }
     
-    func updateOutgoingRequests() {
-        for (key, request) in outgoingRequests {
+    func updateTimeoutTimeForOutgoingRequests() {
+        for request in outgoingRequests.values {
             let newTimeRemainingUntilDeadline = request.timeRemainingUntilDeadline - 1
-            outgoingRequests[key]?.setTimeRemainingUntilDeadline(newTimeRemainingUntilDeadline)
-            
-            guard newTimeRemainingUntilDeadline <= .zero else { continue }
-            
-            delegate?.pinger(self, request: request, didCompleteWithError: .timeout)
-            outgoingRequests[key]?.setDemand(request.demand - .max(1))
-            outgoingRequests[key]?.setTimeRemainingUntilDeadline(request.timeoutInterval)
-            
-            guard let request = outgoingRequests[key] else { return }
-            
-            outgoingRequests.removeValue(forKey: key)
-            ping(request: request)
+
+            if newTimeRemainingUntilDeadline <= .zero {
+                request.decreaseDemandAndUpdateTimeRemainingUntilDeadline()
+                delegate?.pinger(self, request: request, didCompleteWithError: .timeout)
+            } else {
+                request.setTimeRemainingUntilDeadline(newTimeRemainingUntilDeadline)
+            }
+        
+            scheduleNextRequestIfPositiveDemand(request)
         }
     }
     
-    func invalidate() {
-        timer?.invalidate()
+    func invalidateTimer() {
+        timer?.stop()
         timer = nil
     }
-}
 
-// MARK: - Pinger
-
-extension ContinuousPinger: Pinger {
-    public func ping(request: Request) {
-        guard outgoingRequests[request.destination] == nil else {
-            delegate?.pinger(self, request: request, didCompleteWithError: .isOutgoing)
+    func scheduleNextRequestIfPositiveDemand(_ request: Request) {
+        guard request.demand != .none else {
+            outgoingRequests.removeValue(forKey: request.id)
             return
         }
-        guard request.demand != .none else { return }
         
-        do {
-            outgoingRequests[request.destination] = request
-            try packetSender.send(request)
-        } catch _ as PacketSenderError {
-            outgoingRequests.removeValue(forKey: request.destination)
-            delegate?.pinger(self, request: request, didCompleteWithError: .socketFailed)
-        } catch {}
-    }
-    
-    public func stop(ipv4Address: IPv4Address) {
-        outgoingRequests.removeValue(forKey: ipv4Address)
+        performAfter(
+            deadline: .now() + configuration.interval,
+            packetSender.send,
+            value: request,
+            on: pingerQueue
+        )
     }
 }
 
@@ -120,48 +135,63 @@ extension ContinuousPinger: Pinger {
 
 extension ContinuousPinger: PacketSenderDelegate {
     func packetSender(packetSender: PacketSender, didReceive data: Data) {
+        perform(handlePacketSenderResponse, value: data, on: pingerQueue)
+    }
+    
+    private func handlePacketSenderResponse(data: Data) {
         do {
             let package = try extractICMPPackage(from: data)
             let response = Response(
                 destination: package.ipHeader.sourceAddress,
                 duration: (CFAbsoluteTimeGetCurrent() - package.icmpHeader.payload.timestamp) * 1000
             )
-            
-            guard var request = outgoingRequests[response.destination] else { return }
-            
-            request.setDemand(request.demand - .max(1))
-            request.setTimeRemainingUntilDeadline(request.timeoutInterval)
+
+            guard let request = outgoingRequests[package.icmpHeader.identifier] else { return }
+            request.decreaseDemandAndUpdateTimeRemainingUntilDeadline()
             delegate?.pinger(self, request: request, didReceive: response)
             
-            guard request.demand != .none else {
-                outgoingRequests.removeValue(forKey: response.destination)
-                return
-            }
-            
-            DispatchQueue.global().asyncAfter(deadline: .now() + configuration.interval) { [weak self] in
-                self?.outgoingRequests.removeValue(forKey: response.destination)
-                self?.ping(request: request)
-            }
+            scheduleNextRequestIfPositiveDemand(request)
         } catch let error as ICMPResponseValidationError {
-            handleValidationError(error)
+            guard
+                let icmpHeader = error.icmpHeader,
+                let request = outgoingRequests[icmpHeader.identifier]
+            else { return }
+            request.decreaseDemandAndUpdateTimeRemainingUntilDeadline()
+            
+            delegate?.pinger(self, request: request, didCompleteWithError: .invalidResponse)
+            scheduleNextRequestIfPositiveDemand(request)
         } catch {}
     }
     
-    private func handleValidationError(_ error: ICMPResponseValidationError) {
-        switch error {
-        case .checksumMismatch(let ipHeader),
-             .invalidCode(let ipHeader),
-             .invalidType(let ipHeader),
-             .missedIcmpHeader(let ipHeader),
-             .invalidIdentifier(let ipHeader):
-            
-            guard let request = outgoingRequests[ipHeader.sourceAddress] else { return }
-            
-            outgoingRequests.removeValue(forKey: ipHeader.sourceAddress)
-            delegate?.pinger(self, request: request, didCompleteWithError: .invalidResponseStructure)
-            
-        case .missedIpHeader:
-            return
-        }
+    func packetSender(packetSender: PacketSender, request: Request, didCompleteWithError error: PacketSenderError) {
+        perform(handlePacketSenderSockerFailure, value: request, on: pingerQueue)
     }
+    
+    private func handlePacketSenderSockerFailure(request: Request) {
+        request.decreaseDemandAndUpdateTimeRemainingUntilDeadline()
+
+        delegate?.pinger(self, request: request, didCompleteWithError: .socketFailed)
+        scheduleNextRequestIfPositiveDemand(request)
+    }
+}
+
+private func performAfter<T>(
+    deadline: DispatchTime,
+    _ function: @escaping (T) -> Void,
+    value: T,
+    on queue: DispatchQueue
+) {
+    queue.asyncAfter(deadline: deadline) {
+        function(value)
+    }
+}
+
+private func perform<T>(_ function: @escaping (T) -> Void, value: T, on queue: DispatchQueue) {
+    queue.async {
+        function(value)
+    }
+}
+
+private func perform(_ function: @escaping () -> Void, on queue: DispatchQueue) {
+    queue.async(execute: function)
 }

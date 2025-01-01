@@ -3,5 +3,9 @@ import Foundation
 // MARK: - TimerFactory
 
 protocol TimerFactory {
-    func create(timeInterval: TimeInterval, repeats: Bool, block: @Sendable @escaping (Timer) -> Void) -> Timer
+    func createDispatchSourceTimer(
+        timeInterval: TimeInterval,
+        eventQueue: DispatchQueue,
+        eventHandler: @escaping () -> Void
+    ) -> PingxTimer
 }

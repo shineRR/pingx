@@ -6,7 +6,7 @@ extension ICMPResponseValidationError: Equatable {
     public static func == (lhs: ICMPResponseValidationError, rhs: ICMPResponseValidationError) -> Bool {
         switch (lhs, rhs) {
         case (.checksumMismatch, .checksumMismatch),
-             (.invalidIdentifier, .invalidIdentifier),
+             (.invalidPayload, .invalidPayload),
              (.invalidType, .invalidType),
              (.invalidCode, .invalidCode),
              (.missedIpHeader, .missedIpHeader),

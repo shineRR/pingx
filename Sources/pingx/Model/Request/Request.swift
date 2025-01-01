@@ -2,12 +2,12 @@ import Foundation
 
 // MARK: - Request
 
-public struct Request: Identifiable {
+public final class Request: Identifiable, Equatable {
     
     // MARK: Properties
     
     /// The unique identifier for the request.
-    public let id = UUID()
+    public let id = CFSwapInt16HostToBig(UInt16.random(in: 0..<UInt16.max))
     
     /// The type of protocol used to determine the ping.
     let type: PacketType = .icmp
@@ -24,11 +24,13 @@ public struct Request: Identifiable {
     /// The desired quantity of ping requests to be sent.
     public private(set) var demand: Request.Demand
     
+    let sendTimeout: TimeInterval = .zero
+    
     // MARK: Initializer
     
     public init(
         destination: IPv4Address,
-        timeoutInterval: TimeInterval = 120,
+        timeoutInterval: TimeInterval = 10,
         demand: Request.Demand = .max(1)
     ) {
         self.destination = destination
@@ -39,12 +41,21 @@ public struct Request: Identifiable {
     
     // MARK: Methods
     
-    mutating func setTimeRemainingUntilDeadline(_ timeRemainingUntilDeadline: TimeInterval) {
+    public static func == (lhs: Request, rhs: Request) -> Bool {
+        lhs.id == rhs.id && lhs.destination == rhs.destination
+    }
+    
+    func setTimeRemainingUntilDeadline(_ timeRemainingUntilDeadline: TimeInterval) {
         self.timeRemainingUntilDeadline = timeRemainingUntilDeadline
     }
     
-    mutating func setDemand(_ demand: Request.Demand) {
+    func setDemand(_ demand: Request.Demand) {
         self.demand = demand
+    }
+    
+    func decreaseDemandAndUpdateTimeRemainingUntilDeadline() {
+        setDemand(demand - .max(1))
+        setTimeRemainingUntilDeadline(timeoutInterval)
     }
 }
 

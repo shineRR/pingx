@@ -8,6 +8,6 @@ protocol PacketSender: AnyObject {
     
     // MARK: Methods
     
-    func send(_ request: Request) throws
+    func send(_ request: Request)
     func invalidate()
 }

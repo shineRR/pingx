@@ -33,6 +33,37 @@ final class PacketSenderImpl {
     }
 }
 
+// MARK: - PacketSender
+
+extension PacketSenderImpl: PacketSender {
+    func send(_ request: Request) {
+        do {
+            try checkSocketCreation()
+        } catch {
+            delegate?.packetSender(packetSender: self, request: request, didCompleteWithError: .socketCreationError)
+            return
+        }
+        
+        guard let packet = try? packetFactory.create(identifier: request.id, type: request.type) else {
+            delegate?.packetSender(packetSender: self, request: request, didCompleteWithError: .unableToCreatePacket)
+            return
+        }
+        
+        let error = pingxSocket.send(
+            address: request.destination.socketAddress as CFData,
+            data: packet.data as CFData,
+            timeout: request.sendTimeout
+        )
+        handleSocketError(error, request: request)
+    }
+    
+    func invalidate() {
+        guard pingxSocket != nil else { return }
+        pingxSocket.invalidate()
+        pingxSocket = nil
+    }
+}
+
 // MARK: - Private API
 
 private extension PacketSenderImpl {
@@ -46,42 +77,13 @@ private extension PacketSenderImpl {
         
         pingxSocket = try socketFactory.create(command: command)
     }
-}
-
-// MARK: - PacketSender
-
-extension PacketSenderImpl: PacketSender {
-    func send(_ request: Request) throws {
-        try checkSocketCreation()
-        let packet: Packet
-        
-        do {
-            packet = try packetFactory.create(type: request.type)
-        } catch {
-            throw PacketSenderError.error
-        }
-        
-        let error = pingxSocket.send(
-            address: request.destination.socketAddress as CFData,
-            data: packet.data as CFData,
-            timeout: request.timeoutInterval
-        )
-        
-        try handleSocketError(error)
-    }
     
-    func invalidate() {
-        guard pingxSocket != nil else { return }
-        pingxSocket.invalidate()
-        pingxSocket = nil
-    }
-    
-    private func handleSocketError(_ error: CFSocketError) throws {
+    func handleSocketError(_ error: CFSocketError, request: Request) {
         switch error {
         case .error:
-            throw PacketSenderError.error
+            delegate?.packetSender(packetSender: self, request: request, didCompleteWithError: .error)
         case .timeout:
-            throw PacketSenderError.timeout
+            delegate?.packetSender(packetSender: self, request: request, didCompleteWithError: .timeout)
         default:
             return
         }
