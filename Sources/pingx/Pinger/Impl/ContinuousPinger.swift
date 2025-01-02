@@ -79,11 +79,15 @@ public final class ContinuousPinger: Pinger {
     }
     
     public func stop(request: Request) {
-        outgoingRequests.removeValue(forKey: request.id)
+        pingerQueue.async { [weak self] in
+            self?.outgoingRequests.removeValue(forKey: request.id)
+        }
     }
     
     public func stop(requestId: Request.ID) {
-        outgoingRequests.removeValue(forKey: requestId)
+        pingerQueue.async { [weak self] in
+            self?.outgoingRequests.removeValue(forKey: requestId)
+        }
     }
 }
 
@@ -148,8 +152,8 @@ extension ContinuousPinger: PacketSenderDelegate {
 
             guard let request = outgoingRequests[package.icmpHeader.identifier] else { return }
             request.decreaseDemandAndUpdateTimeRemainingUntilDeadline()
-            delegate?.pinger(self, request: request, didReceive: response)
             
+            delegate?.pinger(self, request: request, didReceive: response)
             scheduleNextRequestIfPositiveDemand(request)
         } catch let error as ICMPResponseValidationError {
             guard
@@ -157,7 +161,7 @@ extension ContinuousPinger: PacketSenderDelegate {
                 let request = outgoingRequests[icmpHeader.identifier]
             else { return }
             request.decreaseDemandAndUpdateTimeRemainingUntilDeadline()
-            
+
             delegate?.pinger(self, request: request, didCompleteWithError: .invalidResponse)
             scheduleNextRequestIfPositiveDemand(request)
         } catch {}
@@ -173,25 +177,4 @@ extension ContinuousPinger: PacketSenderDelegate {
         delegate?.pinger(self, request: request, didCompleteWithError: .socketFailed)
         scheduleNextRequestIfPositiveDemand(request)
     }
-}
-
-private func performAfter<T>(
-    deadline: DispatchTime,
-    _ function: @escaping (T) -> Void,
-    value: T,
-    on queue: DispatchQueue
-) {
-    queue.asyncAfter(deadline: deadline) {
-        function(value)
-    }
-}
-
-private func perform<T>(_ function: @escaping (T) -> Void, value: T, on queue: DispatchQueue) {
-    queue.async {
-        function(value)
-    }
-}
-
-private func perform(_ function: @escaping () -> Void, on queue: DispatchQueue) {
-    queue.async(execute: function)
 }

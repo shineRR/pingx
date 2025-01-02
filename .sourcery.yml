@@ -3,7 +3,7 @@ sources:
 templates:
   - Tests/Templates/AutoMockable.stencil
 output:
-  Tests/pingxTests/Mocks/Generated.swift
+  Tests/pingxTests/Mocks/Generated
 args:
   autoMockableTestableImports:
     - pingx

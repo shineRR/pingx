@@ -2,11 +2,12 @@ import Foundation
 
 // MARK: - PingxSocket
 
+// sourcery: AutoMockable
 protocol PingxSocket {
     
     // MARK: Typealias
     
-    associatedtype Instance: AnyObject
+    associatedtype Instance: AnyObject = CommandBlock<Data>
     
     // MARK: Methods
     

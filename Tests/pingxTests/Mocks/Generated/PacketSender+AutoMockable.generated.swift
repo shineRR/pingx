@@ -2,31 +2,28 @@
 // DO NOT EDIT
 // swiftlint:disable all
 
-import UIKit
+import Foundation
+
 @testable import pingx
 
 class PacketSenderMock: PacketSender {
-    var delegate: PacketSenderDelegate?
+    weak var delegate: PacketSenderDelegate?
 
     //MARK: - send
 
-    var sendThrowableError: Error?
     var sendCallsCount = 0
     var sendCalled: Bool {
         return sendCallsCount > 0
     }
-    var sendReceivedRequest: Request?
-    var sendReceivedInvocations: [Request] = []
-    var sendClosure: ((Request) throws -> Void)?
+    var sendReceivedRequest: (Request)?
+    var sendReceivedInvocations: [(Request)] = []
+    var sendClosure: ((Request) -> Void)?
 
-    func send(_ request: Request) throws {
-        if let error = sendThrowableError {
-            throw error
-        }
+    func send(_ request: Request) {
         sendCallsCount += 1
         sendReceivedRequest = request
         sendReceivedInvocations.append(request)
-        try sendClosure?(request)
+        sendClosure?(request)
     }
 
     //MARK: - invalidate
@@ -43,3 +40,5 @@ class PacketSenderMock: PacketSender {
     }
 
 }
+
+// swiftlint:enable all

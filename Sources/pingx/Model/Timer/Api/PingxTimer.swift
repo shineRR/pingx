@@ -1,8 +1,7 @@
 // MARK: PingxTimer
 
+// sourcery: AutoMockable
 protocol PingxTimer {
-    var isCancelled: Bool { get }
-
     func start()
     func stop()
     func fire()
