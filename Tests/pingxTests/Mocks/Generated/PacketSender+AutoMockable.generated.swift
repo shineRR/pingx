@@ -9,7 +9,7 @@ import Foundation
 class PacketSenderMock: PacketSender {
     weak var delegate: PacketSenderDelegate?
 
-    //MARK: - send
+    // MARK: - send
 
     var sendCallsCount = 0
     var sendCalled: Bool {
@@ -26,7 +26,7 @@ class PacketSenderMock: PacketSender {
         sendClosure?(request)
     }
 
-    //MARK: - invalidate
+    // MARK: - invalidate
 
     var invalidateCallsCount = 0
     var invalidateCalled: Bool {

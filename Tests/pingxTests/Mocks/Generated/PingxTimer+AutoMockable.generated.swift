@@ -8,7 +8,7 @@ import Foundation
 
 class PingxTimerMock: PingxTimer {
 
-    //MARK: - start
+    // MARK: - start
 
     var startCallsCount = 0
     var startCalled: Bool {
@@ -21,7 +21,7 @@ class PingxTimerMock: PingxTimer {
         startClosure?()
     }
 
-    //MARK: - stop
+    // MARK: - stop
 
     var stopCallsCount = 0
     var stopCalled: Bool {
@@ -34,7 +34,7 @@ class PingxTimerMock: PingxTimer {
         stopClosure?()
     }
 
-    //MARK: - fire
+    // MARK: - fire
 
     var fireCallsCount = 0
     var fireCalled: Bool {

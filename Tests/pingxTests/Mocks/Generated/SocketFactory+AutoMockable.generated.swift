@@ -8,7 +8,7 @@ import Foundation
 
 class SocketFactoryMock: SocketFactory {
 
-    //MARK: - create
+    // MARK: - create
 
     var createThrowableError: (any Error)?
     var createCallsCount = 0

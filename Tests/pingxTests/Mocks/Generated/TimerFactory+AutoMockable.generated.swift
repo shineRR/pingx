@@ -8,7 +8,7 @@ import Foundation
 
 class TimerFactoryMock: TimerFactory {
 
-    //MARK: - createDispatchSourceTimer
+    // MARK: - createDispatchSourceTimer
 
     var createDispatchSourceTimerCallsCount = 0
     var createDispatchSourceTimerCalled: Bool {

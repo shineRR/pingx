@@ -8,7 +8,7 @@ import Foundation
 
 class PingxSocketMock: PingxSocket {
 
-    //MARK: - send
+    // MARK: - send
 
     var sendCallsCount = 0
     var sendCalled: Bool {
@@ -30,7 +30,7 @@ class PingxSocketMock: PingxSocket {
         }
     }
 
-    //MARK: - invalidate
+    // MARK: - invalidate
 
     var invalidateCallsCount = 0
     var invalidateCalled: Bool {

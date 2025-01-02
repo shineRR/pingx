@@ -8,7 +8,7 @@ import Foundation
 
 class PacketFactoryMock: PacketFactory {
 
-    //MARK: - create
+    // MARK: - create
 
     var createThrowableError: (any Error)?
     var createCallsCount = 0
