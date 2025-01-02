@@ -22,9 +22,11 @@ final class PacketSenderTests: XCTestCase {
         socket.sendReturnValue = .success
         
         socketFactory = SocketFactoryMock()
-        socketFactory.socketCreateReturnValue = socket
+        socketFactory.createReturnValue = socket
         
         packetFactory = PacketFactoryMock()
+        packetFactory.createReturnValue = PacketMock()
+
         packetSenderDelegate = PacketSenderDelegateMock()
         packetSender = PacketSenderImpl(socketFactory: socketFactory, packetFactory: packetFactory)
         packetSender.delegate = packetSenderDelegate
@@ -47,12 +49,12 @@ final class PacketSenderTests: XCTestCase {
         let data = Data()
         
         packetSender.send(request)
-        socketFactory.socketCreateInvocations.last?.closure(data)
+        socketFactory.createReceivedInvocations.last?.closure(data)
         
-        XCTAssertEqual(socketFactory.socketCreateCalledCount, 1)
-        XCTAssertEqual(packetFactory.packetCreateInvocations[0].identifier, request.id)
-        XCTAssertEqual(packetFactory.packetCreateInvocations[0].type, .icmp)
-        XCTAssertEqual(socket.sendCalledCount, 1)
+        XCTAssertEqual(socketFactory.createCallsCount, 1)
+        XCTAssertEqual(packetFactory.createReceivedInvocations[0].identifier, request.id)
+        XCTAssertEqual(packetFactory.createReceivedInvocations[0].type, .icmp)
+        XCTAssertEqual(socket.sendCallsCount, 1)
         XCTAssertEqual(packetSenderDelegate.didReceiveDataCalledCount, 1)
         XCTAssertTrue(packetSenderDelegate.didReceiveDataInvocations[0].packetSender === packetSender)
         XCTAssertEqual(packetSenderDelegate.didReceiveDataInvocations[0].data, data)
@@ -64,20 +66,20 @@ final class PacketSenderTests: XCTestCase {
         packetSender.send(request)
         packetSender.send(request)
         
-        XCTAssertEqual(socketFactory.socketCreateCalledCount, 1)
+        XCTAssertEqual(socketFactory.createCallsCount, 1)
     }
     
     func test_send_whenSocketCreationFailed_throwsError() throws {
         let request = Request(destination: Constants.ipv4)
         
-        socketFactory.error = .socketCreationError
+        socketFactory.createThrowableError = PacketSenderError.socketCreationError
         packetSender.send(request)
         
         XCTAssertEqual(packetSenderDelegate.didCompleteWithErrorCalledCount, 1)
         XCTAssertTrue(packetSenderDelegate.didCompleteWithErrorInvocations[0].packetSender === packetSender)
         XCTAssertEqual(packetSenderDelegate.didCompleteWithErrorInvocations[0].request, request)
         XCTAssertEqual(packetSenderDelegate.didCompleteWithErrorInvocations[0].error, .socketCreationError)
-        XCTAssertEqual(socket.sendCalledCount, 0)
+        XCTAssertEqual(socket.sendCallsCount, 0)
     }
     
     func test_send_whenSocketFailed_throwsError() {
@@ -99,23 +101,23 @@ final class PacketSenderTests: XCTestCase {
     func test_send_packetCreationFailed_throwsError() throws {
         let request = Request(destination: Constants.ipv4)
         
-        packetFactory.error = ICMPChecksum.ChecksumError.outOfBounds
+        packetFactory.createThrowableError = ICMPChecksum.ChecksumError.outOfBounds
         packetSender.send(request)
         
         XCTAssertEqual(packetSenderDelegate.didCompleteWithErrorCalledCount, 1)
         XCTAssertTrue(packetSenderDelegate.didCompleteWithErrorInvocations[0].packetSender === packetSender)
         XCTAssertEqual(packetSenderDelegate.didCompleteWithErrorInvocations[0].request, request)
         XCTAssertEqual(packetSenderDelegate.didCompleteWithErrorInvocations[0].error, .unableToCreatePacket)
-        XCTAssertEqual(socket.sendCalledCount, 0)
+        XCTAssertEqual(socket.sendCallsCount, 0)
     }
     
-    func test_invalidate() throws {
+    func test_deinit_invalidate() throws {
         let request = Request(destination: Constants.ipv4)
         packetSender.send(request)
 
         packetSender = nil
         
-        XCTAssertEqual(socket.invalidateCalledCount, 1)
+        XCTAssertEqual(socket.invalidateCallsCount, 1)
     }
 }
 

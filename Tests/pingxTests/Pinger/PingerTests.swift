@@ -56,8 +56,8 @@ final class PingerTests: XCTestCase {
 
         pinger.ping(request: request)
         
-        XCTAssertEventuallyEqual(self.packetSender.sendCalledInvocation, [request])
-        XCTAssertEventuallyEqual(self.timerFactory.createDispatchSourceTimerCalledCount, 1)
+        XCTAssertEventuallyEqual(self.packetSender.sendReceivedInvocations, [request])
+        XCTAssertEventuallyEqual(self.timerFactory.createDispatchSourceTimerCallsCount, 1)
     }
     
     func test_start_whenRequestIsOutgoingAndDemandIsGreaterThanZero_returnsIsOutgoingError() {
@@ -66,8 +66,8 @@ final class PingerTests: XCTestCase {
         pinger.ping(request: request)
         pinger.ping(request: request)
         
-        XCTAssertEventuallyEqual(self.packetSender.sendCalledInvocation, [request])
-        XCTAssertEqual(timerFactory.createDispatchSourceTimerCalledCount, 1)
+        XCTAssertEventuallyEqual(self.packetSender.sendReceivedInvocations, [request])
+        XCTAssertEqual(timerFactory.createDispatchSourceTimerCallsCount, 1)
         XCTAssertEqual(pingerDelegate.pingerDidCompleteWithErrorCalledCount, 1)
         XCTAssertTrue(pingerDelegate.pingerDidCompleteWithErrorInvocations[0].pinger === pinger)
         XCTAssertEqual(pingerDelegate.pingerDidCompleteWithErrorInvocations[0].error, .pingInProgress)
@@ -79,8 +79,8 @@ final class PingerTests: XCTestCase {
 
         pinger.ping(request: request)
         
-        XCTAssertEqual(packetSender.sendCalledCount, 0)
-        XCTAssertEqual(timerFactory.createDispatchSourceTimerCalledCount, 0)
+        XCTAssertEqual(packetSender.sendCallsCount, 0)
+        XCTAssertEqual(timerFactory.createDispatchSourceTimerCallsCount, 0)
     }
 
     func test_stop_invalidatesTimer() {
@@ -89,7 +89,7 @@ final class PingerTests: XCTestCase {
         pinger.ping(request: request)
         pinger.stop(request: request)
         
-        XCTAssertTrue(timer.isCancelled)
+        XCTAssertEventuallyEqual(self.timer.stopCallsCount, 1)
     }
     
     func test_stopByRequestId_invalidatesTimer() {
@@ -98,7 +98,7 @@ final class PingerTests: XCTestCase {
         pinger.ping(request: request)
         pinger.stop(requestId: request.id)
         
-        XCTAssertTrue(timer.isCancelled)
+        XCTAssertEventuallyEqual(self.timer.stopCallsCount, 1)
     }
     
     func test_stop_whenResponseReceived_doesNotNotifyDelegate() throws {
@@ -110,6 +110,15 @@ final class PingerTests: XCTestCase {
         
         XCTAssertEqual(pingerDelegate.pingerDidReceiveResponseCalledCount, 0)
         XCTAssertEqual(pingerDelegate.pingerDidCompleteWithErrorCalledCount, 0)
+    }
+    
+    func test_deinit_invalidatesTimer() {
+        let request = Request(destination: Constants.ipv4)
+        pinger.ping(request: request)
+        
+        pinger = nil
+
+        XCTAssertEventuallyEqual(self.timer.stopCallsCount, 1)
     }
 }
 
@@ -141,7 +150,7 @@ extension PingerTests {
         }
         
         XCTAssertEventuallyEqual(self.pingerDelegate.pingerDidReceiveResponseCalledCount, 2)
-        XCTAssertEventuallyEqual(self.packetSender.sendCalledCount, 2)
+        XCTAssertEventuallyEqual(self.packetSender.sendCallsCount, 2)
         XCTAssertEqual(pingerDelegate.pingerDidCompleteWithErrorCalledCount, 0)
     }
 }
@@ -155,10 +164,10 @@ extension PingerTests {
         
         pinger.ping(request: request)
         
-        XCTAssertEventuallyEqual(self.packetSender.sendCalledCount, 1)
+        XCTAssertEventuallyEqual(self.packetSender.sendCallsCount, 1)
         
         for _ in 0..<Int(timeoutInterval) {
-            timerFactory.createDispatchSourceTimerInvocations.last?.eventHandler()
+            timerFactory.createDispatchSourceTimerReceivedInvocations.last?.eventHandler()
         }
         
         XCTAssertEqual(pingerDelegate.pingerDidReceiveResponseCalledCount, 0)
@@ -193,7 +202,7 @@ extension PingerTests {
             XCTAssertEventuallyEqual(request.demand, expectedDemand)
         }
         
-        XCTAssertEventuallyEqual(self.packetSender.sendCalledCount, 2)
+        XCTAssertEventuallyEqual(self.packetSender.sendCallsCount, 2)
     }
 
     func test_error_whenValidationFailed_notifiesDelegateAboutInvalidResponse() {
@@ -247,7 +256,7 @@ extension PingerTests {
         pinger.ping(request: request)
         pinger.packetSender(packetSender: packetSender, request: request, didCompleteWithError: .socketCreationError)
         
-        XCTAssertEventuallyEqual(self.packetSender.sendCalledCount, 2)
+        XCTAssertEventuallyEqual(self.packetSender.sendCallsCount, 2)
     }
 }
 
@@ -305,25 +314,5 @@ private extension PingerTests {
         }
         
         pinger.packetSender(packetSender: packetSender, didReceive: data)
-    }
-}
-
-private extension ICMPHeader {
-    static func sample(
-        type: ICMPType = .echoReply,
-        code: UInt8 = .zero,
-        checksum: UInt16 = .zero,
-        identifier: UInt16 = .zero,
-        sequenceNumber: UInt16 = .zero,
-        payload: Payload = Payload()
-    ) -> ICMPHeader {
-        ICMPHeader(
-            type: type,
-            code: code,
-            checksum: checksum,
-            identifier: identifier,
-            sequenceNumber: sequenceNumber,
-            payload: payload
-        )
     }
 }
