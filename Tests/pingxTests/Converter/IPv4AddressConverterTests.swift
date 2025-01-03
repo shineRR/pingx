@@ -54,7 +54,7 @@ struct IPv4AddressConverterTests {
         ]
     )
     func convert_whenAddressIsInvalid_throwsInvalidAddressError(address: String) {
-        #expect(throws: IPAddressConverterError.invalidAddress) {
+        #expect(throws: IPv4AddressConverterError.invalidAddress) {
             try IPv4AddressConverter().convert(address: address)
         }
     }
@@ -68,7 +68,7 @@ struct IPv4AddressConverterTests {
         ]
     )
     func convert_whenOctetIsOutOfRange_throwsOctetOutOfRangeError(address: String) {
-        #expect(throws: IPAddressConverterError.octetOutOfRange) {
+        #expect(throws: IPv4AddressConverterError.octetOutOfRange) {
             try IPv4AddressConverter().convert(address: address)
         }
     }

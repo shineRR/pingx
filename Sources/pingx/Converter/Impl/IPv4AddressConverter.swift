@@ -38,10 +38,10 @@ public struct IPv4AddressConverter: IPv4AddressStringConverter {
         let components = address.trimmingCharacters(in: Constants.allowedCharacters.inverted)
             .components(separatedBy: ".")
             .compactMap(Int.init)
-        guard components.count == Constants.ipv4OctetsCount else { throw IPAddressConverterError.invalidAddress }
+        guard components.count == Constants.ipv4OctetsCount else { throw IPv4AddressConverterError.invalidAddress }
         
         let ipv4Octets = components.compactMap(UInt8.init)
-        guard ipv4Octets.count == Constants.ipv4OctetsCount else { throw IPAddressConverterError.octetOutOfRange }
+        guard ipv4Octets.count == Constants.ipv4OctetsCount else { throw IPv4AddressConverterError.octetOutOfRange }
 
         return IPv4Address(address: (ipv4Octets[0], ipv4Octets[1], ipv4Octets[2], ipv4Octets[3]))
     }

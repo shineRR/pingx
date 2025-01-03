@@ -24,7 +24,7 @@
 
 import Foundation
 
-public enum IPAddressConverterError: CustomNSError {
+public enum IPv4AddressConverterError: CustomNSError {
     public static let errorDomain = "com.pingx.IPAddressConverterError"
     
     case invalidAddress

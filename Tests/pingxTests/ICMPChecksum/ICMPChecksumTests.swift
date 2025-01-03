@@ -22,7 +22,20 @@
 // SOFTWARE.
 //
 
-// sourcery: AutoMockable
-protocol PacketFactory {
-    func create(identifier: UInt16, type: PacketType) throws -> Packet
+import Testing
+@testable import pingx
+
+@Suite
+struct ICMPChecksumTests {
+    @Test(
+        "Calculate checksum",
+        arguments: [
+            (icmpHeader: ICMPHeader.sample(payload: Payload(timestamp: .zero)), expectedChecksum: UInt16(11945))
+        ]
+    )
+    func calculate(icmpHeader: ICMPHeader, expectedChecksum: UInt16) {
+        let actualChecksum = try? ICMPChecksum()(icmpHeader: icmpHeader)
+
+        #expect(actualChecksum == expectedChecksum)
+    }
 }
