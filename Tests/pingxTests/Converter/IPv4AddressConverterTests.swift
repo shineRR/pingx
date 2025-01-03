@@ -32,7 +32,7 @@ struct IPv4AddressConverterTests {
         arguments: [
             (address: "0.0.0.0", expectedResult: IPv4Address(address: (0, 0, 0, 0))),
             (address: "255.0.1.255", expectedResult: IPv4Address(address: (255, 0, 1, 255))),
-            (address: "255.255.255.255", expectedResult: IPv4Address(address: (255, 255, 255, 255))),
+            (address: "255.255.255.255", expectedResult: IPv4Address(address: (255, 255, 255, 255)))
         ]
     )
     func convert_returnsCorrectValue(address: String, expectedResult: IPv4Address) {
