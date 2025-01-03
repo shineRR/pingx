@@ -22,7 +22,11 @@
 // SOFTWARE.
 //
 
-// sourcery: AutoMockable
-protocol PacketFactory {
-    func create(identifier: UInt16, type: PacketType) throws -> Packet
+import Foundation
+
+public enum IPv4AddressConverterError: CustomNSError {
+    public static let errorDomain = "com.pingx.IPAddressConverterError"
+    
+    case invalidAddress
+    case octetOutOfRange
 }

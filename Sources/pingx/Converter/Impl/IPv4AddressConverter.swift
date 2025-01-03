@@ -22,7 +22,27 @@
 // SOFTWARE.
 //
 
-// sourcery: AutoMockable
-protocol PacketFactory {
-    func create(identifier: UInt16, type: PacketType) throws -> Packet
+import Foundation
+
+public struct IPv4AddressConverter: IPv4AddressStringConverter {
+    private enum Constants {
+        static var ipv4OctetsCount: Int { 4 }
+        static var allowedCharacters: CharacterSet {
+            CharacterSet.decimalDigits.union(CharacterSet(charactersIn: ".-"))
+        }
+    }
+
+    public init() {}
+
+    public func convert(address: String) throws -> IPv4Address {
+        let components = address.trimmingCharacters(in: Constants.allowedCharacters.inverted)
+            .components(separatedBy: ".")
+            .compactMap(Int.init)
+        guard components.count == Constants.ipv4OctetsCount else { throw IPv4AddressConverterError.invalidAddress }
+        
+        let ipv4Octets = components.compactMap(UInt8.init)
+        guard ipv4Octets.count == Constants.ipv4OctetsCount else { throw IPv4AddressConverterError.octetOutOfRange }
+
+        return IPv4Address(address: (ipv4Octets[0], ipv4Octets[1], ipv4Octets[2], ipv4Octets[3]))
+    }
 }
