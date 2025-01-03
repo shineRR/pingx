@@ -10,23 +10,25 @@ on:
     branches: [ "main" ]
 
 jobs:
-  build:
+  setup:
     runs-on: macos-latest
-
     steps:
     - name: 🔨 Select Xcode
       run: xcodes select 16.1
     - name: Checkout Code
       uses: actions/checkout@v4
+
+  build:
+    runs-on: macos-latest
+    needs: setup
+    steps:
     - name: 🛠️ Build
       run: swift build -v
       
   unit-tests:
     runs-on: macos-latest
-
+    needs: setup
     steps:
-    - name: Checkout Code
-      uses: actions/checkout@v4
     - name: 🧪 Run tests
       run: xcodebuild test -scheme "pingx" -testPlan "pingx" -destination "OS=18.1,name=iPhone 16 Pro"
     - name: Upload coverage reports to Codecov
