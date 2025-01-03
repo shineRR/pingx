@@ -14,6 +14,8 @@ jobs:
     runs-on: macos-latest
 
     steps:
+    - name: 🔨 Select Xcode
+      run: xcodes select 16.1
     - name: Checkout Code
       uses: actions/checkout@v4
     - name: 🛠️ Build
@@ -26,7 +28,7 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
     - name: 🧪 Run tests
-      run: xcodebuild test -scheme "pingx" -testPlan "pingx" -destination "OS=17.2,name=iPhone 15 Pro"
+      run: xcodebuild test -scheme "pingx" -testPlan "pingx" -destination "OS=17.2,name=iPhone 1 Pro"
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v4.0.1
       with:
