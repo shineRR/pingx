@@ -24,12 +24,11 @@
 
 import Foundation
 
-public enum PingerError: CustomNSError {
-    public static let errorDomain: String = "com.pingx.PingerError"
-    
-    case pingInProgress
-    case socketFailed
-    case invalidDemand
-    case invalidResponse
+enum PingerError: Error, Equatable {
+    case cancelled
+    case socketCreationError
     case timeout
+    case validationError(ICMPResponseValidationError)
+    case unableToCreatePacket
+    case unknown
 }

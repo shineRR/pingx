@@ -25,66 +25,71 @@
 import Foundation
 
 public final class Request: Identifiable, Equatable {
-    
+
     // MARK: Properties
     
     /// The unique identifier for the request.
-    public let id = CFSwapInt16HostToBig(UInt16.random(in: 0..<UInt16.max))
-    
-    /// The type of protocol used to determine the ping.
-    let type: PacketType = .icmp
-    
+    public let id: UInt16
+
+    /// The type of icmp.
+    let type: ICMPType = .echoRequest
+
     /// The destination IP.
     public let destination: IPv4Address
     
-    /// Timeout interval.
+    /// Timeout interval (in milliseconds).
     public let timeoutInterval: TimeInterval
     
-    /// Time remaining until deadline.
-    private(set) var timeRemainingUntilDeadline: TimeInterval
-    
     /// The desired quantity of ping requests to be sent.
-    public private(set) var demand: Request.Demand
-    
-    let sendTimeout: TimeInterval = .zero
+    private(set) var demand: Request.Demand
     
     // MARK: Initializer
     
     public init(
         destination: IPv4Address,
-        timeoutInterval: TimeInterval = 10,
+        timeoutInterval: TimeInterval = 1000,
         demand: Request.Demand = .max(1)
     ) {
+        self.id = CFSwapInt16HostToBig(UInt16.random(in: 0..<UInt16.max))
         self.destination = destination
         self.timeoutInterval = timeoutInterval
-        self.timeRemainingUntilDeadline = timeoutInterval
+        self.demand = demand
+    }
+
+    init(
+        id: UInt16,
+        destination: IPv4Address,
+        timeoutInterval: TimeInterval,
+        demand: Request.Demand
+    ) {
+        self.id = id
+        self.destination = destination
+        self.timeoutInterval = timeoutInterval
         self.demand = demand
     }
     
     // MARK: Methods
-    
+
     public static func == (lhs: Request, rhs: Request) -> Bool {
         lhs.id == rhs.id && lhs.destination == rhs.destination
     }
-    
-    func setTimeRemainingUntilDeadline(_ timeRemainingUntilDeadline: TimeInterval) {
-        self.timeRemainingUntilDeadline = timeRemainingUntilDeadline
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+        hasher.combine(type)
+        hasher.combine(destination)
+        hasher.combine(timeoutInterval)
     }
-    
-    func setDemand(_ demand: Request.Demand) {
-        self.demand = demand
-    }
-    
-    func decreaseDemandAndUpdateTimeRemainingUntilDeadline() {
-        setDemand(demand - .max(1))
-        setTimeRemainingUntilDeadline(timeoutInterval)
+
+    func decreaseDemand() {
+        demand = demand - .max(1)
     }
 }
 
 // MARK: - Demand
 
 public extension Request {
-    struct Demand: Equatable, Hashable {
+    struct Demand: Equatable {
         
         // MARK: Properties
         

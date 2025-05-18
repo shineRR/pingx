@@ -6,7 +6,7 @@ import Foundation
 
 @testable import pingx
 
-class PingxSocketMock: PingxSocket {
+final class PingxSocketMock: PingxSocket {
 
     // MARK: - send
 
@@ -28,19 +28,6 @@ class PingxSocketMock: PingxSocket {
         } else {
             return sendReturnValue
         }
-    }
-
-    // MARK: - invalidate
-
-    var invalidateCallsCount = 0
-    var invalidateCalled: Bool {
-        return invalidateCallsCount > 0
-    }
-    var invalidateClosure: (() -> Void)?
-
-    func invalidate() {
-        invalidateCallsCount += 1
-        invalidateClosure?()
     }
 
 }

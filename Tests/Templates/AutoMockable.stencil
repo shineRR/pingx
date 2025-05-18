@@ -354,14 +354,22 @@
 
 {% for type in types.protocols where type.based.AutoMockable or type|annotated:"AutoMockable" %}{% if type.name != "AutoMockable" %}
 
+{% if type.name|hasSuffix:"Protocol" %}
+// sourcery:file:{{ type.name|replace:"Protocol","" }}+AutoMockable
+{% else %}
 // sourcery:file:{{ type.name }}+AutoMockable
+{% endif %}
 // swiftlint:disable all
 
 import Foundation
 
 @testable import pingx
 
-class {{ type.name }}Mock: {{ type.name }} {
+{% if type.name|hasSuffix:"Protocol" %}
+final class {{ type.name|replace:"Protocol","" }}Mock: {{ type.name }} {
+{% else %}
+final class {{ type.name }}Mock: {{ type.name }} {
+{% endif %}
 {% for variable in type.allVariables|!definedInExtension %}
     {% if variable.isOptional %}{% call mockOptionalVariable variable %}{% elif variable.isArray or variable.isDictionary %}{% call mockNonOptionalArrayOrDictionaryVariable variable %}{% else %}{% call mockNonOptionalVariable variable %}{% endif %}
 {% endfor %}

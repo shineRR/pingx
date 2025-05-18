@@ -24,7 +24,7 @@
 
 import Foundation
 
-struct ICMPHeader {
+struct ICMPHeader: Equatable {
     
     // MARK: Properties
     
@@ -51,6 +51,17 @@ struct ICMPHeader {
         self.identifier = identifier
         self.sequenceNumber = sequenceNumber
         self.payload = payload
+    }
+    
+    // MARK: Static
+    
+    static func == (lhs: ICMPHeader, rhs: ICMPHeader) -> Bool {
+        lhs.type == rhs.type &&
+        lhs.code == rhs.code &&
+        lhs.checksum == rhs.checksum &&
+        lhs.identifier == rhs.identifier &&
+        lhs.sequenceNumber == rhs.sequenceNumber &&
+        lhs.payload == rhs.payload
     }
     
     // MARK: Methods

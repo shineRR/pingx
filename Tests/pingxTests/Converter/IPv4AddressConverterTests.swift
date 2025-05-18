@@ -28,7 +28,7 @@ import Testing
 @Suite
 struct IPv4AddressConverterTests {
     @Test(
-        "Convert a string value to an IPv4 address",
+        "Converts a string value to an IPv4 address",
         arguments: [
             (address: "0.0.0.0", expectedResult: IPv4Address(address: (0, 0, 0, 0))),
             (address: "255.0.1.255", expectedResult: IPv4Address(address: (255, 0, 1, 255))),
@@ -42,7 +42,7 @@ struct IPv4AddressConverterTests {
     }
     
     @Test(
-        "Convert a string value to an IPv4 address when the address is invalid",
+        "Converts a string value to an IPv4 address when the address is invalid",
         arguments: [
             "",
             "0.0.0",
@@ -60,7 +60,7 @@ struct IPv4AddressConverterTests {
     }
     
     @Test(
-        "Convert a string value to an IPv4 address when an octet is out of range",
+        "Converts a string value to an IPv4 address when an octet is out of range",
         arguments: [
             "-1.0.0.1",
             "1.256.999.1",

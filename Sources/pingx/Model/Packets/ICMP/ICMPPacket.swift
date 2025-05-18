@@ -22,7 +22,7 @@
 // SOFTWARE.
 //
 
-struct ICMPPacket {
+struct ICMPPacket: Equatable {
     
     // MARK: Properties
     

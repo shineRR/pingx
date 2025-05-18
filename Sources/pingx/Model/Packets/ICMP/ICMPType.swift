@@ -22,7 +22,7 @@
 // SOFTWARE.
 //
 
-enum ICMPType: UInt8 {
+enum ICMPType: UInt8, Hashable {
     
     /// Echo reply (used to ping)
     case echoReply = 0

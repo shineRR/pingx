@@ -1,8 +1,14 @@
 import pingx
 
-// MARK: - PresenterImpl
+// MARK: - Presenter
 
-final class PresenterImpl {
+final class Presenter {
+    
+    // MARK: Constants
+
+    enum Constants {
+        static var destinationAddress: IPv4Address { IPv4Address(address: (8, 8, 8, 8)) }
+    }
     
     // MARK: Properties
     
@@ -10,45 +16,14 @@ final class PresenterImpl {
     
     // MARK: Initializer
     
-    init(pinger: Pinger = ContinuousPinger()) {
+    init(pinger: Pinger = Pinger()) {
         self.pinger = pinger
-        pinger.delegate = self
-    }
-}
-
-// MARK: - Presenter
-
-extension PresenterImpl: Presenter {
-    func didTapSendButton() {
-        let request = Request(destination: Constants.destinationAddress, demand: .unlimited)
-        pinger.ping(request: request)
-    }
-}
-
-// MARK: - PingerDelegate
-
-extension PresenterImpl: PingerDelegate {
-    func pinger(
-        _ pinger: Pinger,
-        request: Request,
-        didReceive response: Response
-    ) {
-        print("Destination: \(request.destination)\nResponse: \(response)")
     }
     
-    func pinger(
-        _ pinger: Pinger,
-        request: Request,
-        didCompleteWithError error: PingerError
-    ) {
-        print("Destination: \(request.destination)\nError: \(error)")
-    }
-}
-
-// MARK: - Constants
-
-private extension PresenterImpl {
-    enum Constants {
-        static var destinationAddress: IPv4Address { .init(address: (8, 8, 8, 8)) }
+    func didTapSendButton() {
+        let request = Request(destination: Constants.destinationAddress, demand: .max(1))
+        pinger.ping(request: request) { result in
+            print(result)
+        }
     }
 }

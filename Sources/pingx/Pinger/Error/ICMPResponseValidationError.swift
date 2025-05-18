@@ -22,7 +22,7 @@
 // SOFTWARE.
 //
 
-enum ICMPResponseValidationError: Error {
+enum ICMPResponseValidationError: Error, Equatable {
     var icmpHeader: ICMPHeader? {
         switch self {
         case .checksumMismatch(let icmpHeader),

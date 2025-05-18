@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		146872512D23313B00373862 /* Presenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1468724D2D23313B00373862 /* Presenter.swift */; };
 		146872522D23313B00373862 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 146872472D23313B00373862 /* AppDelegate.swift */; };
 		146872532D23313B00373862 /* PresenterImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1468724E2D23313B00373862 /* PresenterImpl.swift */; };
 		146872542D23313B00373862 /* PingxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1468724C2D23313B00373862 /* PingxView.swift */; };
@@ -24,7 +23,6 @@
 		146872492D23313B00373862 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1468724A2D23313B00373862 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		1468724C2D23313B00373862 /* PingxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingxView.swift; sourceTree = "<group>"; };
-		1468724D2D23313B00373862 /* Presenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Presenter.swift; sourceTree = "<group>"; };
 		1468724E2D23313B00373862 /* PresenterImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterImpl.swift; sourceTree = "<group>"; };
 		1468724F2D23313B00373862 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		16ECE250B3B64C6E99822325 /* Pods-pingx_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pingx_Example.release.xcconfig"; path = "Target Support Files/Pods-pingx_Example/Pods-pingx_Example.release.xcconfig"; sourceTree = "<group>"; };
@@ -72,7 +70,6 @@
 				146872492D23313B00373862 /* Info.plist */,
 				1468724B2D23313B00373862 /* LaunchScreen.xib */,
 				1468724C2D23313B00373862 /* PingxView.swift */,
-				1468724D2D23313B00373862 /* Presenter.swift */,
 				1468724E2D23313B00373862 /* PresenterImpl.swift */,
 				1468724F2D23313B00373862 /* ViewController.swift */,
 			);
@@ -214,7 +211,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				146872512D23313B00373862 /* Presenter.swift in Sources */,
 				146872522D23313B00373862 /* AppDelegate.swift in Sources */,
 				146872532D23313B00373862 /* PresenterImpl.swift in Sources */,
 				146872542D23313B00373862 /* PingxView.swift in Sources */,
@@ -256,7 +252,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -292,7 +288,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

@@ -24,48 +24,60 @@
 
 import Foundation
 
-struct Payload: Equatable {
+// sourcery: AutoMockable
+protocol PingxSocket {
     
     // MARK: Typealias
     
-    typealias PayloadID = (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8)
+    associatedtype Instance: AnyObject = CommandBlock<Data>
+    
+    // MARK: Methods
+    
+    func send(address: CFData, data: CFData, timeout: CFTimeInterval) -> CFSocketError
+}
 
+final class PingxSocketImpl<T: AnyObject>: PingxSocket {
+    
+    // MARK: Typealias
+    
+    typealias Instance = T
+    
     // MARK: Properties
     
-    let identifier: PayloadID
-    let timestamp: CFAbsoluteTime
+    let socket: CFSocket
+    let socketSource: CFRunLoopSource
+    let unmanaged: Unmanaged<Instance>
     
     // MARK: Initializer
     
     init(
-        timestamp: CFAbsoluteTime = CFAbsoluteTimeGetCurrent()
+        socket: CFSocket,
+        socketSource: CFRunLoopSource,
+        unmanaged: Unmanaged<Instance>
     ) {
-        self.identifier = Payload.pingxID
-        self.timestamp = timestamp
+        self.socket = socket
+        self.socketSource = socketSource
+        self.unmanaged = unmanaged
     }
     
-    init(
-        identifier: PayloadID,
-        timestamp: CFAbsoluteTime = CFAbsoluteTimeGetCurrent()
-    ) {
-        self.identifier = identifier
-        self.timestamp = timestamp
+    deinit {
+        invalidate()
     }
     
-    // MARK: Static
+    // MARK: Methods
     
-    // "pingx"
-    static let pingxID: PayloadID = (112, 105, 110, 103, 120, 0, 0, 0)
+    func send(address: CFData, data: CFData, timeout: CFTimeInterval) -> CFSocketError {
+        CFSocketSendData(
+            socket,
+            address,
+            data as CFData,
+            timeout
+        )
+    }
     
-    static func == (lhs: Payload, rhs: Payload) -> Bool {
-        lhs.identifier.0 == rhs.identifier.0 &&
-        lhs.identifier.1 == rhs.identifier.1 &&
-        lhs.identifier.2 == rhs.identifier.2 &&
-        lhs.identifier.3 == rhs.identifier.3 &&
-        lhs.identifier.4 == rhs.identifier.4 &&
-        lhs.identifier.5 == rhs.identifier.5 &&
-        lhs.identifier.6 == rhs.identifier.6 &&
-        lhs.identifier.7 == rhs.identifier.7 &&
-        lhs.timestamp == rhs.timestamp
+    private func invalidate() {
+        CFRunLoopSourceInvalidate(socketSource)
+        CFSocketInvalidate(socket)
+        unmanaged.release()
     }
 }

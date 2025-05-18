@@ -11,7 +11,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        let presenter = PresenterImpl()
+        let presenter = Presenter()
         let viewController = ViewController(presenter: presenter)
         
         window = UIWindow(frame: UIScreen.main.bounds)
