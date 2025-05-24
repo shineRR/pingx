@@ -52,3 +52,32 @@ func expectToEventuallyBeCalled(
         sourceLocation: sourceLocation
     )
 }
+
+func expectToEventuallyNotToBeCalled(
+    actualCallsCount: @autoclosure @escaping () -> Int,
+    expectedCallsCount: Int = 1,
+    timeout: TimeInterval = 0.1,
+    sourceLocation: SourceLocation = #_sourceLocation
+) async {
+    let expectation = XCTestExpectation(description: "Wait for actualCallsCount to reach \(expectedCallsCount)")
+    expectation.isInverted = true
+
+    let task = Task {
+        while actualCallsCount() < expectedCallsCount {
+            if Task.isCancelled { return }
+
+            try? await Task.sleep(nanoseconds: 30_000_000) // 30ms
+        }
+
+        expectation.fulfill()
+    }
+    
+    let result = await XCTWaiter.fulfillment(of: [expectation], timeout: timeout)
+    task.cancel()
+
+    #expect(
+        result == .completed,
+        .__block("Wait for actualCallsCount to not reach \(expectedCallsCount)"),
+        sourceLocation: sourceLocation
+    )
+}

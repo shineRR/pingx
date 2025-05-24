@@ -24,9 +24,7 @@
 
 import Foundation
 
-struct PingSequence: AsyncSequence, AsyncIteratorProtocol {
-    typealias Failure = Never
-
+public struct PingSequence: AsyncSequence, AsyncIteratorProtocol {
     private let request: Request
     private let pinger: AsyncPinger
     
@@ -35,15 +33,14 @@ struct PingSequence: AsyncSequence, AsyncIteratorProtocol {
         self.pinger = pinger
     }
 
-    mutating func next() async throws -> PingerResult? {
+    public mutating func next() async throws -> PingResult? {
         guard request.demand != .none else { return nil }
         
         try Task.checkCancellation()
-        request.decreaseDemand()
         
         let result = await withTaskGroup(
-            of: PingerResult.self,
-            returning: Optional<PingerResult>.self
+            of: AsyncPingerResult.self,
+            returning: Optional<AsyncPingerResult>.self
         ) { [weak pinger, request] taskGroup in
             taskGroup.addTask {
                 do {
@@ -68,9 +65,41 @@ struct PingSequence: AsyncSequence, AsyncIteratorProtocol {
             
             return await taskGroup.next()
         }
-
-        return result
+        
+        request.decreaseDemand()
+        request.incrementSequenceNumber()
+        
+        if case .cancelled = result?.error {
+            request.setDemand(.none)
+        }
+        
+        return result?
+            .map { icmpPacket in
+                Response(
+                    destination: icmpPacket.ipHeader.sourceAddress,
+                    duration: (CFAbsoluteTimeGetCurrent() - icmpPacket.icmpHeader.payload.timestamp) * 1000,
+                    sequenceNumber: icmpPacket.icmpHeader.sequenceNumber
+                )
+            }
+            .mapError { $0.mapToPingError() }
     }
     
-    func makeAsyncIterator() -> PingSequence { self }
+    public func makeAsyncIterator() -> PingSequence { self }
+}
+
+private extension AsyncPingerError {
+    func mapToPingError() -> PingError {
+        switch self {
+        case .cancelled:
+            return .cancelled
+        case .timeout:
+            return .timeout
+        case .socketCreationError:
+            return .socketFailed
+        case .responseStructureInconsistent:
+            return .responseStructureInconsistent
+        case .unableToCreatePacket, .unknown:
+            return .internalError(self)
+        }
+    }
 }

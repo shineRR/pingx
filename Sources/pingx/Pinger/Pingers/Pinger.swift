@@ -23,14 +23,15 @@
 //
 
 protocol PingerProtocol: AnyObject {
-    func ping(request: Request, completion: @escaping (PingerResult) -> Void)
+    func ping(request: Request, completion: @escaping (PingResult) -> Void)
     func cancel(request: Request)
 }
 
 final class Pinger: PingerProtocol {
-    private let asyncPinger: AsyncPinger
+    private let asyncPinger: AsyncPingerProtocol
+    @Atomic private var activeRequests: [UInt16: Request] = [:]
     
-    init(asyncPinger: AsyncPinger) {
+    init(asyncPinger: AsyncPingerProtocol) {
         self.asyncPinger = asyncPinger
     }
     
@@ -40,20 +41,35 @@ final class Pinger: PingerProtocol {
         )
     }
     
+    deinit {
+        cancelAllActiveRequests()
+    }
+    
     func ping(
         request: Request,
-        completion: @escaping (PingerResult) -> Void
+        completion: @escaping (PingResult) -> Void
     ) {
-        Task { [weak asyncPinger] in
-            var sequence = asyncPinger?.ping(request: request)
+        activeRequests = [request.id: request]
+
+        Task { [weak self] in
+            var sequence = self?.asyncPinger.ping(request: request)
 
             while let result = try? await sequence?.next() {
                 completion(result)
             }
+            
+            self?.cancel(request: request)
         }
     }
 
     func cancel(request: Request) {
+        activeRequests.removeValue(forKey: request.id)
         asyncPinger.cancel(request: request)
+    }
+    
+    private func cancelAllActiveRequests() {
+        activeRequests.values.forEach { request in
+            cancel(request: request)
+        }
     }
 }

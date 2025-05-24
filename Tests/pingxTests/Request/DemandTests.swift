@@ -22,47 +22,57 @@
 // SOFTWARE.
 //
 
-import XCTest
+import Testing
+
 @testable import pingx
 
-final class DemandTests: XCTestCase {
-    
-    // MARK: Tests
-    
-    func testDemand_initialize() {
-        var demand: Request.Demand
-        
-        demand = .none
-        XCTAssertEqual(demand.max, .zero)
-        
-        demand = .unlimited
-        XCTAssertNil(demand.max)
-        
-        demand = .max(3)
-        XCTAssertEqual(demand.max, 3)
-        
-        expectFatalError(expectedMessage: "The value cannot be lower than 0.") {
-            demand = .max(-1)
-        }
+@Suite
+struct DemandTests {
+    typealias Demand = Request.Demand
+
+    @Test(
+        "Tests initialization of demand",
+        arguments: [
+            (demand: Demand.none, expectedValue: UInt(0)),
+            (demand: Demand.unlimited, expectedValue: nil),
+            (demand: Demand.max(2), expectedValue: UInt(2)),
+        ]
+    )
+    func demand_initialization(demand: Demand, expectedValue: UInt?) {
+        #expect(demand.max == expectedValue)
     }
     
-    func testDemand_subtraction() {
-        let demandsA: [Request.Demand] = [.unlimited, .unlimited, .unlimited, .max(3), .max(2), .max(2), .max(3)]
-        let demandsB: [Request.Demand] = [.unlimited, .none, .max(3), .max(2), .max(3), .max(2), .unlimited]
-        let demandsC: [Request.Demand] = [.unlimited, .unlimited, .unlimited, .max(1), .none, .none, .none]
-        
-        for (index, (demandA, demandB)) in zip(demandsA, demandsB).enumerated() {
-            XCTAssertEqual(demandA - demandB, demandsC[index])
-        }
-    }  
+    @Test(
+        "Tests demand substraction",
+        arguments: [
+            (lValue: Demand.unlimited, rValue: Demand.unlimited, result: Demand.unlimited),
+            (lValue: Demand.unlimited, rValue: Demand.max(3), result: Demand.unlimited),
+            (lValue: Demand.max(3), rValue: Demand.unlimited, result: Demand.none),
+            (lValue: Demand.max(3), rValue: Demand.max(3), result: Demand.none),
+            (lValue: Demand.max(3), rValue: Demand.max(2), result: Demand.max(1)),
+            (lValue: Demand.max(3), rValue: Demand.max(5), result: Demand.none),
+            (lValue: Demand.none, rValue: Demand.none, result: Demand.none),
+            (lValue: Demand.none, rValue: Demand.max(3), result: Demand.none),
+            (lValue: Demand.max(2), rValue: Demand.none, result: Demand.max(2))
+        ]
+    )
+    func demand_substraction(lValue: Demand, rValue: Demand, result: Demand) {
+        #expect((lValue - rValue) == result)
+    }
     
-    func testDemand_addition() {
-        let demandsA: [Request.Demand] = [.unlimited, .none, .unlimited, .max(1), .max(1), .none, .none]
-        let demandsB: [Request.Demand] = [.unlimited, .unlimited, .none, .max(2), .none, .max(2), .none]
-        let demandsC: [Request.Demand] = [.unlimited, .unlimited, .unlimited, .max(3), .max(1), .max(2), .none]
-        
-        for (index, (demandA, demandB)) in zip(demandsA, demandsB).enumerated() {
-            XCTAssertEqual(demandA + demandB, demandsC[index])
-        }
+    @Test(
+        "Tests demand addition",
+        arguments: [
+            (lValue: Demand.unlimited, rValue: Demand.unlimited, result: Demand.unlimited),
+            (lValue: Demand.unlimited, rValue: Demand.max(3), result: Demand.unlimited),
+            (lValue: Demand.max(3), rValue: Demand.unlimited, result: Demand.unlimited),
+            (lValue: Demand.max(3), rValue: Demand.max(3), result: Demand.max(6)),
+            (lValue: Demand.none, rValue: Demand.none, result: Demand.none),
+            (lValue: Demand.none, rValue: Demand.max(3), result: Demand.max(3)),
+            (lValue: Demand.max(.max - 100), rValue: Demand.max(.max - 50), result: Demand.max(.max))
+        ]
+    )
+    func demand_addition(lValue: Demand, rValue: Demand, result: Demand) {
+        #expect((lValue + rValue) == result)
     }
 }

@@ -31,13 +31,15 @@ extension Request {
         id: Request.ID = .zero,
         destination: IPv4Address = .sample(),
         timeoutInterval: TimeInterval = 1000,
-        demand: Demand = .max(1)
+        demand: Demand = .max(1),
+        sequenceNumber: UInt16 = .zero
     ) -> Request {
         Request(
             id: id,
             destination: destination,
             timeoutInterval: timeoutInterval,
-            demand: demand
+            demand: demand,
+            sequenceNumber: sequenceNumber
         )
     }
 }

@@ -22,4 +22,9 @@
 // SOFTWARE.
 //
 
-typealias PingerResult = Result<ICMPPacket, PingerError>
+extension Result {
+    var error: Failure? {
+        guard case .failure(let error) = self else { return nil }
+        return error
+    }
+}

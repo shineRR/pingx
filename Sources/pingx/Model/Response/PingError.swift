@@ -24,11 +24,47 @@
 
 import Foundation
 
-enum PingerError: Error, Equatable {
+public enum PingError: CustomNSError {
+    public static var errorDomain: String { "pingx.PingError" }
+    
+    public var errorDescription: String? {
+        switch self {
+        case .cancelled:
+            return "The operation was cancelled."
+        case .timeout:
+            return "The ping request timed out."
+        case .socketFailed:
+            return "Failed to open or communicate through the socket."
+        case .responseStructureInconsistent:
+            return "Unexpected or malformed ping response."
+        case .internalError(let error):
+            return "An internal error occurred: \(error.localizedDescription)"
+        }
+    }
+    
+    public var errorCode: Int {
+        switch self {
+        case .cancelled:
+            101
+        case .timeout:
+            102
+        case .socketFailed:
+            103
+        case .responseStructureInconsistent:
+            104
+        case .internalError:
+            105
+        }
+    }
+    
+    public var underlyingError: CustomNSError? {
+        guard case .internalError(let error) = self else { return nil }
+        return error
+    }
+
     case cancelled
-    case socketCreationError
     case timeout
-    case validationError(ICMPResponseValidationError)
-    case unableToCreatePacket
-    case unknown
+    case socketFailed
+    case responseStructureInconsistent
+    case internalError(CustomNSError)
 }

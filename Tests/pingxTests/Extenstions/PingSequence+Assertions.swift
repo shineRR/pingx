@@ -36,13 +36,13 @@ import Foundation
     sequence: PingSequence,
     count: Int = .max,
     timeout: TimeInterval = 50
-) async throws -> [PingerResult] {
+) async throws -> [PingResult] {
     try await withThrowingTaskGroup(
-        of: [PingerResult].self,
-        returning: [PingerResult].self
+        of: [PingResult].self,
+        returning: [PingResult].self
     ) { taskGroup in
         taskGroup.addTask {
-            var values: [PingerResult] = []
+            var values: [PingResult] = []
 
             for try await value in sequence where values.count < count {
                 values.append(value)

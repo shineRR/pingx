@@ -24,16 +24,18 @@
 
 import Foundation
 
-public struct Response {
-    
-    // MARK: Properties
-    
-    /// Destination address.
-    public let destination: IPv4Address
-    
-    /// Time elapsed between the request and the response. (ms)
-    public let duration: TimeInterval
-    
-    /// Sequence number to match request/response.
-    public let sequenceNumber: UInt16
+@testable import pingx
+
+extension Response {
+    static func sample(
+        destination: IPv4Address = .sample(),
+        duration: TimeInterval = .zero,
+        sequenceNumber: UInt16 = .zero
+    ) -> Response {
+        Response(
+            destination: destination,
+            duration: duration,
+            sequenceNumber: sequenceNumber
+        )
+    }
 }

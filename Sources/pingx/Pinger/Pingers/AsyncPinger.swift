@@ -24,6 +24,7 @@
 
 import Foundation
 
+// sourcery: AutoMockable
 protocol AsyncPingerProtocol: AnyObject {
     func ping(request: Request) -> PingSequence
     func cancel(request: Request)
@@ -37,7 +38,7 @@ final class AsyncPinger: AsyncPingerProtocol {
     
     // MARK: Properties
     
-    @Atomic private var completions = [UInt16: (PingerResult) -> Void]()
+    @Atomic private var completions = [UInt16: (AsyncPingerResult) -> Void]()
     private let icmpHeaderFactory: ICMPHeaderFactoryProtocol
     private let icmpPacketExtractor: ICMPPacketExtractorProtocol
     private let socketFactory: SocketFactoryProtocol
@@ -67,9 +68,17 @@ final class AsyncPinger: AsyncPingerProtocol {
         PingSequence(request: request, pinger: self)
     }
     
+    func cancel(request: Request) {
+        invokeCompletion(identifier: request.id, result: .failure(.cancelled))
+    }
+}
+
+// MARK: - Internal API
+
+extension AsyncPinger {
     func ping(
         _ request: Request,
-        completion: @escaping (PingerResult) -> Void
+        completion: @escaping (AsyncPingerResult) -> Void
     ) {
         completions[request.id] = completion
         
@@ -80,7 +89,13 @@ final class AsyncPinger: AsyncPingerProtocol {
             return
         }
 
-        guard let packet = try? icmpHeaderFactory.make(type: request.type, identifier: request.id) else {
+        let packet = try? icmpHeaderFactory.make(
+            type: request.type,
+            identifier: request.id,
+            sequenceNumber: request.sequenceNumber
+        )
+
+        guard let packet else {
             invokeCompletion(identifier: request.id, result: .failure(.unableToCreatePacket))
             return
         }
@@ -95,10 +110,6 @@ final class AsyncPinger: AsyncPingerProtocol {
             invokeCompletion(identifier: request.id, result: .failure(error))
         }
     }
-    
-    func cancel(request: Request) {
-        invokeCompletion(identifier: request.id, result: .failure(.cancelled))
-    }
 }
 
 // MARK: - Private API
@@ -110,12 +121,12 @@ private extension AsyncPinger {
         let command: CommandBlock<Data> = CommandBlock { [weak self] data in
             guard let self else { return }
 
-            let result: PingerResult = { [icmpPacketExtractor] in
+            let result: AsyncPingerResult = { [icmpPacketExtractor] in
                 do {
                     let icmpPacket = try icmpPacketExtractor.extract(from: data)
                     return .success(icmpPacket)
                 } catch let error as ICMPResponseValidationError {
-                    return .failure(.validationError(error))
+                    return .failure(.responseStructureInconsistent(error))
                 } catch {
                     return .failure(.unknown)
                 }
@@ -129,14 +140,14 @@ private extension AsyncPinger {
         pingxSocket = try socketFactory.make(command: command)
     }
     
-    func invokeCompletion(identifier: Request.ID, result: PingerResult) {
+    func invokeCompletion(identifier: Request.ID, result: AsyncPingerResult) {
         let completion = completions.removeValue(forKey: identifier)
         completion?(result)
     }
 }
 
 private extension CFSocketError {
-    func mapToPingerError() -> PingerError? {
+    func mapToPingerError() -> AsyncPingerError? {
         switch self {
         case .error:
             return .unknown
@@ -148,12 +159,12 @@ private extension CFSocketError {
     }
 }
 
-private extension Result<ICMPPacket, PingerError> {
+private extension Result<ICMPPacket, AsyncPingerError> {
     var identifier: Request.ID? {
         switch self {
         case .success(let icmpPacket):
             return icmpPacket.icmpHeader.identifier
-        case .failure(.validationError(let validationError)):
+        case .failure(.responseStructureInconsistent(let validationError)):
             return validationError.icmpHeader?.identifier
         case .failure:
             return nil

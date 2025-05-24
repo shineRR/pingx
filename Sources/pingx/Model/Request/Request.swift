@@ -43,6 +43,9 @@ public final class Request: Identifiable, Equatable {
     /// The desired quantity of ping requests to be sent.
     private(set) var demand: Request.Demand
     
+    /// A sequence number  to help in matching Echo and Echo Reply messages.
+    private(set) var sequenceNumber: UInt16
+    
     // MARK: Initializer
     
     public init(
@@ -54,18 +57,21 @@ public final class Request: Identifiable, Equatable {
         self.destination = destination
         self.timeoutInterval = timeoutInterval
         self.demand = demand
+        self.sequenceNumber = .zero
     }
 
     init(
         id: UInt16,
         destination: IPv4Address,
         timeoutInterval: TimeInterval,
-        demand: Request.Demand
+        demand: Request.Demand,
+        sequenceNumber: UInt16
     ) {
         self.id = id
         self.destination = destination
         self.timeoutInterval = timeoutInterval
         self.demand = demand
+        self.sequenceNumber = sequenceNumber
     }
     
     // MARK: Methods
@@ -81,8 +87,17 @@ public final class Request: Identifiable, Equatable {
         hasher.combine(timeoutInterval)
     }
 
+    func setDemand(_ demand: Demand) {
+        self.demand = demand
+    }
+
     func decreaseDemand() {
         demand = demand - .max(1)
+    }
+    
+    func incrementSequenceNumber() {
+        let (result, overflow) = sequenceNumber.addingReportingOverflow(1)
+        sequenceNumber = overflow ? .zero : result
     }
 }
 
@@ -94,11 +109,11 @@ public extension Request {
         // MARK: Properties
         
         /// Represents the current demand, which indicates the number of values requested.
-        public let max: Int?
+        public let max: UInt?
         
         // MARK: Initializer
         
-        init(max: Int?) {
+        init(max: UInt?) {
             self.max = max
         }
         
@@ -114,10 +129,9 @@ public extension Request {
         
         /// Creates a demand for the given maximum number of elements.
         ///
-        /// - Parameter value: The maximum number of elements. Providing a negative value for this parameter results in a fatal error.
-        public static func max(_ max: Int) -> Demand {
-            guard max >= .zero else { FatalError.trigger("The value cannot be lower than 0.", #file, #line) }
-            return .init(max: max)
+        /// - Parameter value: The maximum number of elements.
+        public static func max(_ max: UInt) -> Demand {
+            Demand(max: max)
         }
         
         static func - (lhs: Request.Demand, rhs: Request.Demand) -> Request.Demand {
@@ -126,20 +140,22 @@ public extension Request {
             } else if rhs == .unlimited {
                 return .none
             } else {
-                return .init(
-                    max: Swift.max(
-                        (lhs.max ?? .zero) - (rhs.max ?? .zero),
-                        .zero
-                    )
-                )
+                let lValue = lhs.max ?? .zero
+                let rValue = rhs.max ?? .zero
+                
+                let (result, overflow) = lValue.subtractingReportingOverflow(rValue)
+                return overflow ? .none : .max(result)
             }
         }
         
         static func + (lhs: Request.Demand, rhs: Request.Demand) -> Request.Demand {
             if lhs == .unlimited || rhs == .unlimited { return .unlimited }
-            return .init(
-                max: (lhs.max ?? .zero) + (rhs.max ?? .zero)
-            )
+            
+            let lValue = lhs.max ?? .zero
+            let rValue = rhs.max ?? .zero
+            
+            let (result, overflow) = lValue.addingReportingOverflow(rValue)
+            return overflow ? .max(.max) : .max(result)
         }
     }
 }

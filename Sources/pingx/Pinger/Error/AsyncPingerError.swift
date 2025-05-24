@@ -22,6 +22,32 @@
 // SOFTWARE.
 //
 
-enum FatalError {
-    static var trigger = Swift.fatalError
+import Foundation
+
+enum AsyncPingerError: CustomNSError {
+    static var errorDomain: String { "pingx.PingerError" }
+
+    public var errorCode: Int {
+        switch self {
+        case .cancelled:
+            101
+        case .socketCreationError:
+            102
+        case .timeout:
+            103
+        case .responseStructureInconsistent:
+            104
+        case .unableToCreatePacket:
+            105
+        case .unknown:
+            106
+        }
+    }
+    
+    case cancelled
+    case socketCreationError
+    case timeout
+    case responseStructureInconsistent(ICMPResponseValidationError)
+    case unableToCreatePacket
+    case unknown
 }

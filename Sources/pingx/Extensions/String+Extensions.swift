@@ -24,8 +24,6 @@
 
 import Foundation
 
-// MARK: - String+Extensions
-
 extension String {
     var socketAddress: Data {
         var socketAddress = sockaddr_in()

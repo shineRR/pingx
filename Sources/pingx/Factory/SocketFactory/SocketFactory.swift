@@ -60,7 +60,7 @@ final class SocketFactory: SocketFactoryProtocol {
             &context
         )
         
-        guard let socket = socket else { throw PingerError.socketCreationError }
+        guard let socket = socket else { throw AsyncPingerError.socketCreationError }
         let native = CFSocketGetNative(socket)
         var value: Int32 = 1
         
@@ -71,14 +71,14 @@ final class SocketFactory: SocketFactoryProtocol {
             &value,
             socklen_t(MemoryLayout.size(ofValue: value))
         ) == .zero else {
-            throw PingerError.socketCreationError
+            throw AsyncPingerError.socketCreationError
         }
         
         guard let socketSource = CFSocketCreateRunLoopSource(
             kCFAllocatorDefault,
             socket,
             .zero
-        ) else { throw PingerError.socketCreationError }
+        ) else { throw AsyncPingerError.socketCreationError }
         
         CFRunLoopAddSource(
             CFRunLoopGetMain(),
