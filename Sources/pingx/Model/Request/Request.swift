@@ -41,7 +41,7 @@ public final class Request: Identifiable, Hashable {
     public let timeoutInterval: TimeInterval
     
     /// The desired quantity of ping requests to be sent.
-    private(set) var demand: Request.Demand
+    public private(set) var demand: Request.Demand
     
     /// A sequence number  to help in matching Echo and Echo Reply messages.
     private(set) var sequenceNumber: UInt16

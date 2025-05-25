@@ -7,24 +7,28 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1467664E2DE31BFD00B89B10 /* CallbackPingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1467664D2DE31BFD00B89B10 /* CallbackPingView.swift */; };
+		146766502DE31C0E00B89B10 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1467664F2DE31C0E00B89B10 /* HomeView.swift */; };
+		146766522DE31D1000B89B10 /* CallbackPingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 146766512DE31D0A00B89B10 /* CallbackPingViewModel.swift */; };
+		146766552DE322BC00B89B10 /* AsyncPingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 146766542DE322BC00B89B10 /* AsyncPingView.swift */; };
+		146766572DE322C200B89B10 /* AsyncPingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 146766562DE322BF00B89B10 /* AsyncPingViewModel.swift */; };
 		146872522D23313B00373862 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 146872472D23313B00373862 /* AppDelegate.swift */; };
-		146872532D23313B00373862 /* PresenterImpl.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1468724E2D23313B00373862 /* PresenterImpl.swift */; };
-		146872542D23313B00373862 /* PingxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1468724C2D23313B00373862 /* PingxView.swift */; };
-		146872552D23313B00373862 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1468724F2D23313B00373862 /* ViewController.swift */; };
 		146872572D23313B00373862 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 1468724B2D23313B00373862 /* LaunchScreen.xib */; };
 		146872582D23313B00373862 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 146872482D23313B00373862 /* Images.xcassets */; };
 		FE343DB94858EB002C0DA943 /* Pods_pingx_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7978D2CD5145265FA076CCB8 /* Pods_pingx_Example.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1467664D2DE31BFD00B89B10 /* CallbackPingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallbackPingView.swift; sourceTree = "<group>"; };
+		1467664F2DE31C0E00B89B10 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		146766512DE31D0A00B89B10 /* CallbackPingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallbackPingViewModel.swift; sourceTree = "<group>"; };
+		146766542DE322BC00B89B10 /* AsyncPingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncPingView.swift; sourceTree = "<group>"; };
+		146766562DE322BF00B89B10 /* AsyncPingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncPingViewModel.swift; sourceTree = "<group>"; };
 		1468721D2D2330C500373862 /* pingx_Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pingx_Example.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		146872472D23313B00373862 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		146872482D23313B00373862 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		146872492D23313B00373862 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1468724A2D23313B00373862 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
-		1468724C2D23313B00373862 /* PingxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingxView.swift; sourceTree = "<group>"; };
-		1468724E2D23313B00373862 /* PresenterImpl.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresenterImpl.swift; sourceTree = "<group>"; };
-		1468724F2D23313B00373862 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		16ECE250B3B64C6E99822325 /* Pods-pingx_Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pingx_Example.release.xcconfig"; path = "Target Support Files/Pods-pingx_Example/Pods-pingx_Example.release.xcconfig"; sourceTree = "<group>"; };
 		27E15695FB38592072BFDC43 /* Pods-pingx.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pingx.release.xcconfig"; path = "Target Support Files/Pods-pingx/Pods-pingx.release.xcconfig"; sourceTree = "<group>"; };
 		7978D2CD5145265FA076CCB8 /* Pods_pingx_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_pingx_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -44,6 +48,42 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		146766482DE31BC200B89B10 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				146766532DE322AE00B89B10 /* AsyncPingView */,
+				1467664A2DE31BD400B89B10 /* HomeView */,
+				146766492DE31BCD00B89B10 /* CallbackPingView */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		146766492DE31BCD00B89B10 /* CallbackPingView */ = {
+			isa = PBXGroup;
+			children = (
+				146766512DE31D0A00B89B10 /* CallbackPingViewModel.swift */,
+				1467664D2DE31BFD00B89B10 /* CallbackPingView.swift */,
+			);
+			path = CallbackPingView;
+			sourceTree = "<group>";
+		};
+		1467664A2DE31BD400B89B10 /* HomeView */ = {
+			isa = PBXGroup;
+			children = (
+				1467664F2DE31C0E00B89B10 /* HomeView.swift */,
+			);
+			path = HomeView;
+			sourceTree = "<group>";
+		};
+		146766532DE322AE00B89B10 /* AsyncPingView */ = {
+			isa = PBXGroup;
+			children = (
+				146766562DE322BF00B89B10 /* AsyncPingViewModel.swift */,
+				146766542DE322BC00B89B10 /* AsyncPingView.swift */,
+			);
+			path = AsyncPingView;
+			sourceTree = "<group>";
+		};
 		146872142D2330C500373862 = {
 			isa = PBXGroup;
 			children = (
@@ -65,13 +105,11 @@
 		146872502D23313B00373862 /* pingx */ = {
 			isa = PBXGroup;
 			children = (
+				146766482DE31BC200B89B10 /* Views */,
 				146872472D23313B00373862 /* AppDelegate.swift */,
 				146872482D23313B00373862 /* Images.xcassets */,
 				146872492D23313B00373862 /* Info.plist */,
 				1468724B2D23313B00373862 /* LaunchScreen.xib */,
-				1468724C2D23313B00373862 /* PingxView.swift */,
-				1468724E2D23313B00373862 /* PresenterImpl.swift */,
-				1468724F2D23313B00373862 /* ViewController.swift */,
 			);
 			path = pingx;
 			sourceTree = "<group>";
@@ -211,10 +249,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1467664E2DE31BFD00B89B10 /* CallbackPingView.swift in Sources */,
+				146766572DE322C200B89B10 /* AsyncPingViewModel.swift in Sources */,
 				146872522D23313B00373862 /* AppDelegate.swift in Sources */,
-				146872532D23313B00373862 /* PresenterImpl.swift in Sources */,
-				146872542D23313B00373862 /* PingxView.swift in Sources */,
-				146872552D23313B00373862 /* ViewController.swift in Sources */,
+				146766522DE31D1000B89B10 /* CallbackPingViewModel.swift in Sources */,
+				146766502DE31C0E00B89B10 /* HomeView.swift in Sources */,
+				146766552DE322BC00B89B10 /* AsyncPingView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -240,9 +280,9 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = GX6R5HS8S3;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = pingx/Info.plist;
@@ -252,7 +292,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -276,9 +316,9 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				CODE_SIGN_STYLE = Automatic;
+				CODE_SIGN_STYLE = Manual;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = GX6R5HS8S3;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = pingx/Info.plist;
@@ -288,7 +328,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 15.6;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

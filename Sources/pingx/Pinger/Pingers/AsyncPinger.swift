@@ -56,7 +56,7 @@ public final class AsyncPinger: AsyncPingerProtocol {
         self.socketFactory = socketFactory
     }
     
-    convenience init() {
+    public convenience init() {
         self.init(
             icmpHeaderFactory: ICMPHeaderFactory(),
             icmpPacketExtractor: ICMPPacketExtractor(),
