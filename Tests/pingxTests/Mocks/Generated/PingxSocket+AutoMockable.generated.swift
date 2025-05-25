@@ -6,7 +6,7 @@ import Foundation
 
 @testable import pingx
 
-final class PingxSocketMock: PingxSocket {
+final class PingxSocketMock: PingxSocketProtocol {
 
     // MARK: - send
 

@@ -24,7 +24,7 @@
 
 import Foundation
 
-public final class Request: Identifiable, Equatable {
+public final class Request: Identifiable, Hashable {
 
     // MARK: Properties
     
@@ -85,6 +85,8 @@ public final class Request: Identifiable, Equatable {
         hasher.combine(type)
         hasher.combine(destination)
         hasher.combine(timeoutInterval)
+        hasher.combine(demand)
+        hasher.combine(sequenceNumber)
     }
 
     func setDemand(_ demand: Demand) {
@@ -104,7 +106,7 @@ public final class Request: Identifiable, Equatable {
 // MARK: - Demand
 
 public extension Request {
-    struct Demand: Equatable {
+    struct Demand: Hashable {
         
         // MARK: Properties
         

@@ -25,7 +25,7 @@
 import Foundation
 
 // sourcery: AutoMockable
-protocol PingxSocket {
+protocol PingxSocketProtocol {
     
     // MARK: Typealias
     
@@ -36,7 +36,7 @@ protocol PingxSocket {
     func send(address: CFData, data: CFData, timeout: CFTimeInterval) -> CFSocketError
 }
 
-final class PingxSocketImpl<T: AnyObject>: PingxSocket {
+final class PingxSocket<T: AnyObject>: PingxSocketProtocol {
     
     // MARK: Typealias
     

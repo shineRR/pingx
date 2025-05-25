@@ -162,3 +162,23 @@ private extension ICMPPackageExtractorTests {
         return data
     }
 }
+
+extension ICMPResponseValidationError: Equatable {
+    public static func == (lhs: ICMPResponseValidationError, rhs: ICMPResponseValidationError) -> Bool {
+        switch (lhs, rhs) {
+        case (.checksumMismatch(let lValue), .checksumMismatch(let rValue)):
+            return lValue == rValue
+        case (.invalidPayload(let lValue), .invalidPayload(let rValue)):
+            return lValue == rValue
+        case (.invalidType(let lValue), .invalidType(let rValue)):
+            return lValue == rValue
+        case (.invalidCode(let lValue), .invalidCode(let rValue)):
+            return lValue == rValue
+        case (.missedIpHeader, .missedIpHeader),
+             (.missedIcmpHeader, .missedIcmpHeader):
+            return true
+        default:
+            return false
+        }
+    }
+}

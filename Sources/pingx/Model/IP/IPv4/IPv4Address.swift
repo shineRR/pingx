@@ -24,7 +24,7 @@
 
 import Foundation
 
-public struct IPv4Address {
+public struct IPv4Address: Hashable {
 
     // MARK: Properties
     
@@ -40,11 +40,9 @@ public struct IPv4Address {
         let converter = IPv4AddressConverter()
         self.address = try converter.convert(address: address).address
     }
-}
-
-// MARK: - Hashable
-
-extension IPv4Address: Hashable {
+    
+    // MARK: Methods
+    
     public static func == (lhs: IPv4Address, rhs: IPv4Address) -> Bool {
         lhs.address.0 == rhs.address.0 &&
         lhs.address.1 == rhs.address.1 &&

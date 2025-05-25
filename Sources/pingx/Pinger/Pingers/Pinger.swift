@@ -22,20 +22,20 @@
 // SOFTWARE.
 //
 
-protocol PingerProtocol: AnyObject {
+public protocol PingerProtocol: AnyObject {
     func ping(request: Request, completion: @escaping (PingResult) -> Void)
     func cancel(request: Request)
 }
 
-final class Pinger: PingerProtocol {
+public final class Pinger: PingerProtocol {
     private let asyncPinger: AsyncPingerProtocol
-    @Atomic private var activeRequests: [UInt16: Request] = [:]
+    @Atomic private var activeTasks: [UInt16: Task<Void, Never>] = [:]
     
     init(asyncPinger: AsyncPingerProtocol) {
         self.asyncPinger = asyncPinger
     }
     
-    convenience init() {
+    public convenience init() {
         self.init(
             asyncPinger: AsyncPinger()
         )
@@ -45,31 +45,34 @@ final class Pinger: PingerProtocol {
         cancelAllActiveRequests()
     }
     
-    func ping(
+    public func ping(
         request: Request,
         completion: @escaping (PingResult) -> Void
     ) {
-        activeRequests = [request.id: request]
+        var task: Task<Void, Never>?
 
-        Task { [weak self] in
+        task = Task { [weak self] in
             var sequence = self?.asyncPinger.ping(request: request)
 
-            while let result = try? await sequence?.next() {
+            while !Task.isCancelled, let result = try? await sequence?.next() as? PingResult {
                 completion(result)
             }
             
             self?.cancel(request: request)
         }
+        
+        activeTasks[request.id] = task
     }
 
-    func cancel(request: Request) {
-        activeRequests.removeValue(forKey: request.id)
+    public func cancel(request: Request) {
         asyncPinger.cancel(request: request)
+
+        let task = activeTasks.removeValue(forKey: request.id)
+        task?.cancel()
     }
     
     private func cancelAllActiveRequests() {
-        activeRequests.values.forEach { request in
-            cancel(request: request)
-        }
+        activeTasks.values.forEach { $0.cancel() }
+        activeTasks.removeAll()
     }
 }

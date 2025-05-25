@@ -25,12 +25,12 @@
 import Foundation
 
 // sourcery: AutoMockable
-protocol AsyncPingerProtocol: AnyObject {
+public protocol AsyncPingerProtocol: AnyObject {
     func ping(request: Request) -> PingSequence
     func cancel(request: Request)
 }
 
-final class AsyncPinger: AsyncPingerProtocol {
+public final class AsyncPinger: AsyncPingerProtocol {
     
     // MARK: Typealias
     
@@ -42,7 +42,7 @@ final class AsyncPinger: AsyncPingerProtocol {
     private let icmpHeaderFactory: ICMPHeaderFactoryProtocol
     private let icmpPacketExtractor: ICMPPacketExtractorProtocol
     private let socketFactory: SocketFactoryProtocol
-    private var pingxSocket: (any PingxSocket)!
+    private var pingxSocket: (any PingxSocketProtocol)!
     
     // MARK: Initializer
     
@@ -64,11 +64,11 @@ final class AsyncPinger: AsyncPingerProtocol {
         )
     }
     
-    func ping(request: Request) -> PingSequence {
+    public func ping(request: Request) -> PingSequence {
         PingSequence(request: request, pinger: self)
     }
     
-    func cancel(request: Request) {
+    public func cancel(request: Request) {
         invokeCompletion(identifier: request.id, result: .failure(.cancelled))
     }
 }

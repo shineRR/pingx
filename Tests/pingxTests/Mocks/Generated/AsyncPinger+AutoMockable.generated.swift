@@ -10,16 +10,16 @@ final class AsyncPingerMock: AsyncPingerProtocol {
 
     // MARK: - ping
 
-    var pingCallsCount = 0
-    var pingCalled: Bool {
+    public var pingCallsCount = 0
+    public var pingCalled: Bool {
         return pingCallsCount > 0
     }
-    var pingReceivedRequest: (Request)?
-    var pingReceivedInvocations: [(Request)] = []
-    var pingReturnValue: PingSequence!
-    var pingClosure: ((Request) -> PingSequence)?
+    public var pingReceivedRequest: (Request)?
+    public var pingReceivedInvocations: [(Request)] = []
+    public var pingReturnValue: PingSequence!
+    public var pingClosure: ((Request) -> PingSequence)?
 
-    func ping(request: Request) -> PingSequence {
+    public func ping(request: Request) -> PingSequence {
         pingCallsCount += 1
         pingReceivedRequest = request
         pingReceivedInvocations.append(request)
@@ -32,15 +32,15 @@ final class AsyncPingerMock: AsyncPingerProtocol {
 
     // MARK: - cancel
 
-    var cancelCallsCount = 0
-    var cancelCalled: Bool {
+    public var cancelCallsCount = 0
+    public var cancelCalled: Bool {
         return cancelCallsCount > 0
     }
-    var cancelReceivedRequest: (Request)?
-    var cancelReceivedInvocations: [(Request)] = []
-    var cancelClosure: ((Request) -> Void)?
+    public var cancelReceivedRequest: (Request)?
+    public var cancelReceivedInvocations: [(Request)] = []
+    public var cancelClosure: ((Request) -> Void)?
 
-    func cancel(request: Request) {
+    public func cancel(request: Request) {
         cancelCallsCount += 1
         cancelReceivedRequest = request
         cancelReceivedInvocations.append(request)

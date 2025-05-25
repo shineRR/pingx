@@ -17,10 +17,10 @@ final class SocketFactoryMock: SocketFactoryProtocol {
     }
     var makeReceivedCommand: (CommandBlock<Data>)?
     var makeReceivedInvocations: [(CommandBlock<Data>)] = []
-    var makeReturnValue: (any PingxSocket)!
-    var makeClosure: ((CommandBlock<Data>) throws -> any PingxSocket)?
+    var makeReturnValue: (any PingxSocketProtocol)!
+    var makeClosure: ((CommandBlock<Data>) throws -> any PingxSocketProtocol)?
 
-    func make(command: CommandBlock<Data>) throws -> any PingxSocket {
+    func make(command: CommandBlock<Data>) throws -> any PingxSocketProtocol {
         makeCallsCount += 1
         makeReceivedCommand = command
         makeReceivedInvocations.append(command)

@@ -22,7 +22,6 @@
 // SOFTWARE.
 //
 
-
 import Foundation
 
 final class MockFunc<Input, Output> {
@@ -60,33 +59,3 @@ final class MockFunc<Input, Output> {
         return output
     }
 }
-
-//// MARK: Syntactic Sugar
-//
-//extension MockFunc {
-//    public mutating func returns(_ value: Output) {
-//        result = { _ in value }
-//    }
-//
-//    public mutating func returns() where Output == Void {
-//        result = { _ in () }
-//    }
-//
-//    public mutating func returnsNil<T>()
-//        where Output == Optional<T> {
-//
-//        result = { _ in nil }
-//    }
-//
-//    public mutating func succeeds<T, Error>(_ value: T)
-//        where Output == Result<T, Error> {
-//
-//        result = { _ in .success(value) }
-//    }
-//
-//    public mutating func fails<T, Error>(_ error: Error)
-//        where Output == Result<T, Error> {
-//
-//        result = { _ in .failure(error) }
-//    }
-//}

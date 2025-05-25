@@ -26,13 +26,13 @@ import Foundation
 
 // sourcery: AutoMockable
 protocol SocketFactoryProtocol {
-    func make(command: CommandBlock<Data>) throws -> any PingxSocket
+    func make(command: CommandBlock<Data>) throws -> any PingxSocketProtocol
 }
 
 final class SocketFactory: SocketFactoryProtocol {
     typealias SocketCommand = CommandBlock<Data>
     
-    func make(command: SocketCommand) throws -> any PingxSocket {
+    func make(command: SocketCommand) throws -> any PingxSocketProtocol {
         let unmanaged = Unmanaged.passRetained(command)
         var context = CFSocketContext(
             version: .zero,
@@ -86,7 +86,7 @@ final class SocketFactory: SocketFactoryProtocol {
             .commonModes
         )
         
-        return PingxSocketImpl(
+        return PingxSocket(
             socket: socket,
             socketSource: socketSource,
             unmanaged: unmanaged
