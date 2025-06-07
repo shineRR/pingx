@@ -58,11 +58,11 @@ let request = Request(
     destination: destination,   // Destination
     timeoutInterval: 1500,      // 1.5 seconds timeout (1 second by default)
     demand: .max(5)             // Send 5 ping requests (default is 1).
-                                // Available options for demand:
+)                               // Available options for demand:
                                 // - .none: send no requests
                                 // - .max(n): send up to n requests
                                 // - .unlimited: send unlimited requests
-)
+
 ```
 
 ### Asynchronous Pinging
