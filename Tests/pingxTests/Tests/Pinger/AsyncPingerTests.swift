@@ -34,7 +34,7 @@ struct AsyncPingerTests {
     private let icmpHeaderFactory: ICMPHeaderFactoryMock
     private let icmpPacketExtractor: ICMPPacketExtractorMock
     private let socketFactory: SocketFactoryMock
-    private let pinger: AsyncPinger
+    private var pinger: AsyncPinger
     
     init() {
         self.socket = PingxSocketMock()
@@ -50,6 +50,7 @@ struct AsyncPingerTests {
         self.socketFactory.makeReturnValue = socket
 
         self.pinger = AsyncPinger(
+            configuration: .default,
             icmpHeaderFactory: icmpHeaderFactory,
             icmpPacketExtractor: icmpPacketExtractor,
             socketFactory: socketFactory
@@ -118,7 +119,7 @@ struct AsyncPingerTests {
         #expect(socket.sendCallsCount == 1)
         #expect(socket.sendReceivedArguments?.address == request.destination.socketAddress as CFData)
         #expect(socket.sendReceivedArguments?.data == icmpHeader.data as CFData)
-        #expect(socket.sendReceivedArguments?.timeout == request.timeoutInterval)
+        #expect(socket.sendReceivedArguments?.timeout == request.timeoutInterval.milliseconds)
     }
     
     @Test("When request failed, it emits pingError.internalError")
@@ -249,7 +250,7 @@ struct AsyncPingerTests {
     
     @Test("When request timed out, it emits pingerError.timeout")
     func send_whenRequestIsTimedOut_emitsTimedOutError() async throws {
-        let request = Request.sample(timeoutInterval: 1)
+        let request = Request.sample(timeoutInterval: .milliseconds(1))
 
         let sequence = pinger.ping(request: request)
         
@@ -304,7 +305,46 @@ struct AsyncPingerTests {
                     socketFactory.makeReceivedCommand?.closure(Data())
                 }
             },
-            timeout: 200
+            timeout: .milliseconds(200)
+        )
+    }
+    
+    @Test("When interval between requests is greater than 0, doesn't call the second ping immediately")
+    func send_whenIntervalBetweenRequestsIsGreaterThanZero_doesNotCallSendBeforeIntervalIsReached() async throws {
+        let pinger = AsyncPinger(
+            configuration: PingConfiguration(intervalBetweenRequests: .milliseconds(100)),
+            icmpHeaderFactory: icmpHeaderFactory,
+            icmpPacketExtractor: icmpPacketExtractor,
+            socketFactory: socketFactory
+        )
+        let request = Request.sample(demand: .unlimited)
+        let sequence = pinger.ping(request: request)
+        let response = Response.sample(
+            destination: request.destination,
+            sequenceNumber: request.sequenceNumber
+        )
+        
+        try await checkThat(
+            sequence: sequence,
+            emits: [.success(response)],
+            after: {
+                await expectToEventuallyBeCalled(
+                    actualCallsCount: socket.sendCallsCount,
+                    expectedCallsCount: 1
+                )
+                socketFactory.makeReceivedCommand?.closure(Data())
+
+                await expectToEventuallyNotToBeCalled(
+                    actualCallsCount: socket.sendCallsCount,
+                    expectedCallsCount: 2,
+                    timeout: 0.1
+                )
+                await expectToEventuallyBeCalled(
+                    actualCallsCount: socket.sendCallsCount,
+                    expectedCallsCount: 2
+                )
+            },
+            timeout: .milliseconds(200)
         )
     }
     
@@ -323,7 +363,7 @@ struct AsyncPingerTests {
                 )
                 pinger.cancel(requestId: request.id)
             },
-            timeout: 200
+            timeout: .milliseconds(200)
         )
     }
     
@@ -347,7 +387,7 @@ struct AsyncPingerTests {
                     expectedCallsCount: 2
                 )
             },
-            timeout: 200
+            timeout: .milliseconds(200)
         )
     }
 }
@@ -357,7 +397,7 @@ private extension AsyncPingerTests {
         sequence: PingSequence,
         emits expectedValues: [PingResult],
         after operation: (() async -> Void)? = nil,
-        timeout: TimeInterval = 50,
+        timeout: Interval = .milliseconds(50),
         sourceLocation: SourceLocation = #_sourceLocation
     ) async throws {
         let expectation = XCTestExpectation(
@@ -382,7 +422,7 @@ private extension AsyncPingerTests {
         
         let result = await XCTWaiter.fulfillment(
             of: [expectation],
-            timeout: timeout * 1000
+            timeout: timeout.seconds
         )
         #expect(result == .completed)
     }

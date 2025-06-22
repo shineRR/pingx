@@ -28,16 +28,18 @@ public protocol PingerProtocol: AnyObject {
 }
 
 public final class Pinger: PingerProtocol {
-    private let asyncPinger: AsyncPingerProtocol
     @Atomic private var activeTasks: [UInt16: Task<Void, Never>] = [:]
+    private let asyncPinger: AsyncPingerProtocol
     
     init(asyncPinger: AsyncPingerProtocol) {
         self.asyncPinger = asyncPinger
     }
     
-    public convenience init() {
+    public convenience init(
+        configuration: PingConfiguration = .default
+    ) {
         self.init(
-            asyncPinger: AsyncPinger()
+            asyncPinger: AsyncPinger(configuration: configuration)
         )
     }
     

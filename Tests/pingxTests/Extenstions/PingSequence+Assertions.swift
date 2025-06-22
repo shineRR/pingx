@@ -35,7 +35,7 @@ import Foundation
 @discardableResult func collectValuesFromPingSequence(
     sequence: PingSequence,
     count: Int = .max,
-    timeout: TimeInterval = 50
+    timeout: Interval = .milliseconds(50)
 ) async throws -> [PingResult] {
     try await withThrowingTaskGroup(
         of: [PingResult].self,
@@ -52,7 +52,7 @@ import Foundation
         }
         
         taskGroup.addTask {
-            try await Task.sleep(nanoseconds: UInt64(timeout * 1_000_000))
+            try await Task.sleep(nanoseconds: UInt64(timeout.nanoseconds))
             return []
         }
         
@@ -64,7 +64,7 @@ import Foundation
 
 func observerPingSequenceWithoutReturningResult(
     sequence: PingSequence,
-    timeout: TimeInterval = 50
+    timeout: Interval = .milliseconds(50)
 ) async throws {
     try await collectValuesFromPingSequence(
         sequence: sequence,

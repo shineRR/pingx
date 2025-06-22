@@ -37,8 +37,8 @@ public struct Request: Identifiable, Hashable, Sendable {
     /// The destination IP.
     public let destination: IPv4Address
     
-    /// Timeout interval (in milliseconds).
-    public let timeoutInterval: TimeInterval
+    /// Timeout interval.
+    public let timeoutInterval: Interval
     
     /// The desired quantity of ping requests to be sent.
     public private(set) var demand: Request.Demand
@@ -50,7 +50,7 @@ public struct Request: Identifiable, Hashable, Sendable {
     
     public init(
         destination: IPv4Address,
-        timeoutInterval: TimeInterval = 1000,
+        timeoutInterval: Interval = .seconds(1),
         demand: Request.Demand = .max(1)
     ) {
         self.id = CFSwapInt16HostToBig(UInt16.random(in: 0..<UInt16.max))
@@ -63,7 +63,7 @@ public struct Request: Identifiable, Hashable, Sendable {
     init(
         id: UInt16,
         destination: IPv4Address,
-        timeoutInterval: TimeInterval,
+        timeoutInterval: Interval,
         demand: Request.Demand,
         sequenceNumber: UInt16
     ) {

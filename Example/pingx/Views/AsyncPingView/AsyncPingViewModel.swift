@@ -41,7 +41,9 @@ final class AsyncPingViewModel: ObservableObject {
     
     convenience init() {
         self.init(
-            pinger: AsyncPinger()
+            pinger: AsyncPinger(
+                configuration: PingConfiguration(intervalBetweenRequests: .milliseconds(500))
+            )
         )
     }
     

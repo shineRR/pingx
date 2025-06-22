@@ -36,6 +36,7 @@ public final class AsyncPinger: AsyncPingerProtocol {
     
     @Atomic private var pingxSocket: (any PingxSocketProtocol)!
     @Atomic private var completions = [UInt16: (AsyncPingerResult) -> Void]()
+    private let configuration: PingConfiguration
     private let icmpHeaderFactory: ICMPHeaderFactoryProtocol
     private let icmpPacketExtractor: ICMPPacketExtractorProtocol
     private let socketFactory: SocketFactoryProtocol
@@ -43,17 +44,22 @@ public final class AsyncPinger: AsyncPingerProtocol {
     // MARK: Initializer
     
     init(
+        configuration: PingConfiguration,
         icmpHeaderFactory: ICMPHeaderFactoryProtocol,
         icmpPacketExtractor: ICMPPacketExtractorProtocol,
         socketFactory: SocketFactoryProtocol
     ) {
+        self.configuration = configuration
         self.icmpHeaderFactory = icmpHeaderFactory
         self.icmpPacketExtractor = icmpPacketExtractor
         self.socketFactory = socketFactory
     }
     
-    public convenience init() {
+    public convenience init(
+        configuration: PingConfiguration = .default
+    ) {
         self.init(
+            configuration: configuration,
             icmpHeaderFactory: ICMPHeaderFactory(),
             icmpPacketExtractor: ICMPPacketExtractor(),
             socketFactory: SocketFactory()
@@ -61,7 +67,7 @@ public final class AsyncPinger: AsyncPingerProtocol {
     }
     
     public func ping(request: Request) -> PingSequence {
-        PingSequence(request: request, pinger: self)
+        PingSequence(configuration: configuration, pinger: self, request: request)
     }
     
     public func cancel(requestId: Request.ID) {
@@ -99,7 +105,7 @@ extension AsyncPinger {
         let cfSocketError = pingxSocket.send(
             address: request.destination.socketAddress as CFData,
             data: packet.data as CFData,
-            timeout: request.timeoutInterval
+            timeout: request.timeoutInterval.milliseconds
         )
         
         if let error = cfSocketError.mapToPingerError() {

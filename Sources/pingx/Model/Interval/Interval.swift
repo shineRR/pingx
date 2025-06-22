@@ -24,22 +24,41 @@
 
 import Foundation
 
-@testable import pingx
+public enum Interval: Sendable, Hashable {
+    case seconds(TimeInterval)
+    case milliseconds(TimeInterval)
+    case nanoseconds(TimeInterval)
+    
+    var seconds: TimeInterval {
+        switch self {
+        case .seconds(let value):
+            return value
+        case .milliseconds(let value):
+            return value / 1_000
+        case .nanoseconds(let value):
+            return value / 1_000_000_000
+        }
+    }
 
-extension Request {
-    static func sample(
-        id: Request.ID = .zero,
-        destination: IPv4Address = .sample(),
-        timeoutInterval: Interval = .seconds(1),
-        demand: Demand = .max(1),
-        sequenceNumber: UInt16 = .zero
-    ) -> Request {
-        Request(
-            id: id,
-            destination: destination,
-            timeoutInterval: timeoutInterval,
-            demand: demand,
-            sequenceNumber: sequenceNumber
-        )
+    var milliseconds: TimeInterval {
+        switch self {
+        case .seconds(let value):
+            return value * 1_000
+        case .milliseconds(let value):
+            return value
+        case .nanoseconds(let value):
+            return value / 1_000_000
+        }
+    }
+    
+    var nanoseconds: TimeInterval {
+        switch self {
+        case .seconds(let value):
+            return value * 1_000_000_000
+        case .milliseconds(let value):
+            return value * 1_000_000
+        case .nanoseconds(let value):
+            return value
+        }
     }
 }

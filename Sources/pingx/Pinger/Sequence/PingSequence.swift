@@ -25,26 +25,52 @@
 import Foundation
 
 public struct PingSequence: AsyncSequence, AsyncIteratorProtocol {
-    private var request: Request
+    private let configuration: PingConfiguration
     private let pinger: AsyncPinger
+    private var request: Request
+    private var shouldDelayNextPing = false
     
-    init(request: Request, pinger: AsyncPinger) {
-        self.request = request
+    init(
+        configuration: PingConfiguration,
+        pinger: AsyncPinger,
+        request: Request
+    ) {
+        self.configuration = configuration
         self.pinger = pinger
+        self.request = request
     }
 
     public mutating func next() async throws -> PingResult? {
         guard request.demand != .none else { return nil }
-        
         try Task.checkCancellation()
+
+        if shouldDelayNextPing {
+            try await Task.sleep(nanoseconds: UInt64(configuration.intervalBetweenRequests.nanoseconds))
+            try Task.checkCancellation()
+        } else {
+            shouldDelayNextPing = true
+        }
         
-        let result = await withTaskGroup(
+        let result = await performPingWithTimeout()
+        
+        request.decreaseDemand()
+        request.incrementSequenceNumber()
+        
+        if case .cancelled = result?.error {
+            request.setDemand(.none)
+        }
+        
+        return result?.mapToPingResult()
+    }
+    
+    private func performPingWithTimeout() async -> AsyncPingerResult? {
+        await withTaskGroup(
             of: AsyncPingerResult.self,
             returning: Optional<AsyncPingerResult>.self
         ) { [weak pinger, request] taskGroup in
             taskGroup.addTask {
                 do {
-                    try await Task.sleep(nanoseconds: UInt64(request.timeoutInterval * 1_000_000))
+                    try await Task.sleep(nanoseconds: UInt64(request.timeoutInterval.nanoseconds))
                 } catch {}
                 
                 return .failure(.timeout)
@@ -65,26 +91,22 @@ public struct PingSequence: AsyncSequence, AsyncIteratorProtocol {
             
             return await taskGroup.next()
         }
-        
-        request.decreaseDemand()
-        request.incrementSequenceNumber()
-        
-        if case .cancelled = result?.error {
-            request.setDemand(.none)
-        }
-        
-        return result?
-            .map { icmpPacket in
-                Response(
-                    destination: icmpPacket.ipHeader.sourceAddress,
-                    duration: (CFAbsoluteTimeGetCurrent() - icmpPacket.icmpHeader.payload.timestamp) * 1000,
-                    sequenceNumber: icmpPacket.icmpHeader.sequenceNumber
-                )
-            }
-            .mapError { $0.mapToPingError() }
     }
     
     public func makeAsyncIterator() -> PingSequence { self }
+}
+
+private extension AsyncPingerResult {
+    func mapToPingResult() -> PingResult {
+        map { icmpPacket in
+            Response(
+                destination: icmpPacket.ipHeader.sourceAddress,
+                duration: (CFAbsoluteTimeGetCurrent() - icmpPacket.icmpHeader.payload.timestamp) * 1000,
+                sequenceNumber: icmpPacket.icmpHeader.sequenceNumber
+            )
+        }
+        .mapError { $0.mapToPingError() }
+    }
 }
 
 private extension AsyncPingerError {

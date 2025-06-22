@@ -24,22 +24,16 @@
 
 import Foundation
 
-@testable import pingx
+public struct PingConfiguration {
+    public let intervalBetweenRequests: Interval
+    
+    public init(intervalBetweenRequests: Interval) {
+        self.intervalBetweenRequests = intervalBetweenRequests
+    }
+}
 
-extension Request {
-    static func sample(
-        id: Request.ID = .zero,
-        destination: IPv4Address = .sample(),
-        timeoutInterval: Interval = .seconds(1),
-        demand: Demand = .max(1),
-        sequenceNumber: UInt16 = .zero
-    ) -> Request {
-        Request(
-            id: id,
-            destination: destination,
-            timeoutInterval: timeoutInterval,
-            demand: demand,
-            sequenceNumber: sequenceNumber
-        )
+public extension PingConfiguration {
+    static var `default`: PingConfiguration {
+        PingConfiguration(intervalBetweenRequests: .milliseconds(0))
     }
 }

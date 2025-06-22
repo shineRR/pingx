@@ -41,7 +41,9 @@ final class CallbackPingViewModel: ObservableObject {
     
     convenience init() {
         self.init(
-            pinger: Pinger()
+            pinger: Pinger(
+                configuration: PingConfiguration(intervalBetweenRequests: .milliseconds(500))
+            )
         )
     }
     
