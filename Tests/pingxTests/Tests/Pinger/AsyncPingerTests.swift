@@ -287,7 +287,7 @@ struct AsyncPingerTests {
             ICMPPacket.sample(
                 icmpHeader: .sample(
                     identifier: request.id,
-                    sequenceNumber: request.sequenceNumber
+                    sequenceNumber: UInt16(icmpPacketExtractor.extractCallsCount - 1)
                 )
             )
         }
@@ -321,7 +321,7 @@ struct AsyncPingerTests {
                     actualCallsCount: socket.sendCallsCount,
                     expectedCallsCount: 1
                 )
-                pinger.cancel(request: request)
+                pinger.cancel(requestId: request.id)
             },
             timeout: 200
         )
@@ -340,7 +340,7 @@ struct AsyncPingerTests {
                     actualCallsCount: socket.sendCallsCount,
                     expectedCallsCount: 1
                 )
-                pinger.cancel(request: request)
+                pinger.cancel(requestId: request.id)
 
                 await expectToEventuallyNotToBeCalled(
                     actualCallsCount: socket.sendCallsCount,

@@ -26,34 +26,23 @@ import Foundation
 
 // sourcery: AutoMockable
 protocol PingxSocketProtocol {
-    
-    // MARK: Typealias
-    
-    associatedtype Instance: AnyObject = CommandBlock<Data>
-    
-    // MARK: Methods
-    
     func send(address: CFData, data: CFData, timeout: CFTimeInterval) -> CFSocketError
 }
 
-final class PingxSocket<T: AnyObject>: PingxSocketProtocol {
-    
-    // MARK: Typealias
-    
-    typealias Instance = T
+final class PingxSocket<OutputType: AnyObject>: PingxSocketProtocol {
     
     // MARK: Properties
     
     let socket: CFSocket
     let socketSource: CFRunLoopSource
-    let unmanaged: Unmanaged<Instance>
+    let unmanaged: Unmanaged<OutputType>
     
     // MARK: Initializer
     
     init(
         socket: CFSocket,
         socketSource: CFRunLoopSource,
-        unmanaged: Unmanaged<Instance>
+        unmanaged: Unmanaged<OutputType>
     ) {
         self.socket = socket
         self.socketSource = socketSource

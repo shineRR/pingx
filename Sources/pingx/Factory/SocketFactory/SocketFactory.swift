@@ -30,9 +30,7 @@ protocol SocketFactoryProtocol {
 }
 
 final class SocketFactory: SocketFactoryProtocol {
-    typealias SocketCommand = CommandBlock<Data>
-    
-    func make(command: SocketCommand) throws -> any PingxSocketProtocol {
+    func make(command: CommandBlock<Data>) throws -> any PingxSocketProtocol {
         let unmanaged = Unmanaged.passRetained(command)
         var context = CFSocketContext(
             version: .zero,
@@ -53,7 +51,7 @@ final class SocketFactory: SocketFactoryProtocol {
                     (callbackType as CFSocketCallBackType) == CFSocketCallBackType.dataCallBack
                 else { return }
                 
-                let commandBlock = Unmanaged<SocketCommand>.fromOpaque(info).takeUnretainedValue()
+                let commandBlock = Unmanaged<CommandBlock<Data>>.fromOpaque(info).takeUnretainedValue()
                 let cfdata = Unmanaged<CFData>.fromOpaque(data).takeUnretainedValue()
                 commandBlock.closure(cfdata as Data)
             },

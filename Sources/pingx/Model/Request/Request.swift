@@ -24,7 +24,7 @@
 
 import Foundation
 
-public final class Request: Identifiable, Hashable {
+public struct Request: Identifiable, Hashable, Sendable {
 
     // MARK: Properties
     
@@ -89,15 +89,15 @@ public final class Request: Identifiable, Hashable {
         hasher.combine(sequenceNumber)
     }
 
-    func setDemand(_ demand: Demand) {
+    mutating func setDemand(_ demand: Demand) {
         self.demand = demand
     }
 
-    func decreaseDemand() {
+    mutating func decreaseDemand() {
         demand = demand - .max(1)
     }
     
-    func incrementSequenceNumber() {
+    mutating func incrementSequenceNumber() {
         let (result, overflow) = sequenceNumber.addingReportingOverflow(1)
         sequenceNumber = overflow ? .zero : result
     }
@@ -106,7 +106,7 @@ public final class Request: Identifiable, Hashable {
 // MARK: - Demand
 
 public extension Request {
-    struct Demand: Hashable {
+    struct Demand: Hashable, Sendable {
         
         // MARK: Properties
         

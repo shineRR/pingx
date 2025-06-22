@@ -70,7 +70,7 @@ final class CallbackPingViewModel: ObservableObject {
         isPingActive = false
 
         guard let activeRequest else { return }
-        pinger.cancel(request: activeRequest)
+        pinger.cancel(requestId: activeRequest.id)
 
         self.activeRequest = nil
     }

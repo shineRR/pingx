@@ -24,7 +24,7 @@
 
 public protocol PingerProtocol: AnyObject {
     func ping(request: Request, completion: @escaping (PingResult) -> Void)
-    func cancel(request: Request)
+    func cancel(requestId: Request.ID)
 }
 
 public final class Pinger: PingerProtocol {
@@ -58,16 +58,16 @@ public final class Pinger: PingerProtocol {
                 completion(result)
             }
             
-            self?.cancel(request: request)
+            self?.cancel(requestId: request.id)
         }
         
         activeTasks[request.id] = task
     }
 
-    public func cancel(request: Request) {
-        asyncPinger.cancel(request: request)
+    public func cancel(requestId: Request.ID) {
+        asyncPinger.cancel(requestId: requestId)
 
-        let task = activeTasks.removeValue(forKey: request.id)
+        let task = activeTasks.removeValue(forKey: requestId)
         task?.cancel()
     }
     

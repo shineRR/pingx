@@ -25,7 +25,7 @@
 import Foundation
 
 public struct PingSequence: AsyncSequence, AsyncIteratorProtocol {
-    private let request: Request
+    private var request: Request
     private let pinger: AsyncPinger
     
     init(request: Request, pinger: AsyncPinger) {
@@ -60,7 +60,7 @@ public struct PingSequence: AsyncSequence, AsyncIteratorProtocol {
             
             defer {
                 taskGroup.cancelAll()
-                pinger?.cancel(request: request)
+                pinger?.cancel(requestId: request.id)
             }
             
             return await taskGroup.next()

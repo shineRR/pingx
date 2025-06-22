@@ -24,7 +24,7 @@
 
 import Foundation
 
-public struct IPv4Address: Hashable {
+public struct IPv4Address: Hashable, Sendable {
 
     // MARK: Properties
     

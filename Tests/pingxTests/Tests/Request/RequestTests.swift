@@ -41,7 +41,7 @@ struct RequestTests {
         initialDemand: Request.Demand,
         expectedDemand: Request.Demand
     ) {
-        let request = Request.sample(demand: initialDemand)
+        var request = Request.sample(demand: initialDemand)
         
         request.decreaseDemand()
 
@@ -61,7 +61,7 @@ struct RequestTests {
         initialSequenceNumber: UInt16,
         expectedSequenceNumber: UInt16
     ) {
-        let request = Request.sample(sequenceNumber: initialSequenceNumber)
+        var request = Request.sample(sequenceNumber: initialSequenceNumber)
         
         request.incrementSequenceNumber()
 

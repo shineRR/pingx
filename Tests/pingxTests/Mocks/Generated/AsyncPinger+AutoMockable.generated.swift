@@ -36,15 +36,15 @@ final class AsyncPingerMock: AsyncPingerProtocol {
     public var cancelCalled: Bool {
         return cancelCallsCount > 0
     }
-    public var cancelReceivedRequest: (Request)?
-    public var cancelReceivedInvocations: [(Request)] = []
-    public var cancelClosure: ((Request) -> Void)?
+    public var cancelReceivedRequestId: (Request.ID)?
+    public var cancelReceivedInvocations: [(Request.ID)] = []
+    public var cancelClosure: ((Request.ID) -> Void)?
 
-    public func cancel(request: Request) {
+    public func cancel(requestId: Request.ID) {
         cancelCallsCount += 1
-        cancelReceivedRequest = request
-        cancelReceivedInvocations.append(request)
-        cancelClosure?(request)
+        cancelReceivedRequestId = requestId
+        cancelReceivedInvocations.append(requestId)
+        cancelClosure?(requestId)
     }
 
 }
