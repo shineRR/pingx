@@ -25,14 +25,27 @@
 import SwiftUI
 
 struct HomeView: View {
+    private enum Destination: Hashable {
+        case asyncPing
+        case callbackPing
+    }
+
+    @State private var navigationPath = NavigationPath()
+    
     var body: some View {
-        NavigationView {
-            VStack {
-                NavigationLink("Open callback ping view", destination: CallbackPingView())
-                    .padding()
-                
-                NavigationLink("Open async ping view", destination: AsyncPingView())
-                    .padding()
+        NavigationStack(path: $navigationPath) {
+            List {
+                NavigationLink("AsyncPinger", value: Destination.asyncPing)
+                NavigationLink("Pinger", value: Destination.callbackPing)
+            }
+            .navigationTitle("pingx")
+            .navigationDestination(for: Destination.self) { destination in
+                switch destination {
+                case .asyncPing:
+                    AsyncPingView()
+                case .callbackPing:
+                    CallbackPingView()
+                }
             }
         }
     }
