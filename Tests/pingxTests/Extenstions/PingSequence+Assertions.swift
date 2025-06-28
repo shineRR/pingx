@@ -33,7 +33,7 @@ import Foundation
 ///   - timeout: Time limit for collecting values (in milliseconds)
 /// - Returns: An array of collected elements
 @discardableResult func collectValuesFromPingSequence(
-    sequence: PingSequence,
+    sequence: some PingSequenceProtocol,
     count: Int = .max,
     timeout: Interval = .milliseconds(50)
 ) async throws -> [PingResult] {
@@ -61,7 +61,7 @@ import Foundation
 }
 
 func observerPingSequenceWithoutReturningResult(
-    sequence: PingSequence,
+    sequence: some PingSequenceProtocol,
     timeout: Interval = .milliseconds(50)
 ) async throws {
     try await collectValuesFromPingSequence(

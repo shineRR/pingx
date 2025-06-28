@@ -28,7 +28,7 @@ import Foundation
 
 extension Request {
     static func sample(
-        id: Request.ID = .zero,
+        id: Request.Identifier = .sample(),
         destination: IPv4Address = .sample(),
         timeoutInterval: Interval = .seconds(1),
         demand: Demand = .max(1),
@@ -40,6 +40,24 @@ extension Request {
             timeoutInterval: timeoutInterval,
             demand: demand,
             sequenceNumber: sequenceNumber
+        )
+    }
+}
+
+extension Request.Identifier {
+    static func sample(
+        id: UInt16 = .zero,
+        uniqueToken: UUID = UUID(uuid: (
+            0x89, 0xA7, 0xD4, 0x8B,
+            0x38, 0x23,
+            0x4F, 0x1F,
+            0x9B, 0x1A,
+            0xA6, 0x1B, 0x3E, 0xD8, 0xE2, 0xA9
+        ))
+    ) -> Request.Identifier {
+        Request.Identifier(
+            id: id,
+            uniqueToken: uniqueToken
         )
     }
 }

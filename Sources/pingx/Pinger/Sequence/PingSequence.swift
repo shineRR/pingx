@@ -24,7 +24,9 @@
 
 import Foundation
 
-public struct PingSequence: AsyncSequence, AsyncIteratorProtocol {
+public protocol PingSequenceProtocol: AsyncSequence, AsyncIteratorProtocol where Element == PingResult {}
+
+struct PingSequence: PingSequenceProtocol {
     private let configuration: PingConfiguration
     private let pinger: AsyncPinger
     private var request: Request
@@ -40,7 +42,7 @@ public struct PingSequence: AsyncSequence, AsyncIteratorProtocol {
         self.request = request
     }
 
-    public mutating func next() async throws -> PingResult? {
+    mutating func next() async throws -> PingResult? {
         guard request.demand != .none else { return nil }
         try Task.checkCancellation()
 
@@ -55,6 +57,7 @@ public struct PingSequence: AsyncSequence, AsyncIteratorProtocol {
         
         if case .cancelled = result?.error {
             request.setDemand(.none)
+            return nil
         } else {
             request.decreaseDemand()
             request.incrementSequenceNumber()
@@ -86,14 +89,14 @@ public struct PingSequence: AsyncSequence, AsyncIteratorProtocol {
             
             defer {
                 taskGroup.cancelAll()
-                pinger?.cancel(requestId: request.id)
+                pinger?.cancel(requestId: request.identifier)
             }
             
             return await taskGroup.next()
         }
     }
     
-    public func makeAsyncIterator() -> PingSequence { self }
+    func makeAsyncIterator() -> PingSequence { self }
 }
 
 private extension AsyncPingerResult {

@@ -159,7 +159,7 @@ struct AsyncPingerTests {
         let request = Request.sample()
         let icmpPacket = ICMPPacket.sample(
             icmpHeader: .sample(
-                identifier: request.id
+                identifier: request.identifier.id
             )
         )
         icmpPacketExtractor.extractReturnValue = icmpPacket
@@ -182,7 +182,7 @@ struct AsyncPingerTests {
     
     @Test("When response parsing is successful but identifier is different, it doesn't emit icmp packet")
     func send_whenResponseParsingSucceededButIdentifierIsDifferent_doesNotEmitIcmpPacket() async throws {
-        let request = Request.sample(id: 1)
+        let request = Request.sample(id: .sample(id: 1))
         let icmpPacket = ICMPPacket.sample(
             icmpHeader: .sample(identifier: 2)
         )
@@ -221,7 +221,7 @@ struct AsyncPingerTests {
     @Test("When response parsing is failed and icmp header is present, it emits validation error")
     func send_whenResponseParsingFailedButIcmpHeaderIsPresent_emitsValidationError() async throws {
         let request = Request.sample()
-        let icmpHeader = ICMPHeader.sample(identifier: request.id)
+        let icmpHeader = ICMPHeader.sample(identifier: request.identifier.id)
         let error = ICMPResponseValidationError.invalidCode(icmpHeader)
         icmpPacketExtractor.extractThrowableError = error
 
@@ -293,7 +293,7 @@ struct AsyncPingerTests {
         icmpPacketExtractor.extractClosure = { _ in
             ICMPPacket.sample(
                 icmpHeader: .sample(
-                    identifier: request.id,
+                    identifier: request.identifier.id,
                     sequenceNumber: UInt16(icmpPacketExtractor.extractCallsCount - 1)
                 )
             )
@@ -337,7 +337,7 @@ struct AsyncPingerTests {
                 )
                 socketFactory.makeReceivedCommand?.closure(Data())
 
-                await expectToEventuallyNotToBeCalled(
+                await expectNotToEventuallyBeCalled(
                     actualCallsCount: socket.sendCallsCount,
                     expectedCallsCount: 2,
                     timeout: 0.05
@@ -351,20 +351,20 @@ struct AsyncPingerTests {
         )
     }
     
-    @Test("When request is cancelled, it throws cancel error")
-    func cancel_whenRequestIsCancelled_emitsCancelError() async throws {
+    @Test("When request is cancelled, it doesn't throw cancel error")
+    func cancel_whenRequestIsCancelled_doesNotEmitCancelError() async throws {
         let request = Request.sample(demand: .max(1))
         let sequence = pinger.ping(request: request)
         
         try await checkThat(
             sequence: sequence,
-            emits: [.failure(.cancelled)],
+            emits: [],
             after: {
                 await expectToEventuallyBeCalled(
                     actualCallsCount: socket.sendCallsCount,
                     expectedCallsCount: 1
                 )
-                pinger.cancel(requestId: request.id)
+                pinger.cancel(requestId: request.identifier)
             }
         )
     }
@@ -376,15 +376,15 @@ struct AsyncPingerTests {
         
         try await checkThat(
             sequence: sequence,
-            emits: [.failure(.cancelled)],
+            emits: [],
             after: {
                 await expectToEventuallyBeCalled(
                     actualCallsCount: socket.sendCallsCount,
                     expectedCallsCount: 1
                 )
-                pinger.cancel(requestId: request.id)
+                pinger.cancel(requestId: request.identifier)
 
-                await expectToEventuallyNotToBeCalled(
+                await expectNotToEventuallyBeCalled(
                     actualCallsCount: socket.sendCallsCount,
                     expectedCallsCount: 2
                 )
@@ -395,7 +395,7 @@ struct AsyncPingerTests {
 
 private extension AsyncPingerTests {
     func checkThat(
-        sequence: PingSequence,
+        sequence: some PingSequenceProtocol,
         emits expectedValues: [PingResult],
         after operation: (() async -> Void)? = nil,
         timeout: Interval = .milliseconds(50),
@@ -415,20 +415,5 @@ private extension AsyncPingerTests {
             "Expected: \(expectedValues), Got: \(values)",
             sourceLocation: sourceLocation
         )
-    }
-}
-
-private extension PingResult {
-    func equals(_ rhs: PingResult) -> Bool {
-        switch (self, rhs) {
-        case (.success(let lValue), .success(let rValue)):
-            return lValue.destination == rValue.destination &&
-                   lValue.sequenceNumber == rValue.sequenceNumber
-        case (.failure(let lError), .failure(let rError)):
-            return lError.errorCode == rError.errorCode &&
-                   lError.underlyingError?.errorCode == rError.underlyingError?.errorCode
-        default:
-            return false
-        }
     }
 }

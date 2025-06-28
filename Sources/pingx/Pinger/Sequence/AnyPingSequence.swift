@@ -22,18 +22,36 @@
 // SOFTWARE.
 //
 
-import Testing
-@testable import pingx
+public struct AnyPingSequence: PingSequenceProtocol {
+    public struct AsyncIterator: AsyncIteratorProtocol {
+        private let _next: () async throws -> PingResult?
 
-@Suite
-struct ICMPChecksumTests {
-    @Test(
-        "Calculate checksum",
-        arguments: [(icmpHeader: ICMPHeader.sample(), expectedChecksum: UInt16(53687))]
-    )
-    func calculate(icmpHeader: ICMPHeader, expectedChecksum: UInt16) {
-        let actualChecksum = try? ICMPChecksum()(icmpHeader: icmpHeader)
+        init(_next: @escaping () async throws -> PingResult?) {
+            self._next = _next
+        }
 
-        #expect(actualChecksum == expectedChecksum)
+        mutating public func next() async throws -> PingResult? {
+            try await _next()
+        }
+    }
+
+    private let _makeAsyncIterator: () -> AsyncIterator
+    private let _next: () async throws -> PingResult?
+
+    init(sequence: some PingSequenceProtocol) {
+        var iterator = sequence.makeAsyncIterator()
+
+        self._makeAsyncIterator = {
+            AsyncIterator { try await iterator.next() }
+        }
+        self._next = { try await iterator.next() }
+    }
+    
+    public func next() async throws -> PingResult? {
+        try await _next()
+    }
+
+    public func makeAsyncIterator() -> AsyncIterator {
+        _makeAsyncIterator()
     }
 }

@@ -76,6 +76,6 @@ struct ICMPHeader: Equatable {
 extension ICMPHeader: Packet {
     var data: Data {
         var packet = self
-        return Data(bytes: &packet, count: MemoryLayout<ICMPHeader>.size)
+        return withUnsafeBytes(of: &packet) { Data($0) }
     }
 }

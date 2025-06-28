@@ -43,19 +43,8 @@ struct ICMPPackageExtractorTests {
         
         let icmpPacket = try extractor.extract(from: data)
         
-        #expect(icmpPacket.icmpHeader.identifier == request.id)
+        #expect(icmpPacket.icmpHeader.identifier == request.identifier.id)
         #expect(icmpPacket.ipHeader.sourceAddress == request.destination)
-    }
-
-    @Test("When payload is different, it throws invalidPayload error")
-    func extract_whenIdentifierIsDifferent_throwsInvalidPayloadError() async throws {
-        let payload = Payload.sample(identifier: (1, 1, 1, 1, 1, 1, 1, 1))
-        let icmpHeader = ICMPHeader.sample(payload: payload)
-        let data = makeErrorData(icmpHeader: icmpHeader)
-        
-        #expect(throws: ICMPResponseValidationError.invalidPayload(icmpHeader)) {
-            try extractor.extract(from: data)
-        }
     }
     
     @Test("When icmp type is not echo reply, it throws invalidType error")
@@ -120,9 +109,14 @@ private extension ICMPPackageExtractorTests {
         var icmpHeader = ICMPHeader.sample(
             type: .echoReply,
             code: .zero,
-            identifier: request.id,
+            identifier: request.identifier.id,
             sequenceNumber: .zero,
-            payload: Payload()
+            payload: .sample(
+                identifier: .sample(
+                    id: request.identifier.id,
+                    uniqueToken: request.identifier.uniqueToken
+                )
+            )
         )
         
         guard let checksum = try? ICMPChecksum()(icmpHeader: icmpHeader) else {
@@ -131,7 +125,7 @@ private extension ICMPPackageExtractorTests {
         icmpHeader.setChecksum(checksum)
         
         var icmpPacket = ICMPPacket(ipHeader: ipHeader, icmpHeader: icmpHeader)
-        let data = Data(bytes: &icmpPacket, count: MemoryLayout<ICMPPacket>.size)
+        let data = withUnsafeBytes(of: &icmpPacket) { Data($0) }
         
         return data
     }
@@ -151,7 +145,7 @@ private extension ICMPPackageExtractorTests {
         
         if let icmpHeader {
             var icmp = ICMPPacket.sample(ipHeader: ipHeader, icmpHeader: icmpHeader)
-            data = Data(bytes: &icmp, count: MemoryLayout<ICMPPacket>.size)
+            data = withUnsafeBytes(of: &icmp) { Data($0) }
         } else if shouldAddIpHeader {
             var ipHeader = ipHeader
             data = Data(bytes: &ipHeader, count: MemoryLayout<IPHeader>.size)
@@ -167,8 +161,6 @@ extension ICMPResponseValidationError: Equatable {
     public static func == (lhs: ICMPResponseValidationError, rhs: ICMPResponseValidationError) -> Bool {
         switch (lhs, rhs) {
         case (.checksumMismatch(let lValue), .checksumMismatch(let rValue)):
-            return lValue == rValue
-        case (.invalidPayload(let lValue), .invalidPayload(let rValue)):
             return lValue == rValue
         case (.invalidType(let lValue), .invalidType(let rValue)):
             return lValue == rValue

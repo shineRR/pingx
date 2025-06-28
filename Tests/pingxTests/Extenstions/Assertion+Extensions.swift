@@ -25,16 +25,16 @@
 import Testing
 import XCTest
 
-func expectToEventuallyBeCalled(
-    actualCallsCount: @autoclosure @escaping () -> Int,
-    expectedCallsCount: Int = 1,
+func expectTo(
+    expression: @escaping () -> Bool,
     timeout: TimeInterval = 1.0,
+    description: String = "",
     sourceLocation: SourceLocation = #_sourceLocation
 ) async {
-    let expectation = XCTestExpectation(description: "Wait for actualCallsCount to reach \(expectedCallsCount)")
+    let expectation = XCTestExpectation(description: description)
     
     let task = Task {
-        while actualCallsCount() < expectedCallsCount {
+        while !expression() {
             try Task.checkCancellation()
             try? await Task.sleep(nanoseconds: 20_000_000) // 20ms
         }
@@ -47,24 +47,23 @@ func expectToEventuallyBeCalled(
 
     #expect(
         result == .completed,
-        "Wait for actualCallsCount to reach \(expectedCallsCount)",
+        .__block(description),
         sourceLocation: sourceLocation
     )
 }
 
-func expectToEventuallyNotToBeCalled(
-    actualCallsCount: @autoclosure @escaping () -> Int,
-    expectedCallsCount: Int = 1,
-    timeout: TimeInterval = 0.1,
+func expectNotTo(
+    expression: @escaping () -> Bool,
+    timeout: TimeInterval = 1.0,
+    description: String = "",
     sourceLocation: SourceLocation = #_sourceLocation
 ) async {
-    let expectation = XCTestExpectation(description: "Wait for actualCallsCount to reach \(expectedCallsCount)")
+    let expectation = XCTestExpectation(description: description)
     expectation.isInverted = true
 
     let task = Task {
-        while actualCallsCount() < expectedCallsCount {
-            if Task.isCancelled { return }
-
+        while !expression() {
+            try Task.checkCancellation()
             try? await Task.sleep(nanoseconds: 20_000_000) // 20ms
         }
 
@@ -76,7 +75,48 @@ func expectToEventuallyNotToBeCalled(
 
     #expect(
         result == .completed,
-        "Wait for actualCallsCount to not reach \(expectedCallsCount)",
+        .__block(description),
+        sourceLocation: sourceLocation
+    )
+}
+
+func expectToEventuallyBeCalled(
+    actualCallsCount: @autoclosure @escaping () -> Int,
+    expectedCallsCount: Int = 1,
+    timeout: TimeInterval = 1.0,
+    sourceLocation: SourceLocation = #_sourceLocation
+) async {
+    await expectTo(
+        expression: { actualCallsCount() == expectedCallsCount },
+        timeout: timeout,
+        description: "Wait for actualCallsCount to reach \(expectedCallsCount)",
+        sourceLocation: sourceLocation
+    )
+}
+
+func expectNotToEventuallyBeCalled(
+    actualCallsCount: @autoclosure @escaping () -> Int,
+    expectedCallsCount: Int = 1,
+    timeout: TimeInterval = 0.1,
+    sourceLocation: SourceLocation = #_sourceLocation
+) async {
+    await expectNotTo(
+        expression: { actualCallsCount() >= expectedCallsCount },
+        timeout: timeout,
+        description: "Wait for actualCallsCount to not reach \(expectedCallsCount)",
+        sourceLocation: sourceLocation
+    )
+}
+
+func expectNotToEventuallyBeNil<T>(
+    actualValue: @autoclosure @escaping () -> T?,
+    timeout: TimeInterval = 1.0,
+    sourceLocation: SourceLocation = #_sourceLocation
+) async {
+    await expectTo(
+        expression: { actualValue() != nil },
+        timeout: timeout,
+        description: "Wait for actualCallsCount not to be nil",
         sourceLocation: sourceLocation
     )
 }

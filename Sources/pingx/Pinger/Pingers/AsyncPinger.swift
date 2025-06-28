@@ -26,8 +26,8 @@ import Foundation
 
 // sourcery: AutoMockable
 public protocol AsyncPingerProtocol: AnyObject {
-    func ping(request: Request) -> PingSequence
-    func cancel(requestId: Request.ID)
+    func ping(request: Request) -> AnyPingSequence
+    func cancel(requestId: Request.Identifier)
 }
 
 public final class AsyncPinger: AsyncPingerProtocol {
@@ -35,7 +35,7 @@ public final class AsyncPinger: AsyncPingerProtocol {
     // MARK: Properties
     
     @Atomic private var pingxSocket: (any PingxSocketProtocol)!
-    @Atomic private var completions = [UInt16: (AsyncPingerResult) -> Void]()
+    @Atomic private var completions = [Request.Identifier: (AsyncPingerResult) -> Void]()
     private let configuration: PingConfiguration
     private let icmpHeaderFactory: ICMPHeaderFactoryProtocol
     private let icmpPacketExtractor: ICMPPacketExtractorProtocol
@@ -66,11 +66,17 @@ public final class AsyncPinger: AsyncPingerProtocol {
         )
     }
     
-    public func ping(request: Request) -> PingSequence {
-        PingSequence(configuration: configuration, pinger: self, request: request)
+    public func ping(request: Request) -> AnyPingSequence {
+        AnyPingSequence(
+            sequence: PingSequence(
+                configuration: configuration,
+                pinger: self,
+                request: request
+            )
+        )
     }
     
-    public func cancel(requestId: Request.ID) {
+    public func cancel(requestId: Request.Identifier) {
         invokeCompletion(identifier: requestId, result: .failure(.cancelled))
     }
 }
@@ -82,23 +88,23 @@ extension AsyncPinger {
         _ request: Request,
         completion: @escaping (AsyncPingerResult) -> Void
     ) {
-        completions[request.id] = completion
+        completions[request.identifier] = completion
         
         do {
             try checkSocketCreation()
         } catch {
-            invokeCompletion(identifier: request.id, result: .failure(.socketCreationError))
+            invokeCompletion(identifier: request.identifier, result: .failure(.socketCreationError))
             return
         }
 
         let packet = try? icmpHeaderFactory.make(
             type: request.type,
-            identifier: request.id,
+            requestIdentifier: request.identifier,
             sequenceNumber: request.sequenceNumber
         )
 
         guard let packet else {
-            invokeCompletion(identifier: request.id, result: .failure(.unableToCreatePacket))
+            invokeCompletion(identifier: request.identifier, result: .failure(.unableToCreatePacket))
             return
         }
         
@@ -109,7 +115,7 @@ extension AsyncPinger {
         )
         
         if let error = cfSocketError.mapToPingerError() {
-            invokeCompletion(identifier: request.id, result: .failure(error))
+            invokeCompletion(identifier: request.identifier, result: .failure(error))
         }
     }
 }
@@ -142,7 +148,7 @@ private extension AsyncPinger {
         pingxSocket = try socketFactory.make(command: command)
     }
     
-    func invokeCompletion(identifier: Request.ID, result: AsyncPingerResult) {
+    func invokeCompletion(identifier: Request.Identifier, result: AsyncPingerResult) {
         let completion = completions.removeValue(forKey: identifier)
         completion?(result)
     }
@@ -162,14 +168,25 @@ private extension CFSocketError {
 }
 
 private extension Result<ICMPPacket, AsyncPingerError> {
-    var identifier: Request.ID? {
+    var identifier: Request.Identifier? {
         switch self {
         case .success(let icmpPacket):
-            return icmpPacket.icmpHeader.identifier
+            return icmpPacket.icmpHeader.payload.toRequestIdentifier()
         case .failure(.responseStructureInconsistent(let validationError)):
-            return validationError.icmpHeader?.identifier
+            return validationError.icmpHeader.map { icmpHeader in
+                icmpHeader.payload.toRequestIdentifier()
+            }
         case .failure:
             return nil
         }
+    }
+}
+
+private extension Payload {
+    func toRequestIdentifier() -> Request.Identifier {
+        Request.Identifier(
+            id: identifier.id,
+            uniqueToken: identifier.uniqueToken
+        )
     }
 }

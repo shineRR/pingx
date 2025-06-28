@@ -22,18 +22,19 @@
 // SOFTWARE.
 //
 
-import Testing
 @testable import pingx
 
-@Suite
-struct ICMPChecksumTests {
-    @Test(
-        "Calculate checksum",
-        arguments: [(icmpHeader: ICMPHeader.sample(), expectedChecksum: UInt16(53687))]
-    )
-    func calculate(icmpHeader: ICMPHeader, expectedChecksum: UInt16) {
-        let actualChecksum = try? ICMPChecksum()(icmpHeader: icmpHeader)
-
-        #expect(actualChecksum == expectedChecksum)
+extension PingResult {
+    func equals(_ rhs: PingResult) -> Bool {
+        switch (self, rhs) {
+        case (.success(let lValue), .success(let rValue)):
+            return lValue.destination == rValue.destination &&
+                   lValue.sequenceNumber == rValue.sequenceNumber
+        case (.failure(let lError), .failure(let rError)):
+            return lError.errorCode == rError.errorCode &&
+                   lError.underlyingError?.errorCode == rError.underlyingError?.errorCode
+        default:
+            return false
+        }
     }
 }

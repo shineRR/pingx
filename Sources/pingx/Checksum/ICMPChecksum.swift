@@ -51,15 +51,12 @@ extension ICMPChecksum {
 
 private extension ICMPChecksum {
     func arrayPayload(_ payload: Payload) -> [UInt8] {
-        let identifier: [UInt8] = [
-            payload.identifier.0, payload.identifier.1, payload.identifier.2, payload.identifier.3,
-            payload.identifier.4, payload.identifier.5, payload.identifier.6, payload.identifier.7
-        ]
         var timestamp = payload.timestamp
+        var bytes: [UInt8] = []
+
+        withUnsafeBytes(of: payload.identifier) { bytes.append(contentsOf: $0) }
+        withUnsafeBytes(of: &timestamp) { bytes.append(contentsOf: $0) }
         
-        return identifier + Data(
-            bytes: &timestamp,
-            count: MemoryLayout<CFAbsoluteTime>.size
-        ).withUnsafeBytes { Array($0) }
+        return bytes
     }
 }

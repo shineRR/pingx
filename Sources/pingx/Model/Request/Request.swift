@@ -24,12 +24,24 @@
 
 import Foundation
 
-public struct Request: Identifiable, Hashable, Sendable {
+public struct Request: Hashable, Sendable {
+    public struct Identifier: Hashable, Sendable {
+        let id: UInt16
+        let uniqueToken: UUID
+        
+        init(
+            id: UInt16,
+            uniqueToken: UUID = UUID()
+        ) {
+            self.id = id
+            self.uniqueToken = uniqueToken
+        }
+    }
 
     // MARK: Properties
     
     /// The unique identifier for the request.
-    public let id: UInt16
+    public let identifier: Identifier
 
     /// The type of icmp.
     let type: ICMPType = .echoRequest
@@ -53,7 +65,7 @@ public struct Request: Identifiable, Hashable, Sendable {
         timeoutInterval: Interval = .seconds(1),
         demand: Request.Demand = .max(1)
     ) {
-        self.id = CFSwapInt16HostToBig(UInt16.random(in: 0..<UInt16.max))
+        self.identifier = Identifier(id: CFSwapInt16HostToBig(UInt16.random(in: 0..<UInt16.max)))
         self.destination = destination
         self.timeoutInterval = timeoutInterval
         self.demand = demand
@@ -61,13 +73,13 @@ public struct Request: Identifiable, Hashable, Sendable {
     }
 
     init(
-        id: UInt16,
+        id: Identifier,
         destination: IPv4Address,
         timeoutInterval: Interval,
         demand: Request.Demand,
         sequenceNumber: UInt16
     ) {
-        self.id = id
+        self.identifier = id
         self.destination = destination
         self.timeoutInterval = timeoutInterval
         self.demand = demand
@@ -77,11 +89,11 @@ public struct Request: Identifiable, Hashable, Sendable {
     // MARK: Methods
 
     public static func == (lhs: Request, rhs: Request) -> Bool {
-        lhs.id == rhs.id && lhs.destination == rhs.destination
+        lhs.identifier == rhs.identifier && lhs.destination == rhs.destination
     }
 
     public func hash(into hasher: inout Hasher) {
-        hasher.combine(id)
+        hasher.combine(identifier)
         hasher.combine(type)
         hasher.combine(destination)
         hasher.combine(timeoutInterval)

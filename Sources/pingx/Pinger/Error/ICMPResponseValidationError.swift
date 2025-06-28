@@ -27,8 +27,7 @@ enum ICMPResponseValidationError: Error {
         switch self {
         case .checksumMismatch(let icmpHeader),
              .invalidCode(let icmpHeader),
-             .invalidType(let icmpHeader),
-             .invalidPayload(let icmpHeader):
+             .invalidType(let icmpHeader):
             return icmpHeader
         case .missedIpHeader, .missedIcmpHeader:
             return nil
@@ -36,7 +35,6 @@ enum ICMPResponseValidationError: Error {
     }
     
     case checksumMismatch(ICMPHeader)
-    case invalidPayload(ICMPHeader)
     case invalidType(ICMPHeader)
     case invalidCode(ICMPHeader)
     case missedIpHeader

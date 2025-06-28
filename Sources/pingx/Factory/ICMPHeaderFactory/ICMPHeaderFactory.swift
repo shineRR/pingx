@@ -28,7 +28,7 @@ import Foundation
 protocol ICMPHeaderFactoryProtocol {
     func make(
         type: ICMPType,
-        identifier: UInt16,
+        requestIdentifier: Request.Identifier,
         sequenceNumber: UInt16
     ) throws -> ICMPHeader
 }
@@ -36,14 +36,19 @@ protocol ICMPHeaderFactoryProtocol {
 struct ICMPHeaderFactory: ICMPHeaderFactoryProtocol {
     func make(
         type: ICMPType,
-        identifier: UInt16,
+        requestIdentifier: Request.Identifier,
         sequenceNumber: UInt16
     ) throws -> ICMPHeader {
         var icmpHeader = ICMPHeader(
             type: type,
-            identifier: identifier,
+            identifier: requestIdentifier.id,
             sequenceNumber: sequenceNumber,
-            payload: Payload()
+            payload: Payload(
+                identifier: Payload.Identifier(
+                    id: requestIdentifier.id,
+                    uniqueToken: requestIdentifier.uniqueToken
+                )
+            )
         )
         let checksum = try ICMPChecksum()(icmpHeader: icmpHeader)
         
