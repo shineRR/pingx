@@ -35,9 +35,8 @@ func expectToEventuallyBeCalled(
     
     let task = Task {
         while actualCallsCount() < expectedCallsCount {
-            if Task.isCancelled { return }
-
-            try? await Task.sleep(nanoseconds: 30_000_000) // 30ms
+            try Task.checkCancellation()
+            try? await Task.sleep(nanoseconds: 20_000_000) // 20ms
         }
 
         expectation.fulfill()
@@ -48,7 +47,7 @@ func expectToEventuallyBeCalled(
 
     #expect(
         result == .completed,
-        .__block("Wait for actualCallsCount to reach \(expectedCallsCount)"),
+        "Wait for actualCallsCount to reach \(expectedCallsCount)",
         sourceLocation: sourceLocation
     )
 }
@@ -66,7 +65,7 @@ func expectToEventuallyNotToBeCalled(
         while actualCallsCount() < expectedCallsCount {
             if Task.isCancelled { return }
 
-            try? await Task.sleep(nanoseconds: 30_000_000) // 30ms
+            try? await Task.sleep(nanoseconds: 20_000_000) // 20ms
         }
 
         expectation.fulfill()
@@ -77,7 +76,7 @@ func expectToEventuallyNotToBeCalled(
 
     #expect(
         result == .completed,
-        .__block("Wait for actualCallsCount to not reach \(expectedCallsCount)"),
+        "Wait for actualCallsCount to not reach \(expectedCallsCount)",
         sourceLocation: sourceLocation
     )
 }

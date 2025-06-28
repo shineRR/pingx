@@ -53,11 +53,11 @@ public struct PingSequence: AsyncSequence, AsyncIteratorProtocol {
         
         let result = await performPingWithTimeout()
         
-        request.decreaseDemand()
-        request.incrementSequenceNumber()
-        
         if case .cancelled = result?.error {
             request.setDemand(.none)
+        } else {
+            request.decreaseDemand()
+            request.incrementSequenceNumber()
         }
         
         return result?.mapToPingResult()

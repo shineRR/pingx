@@ -38,27 +38,25 @@ import Foundation
     timeout: Interval = .milliseconds(50)
 ) async throws -> [PingResult] {
     try await withThrowingTaskGroup(
-        of: [PingResult].self,
+        of: Void.self,
         returning: [PingResult].self
     ) { taskGroup in
-        taskGroup.addTask {
-            var values: [PingResult] = []
+        var values: [PingResult] = []
 
+        taskGroup.addTask {
             for try await value in sequence where values.count < count {
                 values.append(value)
             }
-            
-            return values
         }
         
         taskGroup.addTask {
             try await Task.sleep(nanoseconds: UInt64(timeout.nanoseconds))
-            return []
         }
         
         defer { taskGroup.cancelAll() }
 
-        return try await taskGroup.next().unsafelyUnwrapped
+        _ = try await taskGroup.next()
+        return values
     }
 }
 

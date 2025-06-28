@@ -34,7 +34,7 @@ struct AsyncPingerTests {
     private let icmpHeaderFactory: ICMPHeaderFactoryMock
     private let icmpPacketExtractor: ICMPPacketExtractorMock
     private let socketFactory: SocketFactoryMock
-    private var pinger: AsyncPinger
+    private var pinger: AsyncPinger!
     
     init() {
         self.socket = PingxSocketMock()
@@ -49,8 +49,14 @@ struct AsyncPingerTests {
         self.socketFactory = SocketFactoryMock()
         self.socketFactory.makeReturnValue = socket
 
-        self.pinger = AsyncPinger(
-            configuration: .default,
+        self.pinger = makeAsyncPinger()
+    }
+    
+    private func makeAsyncPinger(
+        configuration: PingConfiguration = PingConfiguration(intervalBetweenRequests: .milliseconds(0))
+    ) -> AsyncPinger {
+        AsyncPinger(
+            configuration: configuration,
             icmpHeaderFactory: icmpHeaderFactory,
             icmpPacketExtractor: icmpPacketExtractor,
             socketFactory: socketFactory
@@ -305,17 +311,14 @@ struct AsyncPingerTests {
                     socketFactory.makeReceivedCommand?.closure(Data())
                 }
             },
-            timeout: .milliseconds(200)
+            timeout: .milliseconds(150)
         )
     }
     
     @Test("When interval between requests is greater than 0, doesn't call the second ping immediately")
-    func send_whenIntervalBetweenRequestsIsGreaterThanZero_doesNotCallSendBeforeIntervalIsReached() async throws {
-        let pinger = AsyncPinger(
-            configuration: PingConfiguration(intervalBetweenRequests: .milliseconds(100)),
-            icmpHeaderFactory: icmpHeaderFactory,
-            icmpPacketExtractor: icmpPacketExtractor,
-            socketFactory: socketFactory
+    mutating func send_whenRequestIntervalIsGreaterThanZero_doesNotCallSendBeforeIntervalIsReached() async throws {
+        pinger = makeAsyncPinger(
+            configuration: PingConfiguration(intervalBetweenRequests: .milliseconds(50))
         )
         let request = Request.sample(demand: .unlimited)
         let sequence = pinger.ping(request: request)
@@ -327,7 +330,7 @@ struct AsyncPingerTests {
         try await checkThat(
             sequence: sequence,
             emits: [.success(response)],
-            after: {
+            after: { [self] in
                 await expectToEventuallyBeCalled(
                     actualCallsCount: socket.sendCallsCount,
                     expectedCallsCount: 1
@@ -337,14 +340,14 @@ struct AsyncPingerTests {
                 await expectToEventuallyNotToBeCalled(
                     actualCallsCount: socket.sendCallsCount,
                     expectedCallsCount: 2,
-                    timeout: 0.1
+                    timeout: 0.05
                 )
                 await expectToEventuallyBeCalled(
                     actualCallsCount: socket.sendCallsCount,
                     expectedCallsCount: 2
                 )
             },
-            timeout: .milliseconds(200)
+            timeout: .milliseconds(100)
         )
     }
     
@@ -362,8 +365,7 @@ struct AsyncPingerTests {
                     expectedCallsCount: 1
                 )
                 pinger.cancel(requestId: request.id)
-            },
-            timeout: .milliseconds(200)
+            }
         )
     }
     
@@ -386,8 +388,7 @@ struct AsyncPingerTests {
                     actualCallsCount: socket.sendCallsCount,
                     expectedCallsCount: 2
                 )
-            },
-            timeout: .milliseconds(200)
+            }
         )
     }
 }
@@ -400,64 +401,34 @@ private extension AsyncPingerTests {
         timeout: Interval = .milliseconds(50),
         sourceLocation: SourceLocation = #_sourceLocation
     ) async throws {
-        let expectation = XCTestExpectation(
-            description: "Wait for expectedValues to be equal to the values emitted by the sequence"
-        )
-        
-        Task {
-            let values = try await collectValuesFromPingSequence(sequence: sequence, timeout: timeout)
-            
-            for (actualValue, expectedValue) in zip(values, expectedValues) {
-                PingResult.beEqual(
-                    actualValue: actualValue,
-                    expectedValue: expectedValue,
-                    sourceLocation: sourceLocation
-                )
-            }
-
-            expectation.fulfill()
+        let collectingValuesTask = Task {
+            return try await collectValuesFromPingSequence(sequence: sequence, timeout: timeout)
         }
         
         await operation?()
         
-        let result = await XCTWaiter.fulfillment(
-            of: [expectation],
-            timeout: timeout.seconds
+        let values = try await collectingValuesTask.value
+        let areValuesEqualToExpectedValues = values.elementsEqual(expectedValues, by: { $0.equals($1) })
+
+        try #require(
+            areValuesEqualToExpectedValues,
+            "Expected: \(expectedValues), Got: \(values)",
+            sourceLocation: sourceLocation
         )
-        #expect(result == .completed)
     }
 }
 
 private extension PingResult {
-    static func beEqual(
-        actualValue: PingResult,
-        expectedValue: PingResult,
-        sourceLocation: SourceLocation = #_sourceLocation
-    ) {
-        switch (actualValue, expectedValue) {
+    func equals(_ rhs: PingResult) -> Bool {
+        switch (self, rhs) {
         case (.success(let lValue), .success(let rValue)):
-            #expect(
-                lValue.destination == rValue.destination,
-                sourceLocation: sourceLocation
-            )
-            #expect(
-                lValue.sequenceNumber == rValue.sequenceNumber,
-                sourceLocation: sourceLocation
-            )
+            return lValue.destination == rValue.destination &&
+                   lValue.sequenceNumber == rValue.sequenceNumber
         case (.failure(let lError), .failure(let rError)):
-            #expect(
-                lError.errorCode == rError.errorCode,
-                sourceLocation: sourceLocation
-            )
-            #expect(
-                lError.underlyingError?.errorCode == rError.underlyingError?.errorCode,
-                sourceLocation: sourceLocation
-            )
+            return lError.errorCode == rError.errorCode &&
+                   lError.underlyingError?.errorCode == rError.underlyingError?.errorCode
         default:
-            #expect(
-                Bool(false),
-                sourceLocation: sourceLocation
-            )
+            return false
         }
     }
 }
