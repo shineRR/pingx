@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		145E71772E0FFF6100F92C01 /* PingResultDisplayModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 145E71762E0FFF5D00F92C01 /* PingResultDisplayModel.swift */; };
 		1467664E2DE31BFD00B89B10 /* CallbackPingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1467664D2DE31BFD00B89B10 /* CallbackPingView.swift */; };
 		146766502DE31C0E00B89B10 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1467664F2DE31C0E00B89B10 /* HomeView.swift */; };
 		146766522DE31D1000B89B10 /* CallbackPingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 146766512DE31D0A00B89B10 /* CallbackPingViewModel.swift */; };
@@ -19,6 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		145E71762E0FFF5D00F92C01 /* PingResultDisplayModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PingResultDisplayModel.swift; sourceTree = "<group>"; };
 		1467664D2DE31BFD00B89B10 /* CallbackPingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallbackPingView.swift; sourceTree = "<group>"; };
 		1467664F2DE31C0E00B89B10 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		146766512DE31D0A00B89B10 /* CallbackPingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallbackPingViewModel.swift; sourceTree = "<group>"; };
@@ -48,9 +50,18 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		145E71752E0FFF5400F92C01 /* DisplayModels */ = {
+			isa = PBXGroup;
+			children = (
+				145E71762E0FFF5D00F92C01 /* PingResultDisplayModel.swift */,
+			);
+			path = DisplayModels;
+			sourceTree = "<group>";
+		};
 		146766482DE31BC200B89B10 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				145E71752E0FFF5400F92C01 /* DisplayModels */,
 				146766532DE322AE00B89B10 /* AsyncPingView */,
 				1467664A2DE31BD400B89B10 /* HomeView */,
 				146766492DE31BCD00B89B10 /* CallbackPingView */,
@@ -252,6 +263,7 @@
 				1467664E2DE31BFD00B89B10 /* CallbackPingView.swift in Sources */,
 				146766572DE322C200B89B10 /* AsyncPingViewModel.swift in Sources */,
 				146872522D23313B00373862 /* AppDelegate.swift in Sources */,
+				145E71772E0FFF6100F92C01 /* PingResultDisplayModel.swift in Sources */,
 				146766522DE31D1000B89B10 /* CallbackPingViewModel.swift in Sources */,
 				146766502DE31C0E00B89B10 /* HomeView.swift in Sources */,
 				146766552DE322BC00B89B10 /* AsyncPingView.swift in Sources */,

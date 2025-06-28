@@ -30,7 +30,7 @@ final class CallbackPingViewModel: ObservableObject {
     }
     
     @Published private(set) var isPingActive = false
-    @Published private(set) var pingResults = [PingResult]()
+    @Published private(set) var pingResultDisplayModels = [PingResultDisplayModel]()
     
     private let pinger: PingerProtocol
     private var activeRequest: Request?
@@ -41,14 +41,12 @@ final class CallbackPingViewModel: ObservableObject {
     
     convenience init() {
         self.init(
-            pinger: Pinger(
-                configuration: PingConfiguration(intervalBetweenRequests: .milliseconds(500))
-            )
+            pinger: Pinger(configuration: .default)
         )
     }
     
     func startPinging() {
-        pingResults.removeAll()
+        pingResultDisplayModels.removeAll()
         
         let request = Request(
             destination: Constants.destinationAddress,
@@ -59,7 +57,8 @@ final class CallbackPingViewModel: ObservableObject {
         activeRequest = request
         pinger.ping(request: request) { [weak self] result in
             DispatchQueue.main.async {
-                self?.pingResults.append(result)
+                let displayModel = PingResultDisplayModel(pingResult: result)
+                self?.pingResultDisplayModels.append(displayModel)
                 
                 if request.demand == .none {
                     self?.isPingActive = false

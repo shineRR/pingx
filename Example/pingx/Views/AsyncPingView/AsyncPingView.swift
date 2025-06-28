@@ -36,10 +36,9 @@ struct AsyncPingView: View {
             }
 
             List {
-                ForEach(viewModel.pingResults.indices, id: \.self) { index in
-                    let result = viewModel.pingResults[index]
-                
-                    Text("Response: \(result)")
+                ForEach(viewModel.pingResultDisplayModels.indices, id: \.self) { index in
+                    let displayModel = viewModel.pingResultDisplayModels[index]
+                    Text(displayModel.makeUserFriendlyMessage())
                 }
             }
         }

@@ -34,6 +34,6 @@ public struct PingConfiguration {
 
 public extension PingConfiguration {
     static var `default`: PingConfiguration {
-        PingConfiguration(intervalBetweenRequests: .milliseconds(0))
+        PingConfiguration(intervalBetweenRequests: .seconds(1))
     }
 }

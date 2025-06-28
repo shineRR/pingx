@@ -30,7 +30,7 @@ final class AsyncPingViewModel: ObservableObject {
     }
 
     @Published var isPingActive = false
-    @Published var pingResults: [PingResult] = []
+    @Published var pingResultDisplayModels: [PingResultDisplayModel] = []
 
     private let pinger: AsyncPingerProtocol
     private var pingTask: Task<Void, Error>? = nil
@@ -41,15 +41,13 @@ final class AsyncPingViewModel: ObservableObject {
     
     convenience init() {
         self.init(
-            pinger: AsyncPinger(
-                configuration: PingConfiguration(intervalBetweenRequests: .milliseconds(500))
-            )
+            pinger: AsyncPinger(configuration: .default)
         )
     }
     
     func startPinging() {
         isPingActive = true
-        pingResults.removeAll()
+        pingResultDisplayModels.removeAll()
         
         let request = Request(
             destination: Constants.destinationAddress,
@@ -61,7 +59,8 @@ final class AsyncPingViewModel: ObservableObject {
             
             for try await result in sequence {
                 DispatchQueue.main.async { [weak self] in
-                    self?.pingResults.append(result)
+                    let displayModel = PingResultDisplayModel(pingResult: result)
+                    self?.pingResultDisplayModels.append(displayModel)
                 }
             }
 

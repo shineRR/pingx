@@ -22,43 +22,26 @@
 // SOFTWARE.
 //
 
-import Foundation
+import pingx
 
-public enum Interval: Sendable, Hashable {
-    case seconds(TimeInterval)
-    case milliseconds(TimeInterval)
-    case nanoseconds(TimeInterval)
-    
-    public var seconds: TimeInterval {
-        switch self {
-        case .seconds(let value):
-            return value
-        case .milliseconds(let value):
-            return value / 1_000
-        case .nanoseconds(let value):
-            return value / 1_000_000_000
-        }
+struct PingResultDisplayModel {
+    private let pingResult: PingResult
+
+    init(pingResult: PingResult) {
+        self.pingResult = pingResult
     }
 
-    public var milliseconds: TimeInterval {
-        switch self {
-        case .seconds(let value):
-            return value * 1_000
-        case .milliseconds(let value):
-            return value
-        case .nanoseconds(let value):
-            return value / 1_000_000
-        }
-    }
-    
-    public var nanoseconds: TimeInterval {
-        switch self {
-        case .seconds(let value):
-            return value * 1_000_000_000
-        case .milliseconds(let value):
-            return value * 1_000_000
-        case .nanoseconds(let value):
-            return value
+    func makeUserFriendlyMessage() -> String {
+        switch pingResult {
+        case .success(let response):
+            return """
+            Success
+            Destination: \(response.destination.address),
+            Response time: \(String(format: "%.05f", response.duration.milliseconds)) ms,
+            Sequence number: \(response.sequenceNumber)
+            """
+        case .failure(let error):
+            return "Error: \(error.errorDescription ?? "")"
         }
     }
 }

@@ -101,7 +101,7 @@ private extension AsyncPingerResult {
         map { icmpPacket in
             Response(
                 destination: icmpPacket.ipHeader.sourceAddress,
-                duration: (CFAbsoluteTimeGetCurrent() - icmpPacket.icmpHeader.payload.timestamp) * 1000,
+                duration: .seconds(CFAbsoluteTimeGetCurrent() - icmpPacket.icmpHeader.payload.timestamp),
                 sequenceNumber: icmpPacket.icmpHeader.sequenceNumber
             )
         }

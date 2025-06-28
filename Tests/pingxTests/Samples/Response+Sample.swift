@@ -29,7 +29,7 @@ import Foundation
 extension Response {
     static func sample(
         destination: IPv4Address = .sample(),
-        duration: TimeInterval = .zero,
+        duration: Interval = .milliseconds(.zero),
         sequenceNumber: UInt16 = .zero
     ) -> Response {
         Response(
