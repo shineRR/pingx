@@ -46,7 +46,7 @@ public struct AnyPingSequence: PingSequenceProtocol {
         }
         self._next = { try await iterator.next() }
     }
-    
+
     public func next() async throws -> PingResult? {
         try await _next()
     }

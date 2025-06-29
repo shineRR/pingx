@@ -23,13 +23,13 @@
 //
 
 final class CommandBlock<T> {
-    
+
     // MARK: Properties
-    
+
     let closure: (T) -> Void
-    
+
     // MARK: Initializer
-    
+
     init(closure: @escaping (T) -> Void) {
         self.closure = closure
     }

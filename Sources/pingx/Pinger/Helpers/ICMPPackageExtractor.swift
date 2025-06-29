@@ -37,14 +37,14 @@ struct ICMPPacketExtractor: ICMPPacketExtractorProtocol {
             }
             throw ICMPResponseValidationError.missedIcmpHeader
         }
-        
+
         let ipHeader = data.withUnsafeBytes { $0.load(as: IPHeader.self) }
         let offset = data.count - MemoryLayout<ICMPHeader>.size
         let icmpHeader = data.withUnsafeBytes { $0.loadUnaligned(fromByteOffset: offset, as: ICMPHeader.self) }
         let icmpPackage = ICMPPacket(ipHeader: ipHeader, icmpHeader: icmpHeader)
-        
+
         try validateICMPPackage(icmpPackage)
-        
+
         return icmpPackage
     }
 }
@@ -54,14 +54,14 @@ private extension ICMPPacketExtractor {
         guard icmpPackage.icmpHeader.type == ICMPType.echoReply.rawValue else {
             throw ICMPResponseValidationError.invalidType(icmpPackage.icmpHeader)
         }
-        
+
         guard icmpPackage.icmpHeader.code == .zero else {
             throw ICMPResponseValidationError.invalidCode(icmpPackage.icmpHeader)
         }
-        
+
         do {
             let checksum = try ICMPChecksum()(icmpHeader: icmpPackage.icmpHeader)
-            
+
             guard icmpPackage.icmpHeader.checksum == checksum else {
                 throw ICMPResponseValidationError.checksumMismatch(icmpPackage.icmpHeader)
             }

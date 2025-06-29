@@ -29,34 +29,34 @@ struct ICMPChecksum {
         let typecode = Data([icmpHeader.type, icmpHeader.code]).withUnsafeBytes { $0.load(as: UInt16.self) }
         var sum = UInt64(typecode) + UInt64(icmpHeader.identifier) + UInt64(icmpHeader.sequenceNumber)
         let payload = arrayPayload(icmpHeader.payload)
-        
+
         for i in stride(from: 0, to: payload.count, by: 2) {
             sum += Data([payload[i], payload[i + 1]]).withUnsafeBytes { UInt64($0.load(as: UInt16.self)) }
         }
-        
+
         sum = (sum >> 16) + (sum & 0xFFFF)
         sum += sum >> 16
-        
+
         guard sum >= UInt16.min, sum <= UInt16.max else { throw ChecksumError.outOfBounds }
-        
+
         return ~UInt16(sum)
     }
 }
 
 extension ICMPChecksum {
-    enum ChecksumError: Error {
+    enum ChecksumError: CustomNSError {
+        static let errorDomain = "pingx.ChecksumError"
+
         case outOfBounds
     }
 }
 
 private extension ICMPChecksum {
     func arrayPayload(_ payload: Payload) -> [UInt8] {
-        var timestamp = payload.timestamp
         var bytes: [UInt8] = []
-
         withUnsafeBytes(of: payload.identifier) { bytes.append(contentsOf: $0) }
-        withUnsafeBytes(of: &timestamp) { bytes.append(contentsOf: $0) }
-        
+        withUnsafeBytes(of: payload.timestamp) { bytes.append(contentsOf: $0) }
+
         return bytes
     }
 }

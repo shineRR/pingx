@@ -35,14 +35,14 @@ struct AsyncPingerTests {
     private let icmpPacketExtractor: ICMPPacketExtractorMock
     private let socketFactory: SocketFactoryMock
     private var pinger: AsyncPinger!
-    
+
     init() {
         self.socket = PingxSocketMock()
         self.socket.sendReturnValue = .success
 
         self.icmpHeaderFactory = ICMPHeaderFactoryMock()
         self.icmpHeaderFactory.makeReturnValue = ICMPHeader.sample()
-        
+
         self.icmpPacketExtractor = ICMPPacketExtractorMock()
         self.icmpPacketExtractor.extractReturnValue = ICMPPacket.sample()
 
@@ -51,7 +51,7 @@ struct AsyncPingerTests {
 
         self.pinger = makeAsyncPinger()
     }
-    
+
     private func makeAsyncPinger(
         configuration: PingConfiguration = PingConfiguration(intervalBetweenRequests: .milliseconds(0))
     ) -> AsyncPinger {
@@ -62,30 +62,30 @@ struct AsyncPingerTests {
             socketFactory: socketFactory
         )
     }
-    
+
     @Test("When socket is not created, it creates socket")
     func send_whenSocketIsNotCreated_createsSocket() async throws {
         let request = Request.sample()
 
         let sequence = pinger.ping(request: request)
         try await observerPingSequenceWithoutReturningResult(sequence: sequence)
-        
+
         #expect(socketFactory.makeCallsCount == 1)
     }
-    
+
     @Test("When socket is created, it doesn't create socket again")
     func send_whenSocketIsCreated_doesNotCreateSocket() async throws {
         let request = Request.sample()
 
         let sequence1 = pinger.ping(request: request)
         try await observerPingSequenceWithoutReturningResult(sequence: sequence1)
-        
+
         let sequence2 = pinger.ping(request: request)
         try await observerPingSequenceWithoutReturningResult(sequence: sequence2)
-        
+
         #expect(socketFactory.makeCallsCount == 1)
     }
-    
+
     @Test("When socket creation failed, it emits pingError.socketFailed")
     func send_whenSocketIsNotCreatedAndCreationFailed_emitsSocketCreationError() async throws {
         let request = Request.sample()
@@ -98,7 +98,7 @@ struct AsyncPingerTests {
             emits: [.failure(.socketFailed)]
         )
     }
-    
+
     @Test("When packet creation failed, it emits pingError.internalError")
     func send_whenPacketCreationFailed_emitsPacketCreationError() async throws {
         let request = Request.sample()
@@ -106,13 +106,14 @@ struct AsyncPingerTests {
         icmpHeaderFactory.makeThrowableError = AnyError()
 
         let sequence = pinger.ping(request: request)
-        
+
         try await checkThat(
             sequence: sequence,
             emits: [.failure(.internalError(AsyncPingerError.unableToCreatePacket))]
         )
+        #expect(icmpHeaderFactory.makeReceivedInvocations == [request])
     }
-    
+
     @Test("When setup is completed, sends a packet using the created socket")
     func send_whenSetUpIsCompleted_sendsPacket() async throws {
         let request = Request.sample()
@@ -126,34 +127,35 @@ struct AsyncPingerTests {
         #expect(socket.sendReceivedArguments?.address == request.destination.socketAddress as CFData)
         #expect(socket.sendReceivedArguments?.data == icmpHeader.data as CFData)
         #expect(socket.sendReceivedArguments?.timeout == request.timeoutInterval.milliseconds)
+        #expect(icmpHeaderFactory.makeReceivedInvocations == [request])
     }
-    
+
     @Test("When request failed, it emits pingError.internalError")
     func send_whenPacketSendingFailed_emitsError() async throws {
         let request = Request.sample()
         socket.sendReturnValue = .error
 
         let sequence = pinger.ping(request: request)
-        
+
         try await checkThat(
             sequence: sequence,
             emits: [.failure(.internalError(AsyncPingerError.unknown))]
         )
     }
-    
+
     @Test("When packet sending timed out, it emits pingError.timeout")
     func send_whenPacketSendingTimedOut_emitsTimedOutError() async throws {
         let request = Request.sample()
         socket.sendReturnValue = .timeout
 
         let sequence = pinger.ping(request: request)
-        
+
         try await checkThat(
             sequence: sequence,
             emits: [.failure(.timeout)]
         )
     }
-    
+
     @Test("When response parsing is successful, it emits icmp packet")
     func send_whenResponseParsingSucceeded_emitsIcmpPacket() async throws {
         let request = Request.sample()
@@ -169,7 +171,7 @@ struct AsyncPingerTests {
             destination: request.destination,
             sequenceNumber: request.sequenceNumber
         )
-        
+
         try await checkThat(
             sequence: sequence,
             emits: [.success(response)],
@@ -179,7 +181,7 @@ struct AsyncPingerTests {
             }
         )
     }
-    
+
     @Test("When response parsing is successful but identifier is different, it doesn't emit icmp packet")
     func send_whenResponseParsingSucceededButIdentifierIsDifferent_doesNotEmitIcmpPacket() async throws {
         let request = Request.sample(id: .sample(id: 1))
@@ -189,7 +191,7 @@ struct AsyncPingerTests {
         icmpPacketExtractor.extractReturnValue = icmpPacket
 
         let sequence = pinger.ping(request: request)
-        
+
         try await checkThat(
             sequence: sequence,
             emits: [],
@@ -207,7 +209,7 @@ struct AsyncPingerTests {
         icmpPacketExtractor.extractThrowableError = error
 
         let sequence = pinger.ping(request: request)
-        
+
         try await checkThat(
             sequence: sequence,
             emits: [],
@@ -226,7 +228,7 @@ struct AsyncPingerTests {
         icmpPacketExtractor.extractThrowableError = error
 
         let sequence = pinger.ping(request: request)
-        
+
         try await checkThat(
             sequence: sequence,
             emits: [.failure(.responseStructureInconsistent)],
@@ -236,14 +238,14 @@ struct AsyncPingerTests {
             }
         )
     }
-    
+
     @Test("When response parsing is failed with unknown response, it doesn't emit")
     func send_whenResponseParsingFailedWithUnknownError_doesNotEmit() async throws {
         let request = Request.sample()
         icmpPacketExtractor.extractThrowableError = AnyError()
 
         let sequence = pinger.ping(request: request)
-        
+
         try await checkThat(
             sequence: sequence,
             emits: [],
@@ -253,31 +255,31 @@ struct AsyncPingerTests {
             }
         )
     }
-    
+
     @Test("When request timed out, it emits pingerError.timeout")
     func send_whenRequestIsTimedOut_emitsTimedOutError() async throws {
         let request = Request.sample(timeoutInterval: .milliseconds(1))
 
         let sequence = pinger.ping(request: request)
-        
+
         try await checkThat(
             sequence: sequence,
             emits: [.failure(.timeout)]
         )
     }
-    
+
     @Test("When request demand is zero, doesn't emit values")
     func send_whenRequestDemandIsZero_doesNotEmitValues() async throws {
         let request = Request.sample(demand: .none)
 
         let sequence = pinger.ping(request: request)
-        
+
         try await checkThat(
             sequence: sequence,
             emits: []
         )
     }
-    
+
     @Test(
         "When request demand is greater than one, the corresponding number of values is emitted",
         arguments: [1, 2, 3, 4, 5]
@@ -289,7 +291,7 @@ struct AsyncPingerTests {
         let responses = (0..<demand)
             .map { Response.sample(destination: request.destination, sequenceNumber: UInt16($0)) }
             .map(PingResult.success)
-        
+
         icmpPacketExtractor.extractClosure = { _ in
             ICMPPacket.sample(
                 icmpHeader: .sample(
@@ -298,7 +300,7 @@ struct AsyncPingerTests {
                 )
             )
         }
-        
+
         try await checkThat(
             sequence: sequence,
             emits: responses,
@@ -314,7 +316,7 @@ struct AsyncPingerTests {
             timeout: .milliseconds(150)
         )
     }
-    
+
     @Test("When interval between requests is greater than 0, doesn't call the second ping immediately")
     mutating func send_whenRequestIntervalIsGreaterThanZero_doesNotCallSendBeforeIntervalIsReached() async throws {
         pinger = makeAsyncPinger(
@@ -326,7 +328,7 @@ struct AsyncPingerTests {
             destination: request.destination,
             sequenceNumber: request.sequenceNumber
         )
-        
+
         try await checkThat(
             sequence: sequence,
             emits: [.success(response)],
@@ -350,12 +352,12 @@ struct AsyncPingerTests {
             timeout: .milliseconds(100)
         )
     }
-    
+
     @Test("When request is cancelled, it doesn't throw cancel error")
     func cancel_whenRequestIsCancelled_doesNotEmitCancelError() async throws {
         let request = Request.sample(demand: .max(1))
         let sequence = pinger.ping(request: request)
-        
+
         try await checkThat(
             sequence: sequence,
             emits: [],
@@ -368,12 +370,12 @@ struct AsyncPingerTests {
             }
         )
     }
-    
+
     @Test("When request is cancelled and demand is greater than one, it doesn't emit results after cancellation")
     func cancel_whenRequestIsCancelledAndDemandIsGreaterThanOne_doesNotEmitResultsAfterCancellation() async throws {
         let request = Request.sample(demand: .unlimited)
         let sequence = pinger.ping(request: request)
-        
+
         try await checkThat(
             sequence: sequence,
             emits: [],
@@ -404,9 +406,9 @@ private extension AsyncPingerTests {
         let collectingValuesTask = Task {
             return try await collectValuesFromPingSequence(sequence: sequence, timeout: timeout)
         }
-        
+
         await operation?()
-        
+
         let values = try await collectingValuesTask.value
         let areValuesEqualToExpectedValues = values.elementsEqual(expectedValues, by: { $0.equals($1) })
 

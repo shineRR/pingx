@@ -31,12 +31,12 @@ struct Payload: Equatable {
     }
 
     // MARK: Properties
-    
+
     let identifier: Identifier
     let timestamp: CFAbsoluteTime
-    
+
     // MARK: Initializer
-    
+
     init(
         identifier: Identifier,
         timestamp: CFAbsoluteTime = CFAbsoluteTimeGetCurrent()

@@ -25,7 +25,7 @@
 import Foundation
 
 public enum IPv4AddressConverterError: CustomNSError {
-    public static let errorDomain = "com.pingx.IPAddressConverterError"
+    public static let errorDomain = "pingx.IPAddressConverterError"
     
     case invalidAddress
     case octetOutOfRange

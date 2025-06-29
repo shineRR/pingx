@@ -41,7 +41,7 @@ struct DemandTests {
     func demand_initialization(demand: Demand, expectedValue: UInt?) {
         #expect(demand.max == expectedValue)
     }
-    
+
     @Test(
         "Tests demand substraction",
         arguments: [
@@ -59,7 +59,7 @@ struct DemandTests {
     func demand_substraction(lValue: Demand, rValue: Demand, result: Demand) {
         #expect((lValue - rValue) == result)
     }
-    
+
     @Test(
         "Tests demand addition",
         arguments: [

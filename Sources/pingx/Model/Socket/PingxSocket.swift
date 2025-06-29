@@ -30,15 +30,15 @@ protocol PingxSocketProtocol {
 }
 
 final class PingxSocket<OutputType: AnyObject>: PingxSocketProtocol {
-    
+
     // MARK: Properties
-    
+
     let socket: CFSocket
     let socketSource: CFRunLoopSource
     let unmanaged: Unmanaged<OutputType>
-    
+
     // MARK: Initializer
-    
+
     init(
         socket: CFSocket,
         socketSource: CFRunLoopSource,
@@ -48,13 +48,13 @@ final class PingxSocket<OutputType: AnyObject>: PingxSocketProtocol {
         self.socketSource = socketSource
         self.unmanaged = unmanaged
     }
-    
+
     deinit {
         invalidate()
     }
-    
+
     // MARK: Methods
-    
+
     func send(address: CFData, data: CFData, timeout: CFTimeInterval) -> CFSocketError {
         CFSocketSendData(
             socket,
@@ -63,7 +63,7 @@ final class PingxSocket<OutputType: AnyObject>: PingxSocketProtocol {
             timeout
         )
     }
-    
+
     private func invalidate() {
         CFRunLoopSourceInvalidate(socketSource)
         CFSocketInvalidate(socket)

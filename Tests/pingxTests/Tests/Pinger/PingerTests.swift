@@ -32,7 +32,7 @@ struct PingerTests {
     private let pingSequence: MockPingSequence
     private let asyncPinger: AsyncPingerMock
     private var pinger: Pinger!
-    
+
     init() {
         self.pingSequence = MockPingSequence()
 
@@ -40,23 +40,23 @@ struct PingerTests {
         self.asyncPinger.pingReturnValue = AnyPingSequence(
             sequence: pingSequence
         )
-        
+
         self.pinger = Pinger(
             asyncPinger: asyncPinger
         )
     }
-    
-    
+
+
     @Test("When ping is called, starts pinging using the async pinger")
     func ping_callsASyncPinger() async {
         pinger.ping()
-        
+
         await expectToEventuallyBeCalled(
             actualCallsCount: asyncPinger.pingCallsCount,
             expectedCallsCount: 1
         )
     }
-    
+
     @Test("When the sequence emits events, calls completion with received events")
     func ping_whenSequenceEmitsEvent_callsCompletionWithReceivedEvent() async {
         let completion = MockFunc<PingResult, Void>()
@@ -70,14 +70,14 @@ struct PingerTests {
         for pingResult in pingResults {
             await pingSequence.send(pingResult)
         }
-        
+
         await expectToEventuallyBeCalled(
             actualCallsCount: completion.count,
             expectedCallsCount: 3
         )
         #expect(completion.parameters.elementsEqual(pingResults, by: { $0.equals($1) }))
     }
-    
+
     @Test("When sequence completes, cancels request by id")
     func ping_whenSequenceCompletes_cancelsRequestById() async {
         let request = Request.sample()
@@ -91,25 +91,25 @@ struct PingerTests {
         )
         #expect(asyncPinger.cancelReceivedInvocations == [request.identifier])
     }
-    
+
     @Test("When request is cancelled, cancels request by id")
     func cancel_cancelsRequestById() async {
         let request = Request.sample()
-        
+
         pinger.cancel(requestId: request.identifier)
-        
+
         #expect(asyncPinger.cancelReceivedInvocations == [request.identifier])
     }
-    
+
     @Test("When pinger is deinitialized, cancels all active requests")
     mutating func cancel_cancelsAllActiveRequests() async {
         let request1 = Request.sample(id: .sample(id: 0))
         let request2 = Request.sample(id: .sample(id: 1))
-        
+
         pinger.ping(request: request1)
         pinger.ping(request: request2)
         pinger = nil
-        
+
         #expect(
             asyncPinger.cancelReceivedInvocations.sorted(by: { $0.id < $1.id }) == [
                 request1.identifier, request2.identifier

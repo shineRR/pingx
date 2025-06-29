@@ -42,7 +42,7 @@ struct RequestTests {
         expectedDemand: Request.Demand
     ) {
         var request = Request.sample(demand: initialDemand)
-        
+
         request.decreaseDemand()
 
         #expect(request.demand == expectedDemand)
@@ -62,7 +62,7 @@ struct RequestTests {
         expectedSequenceNumber: UInt16
     ) {
         var request = Request.sample(sequenceNumber: initialSequenceNumber)
-        
+
         request.incrementSequenceNumber()
 
         #expect(request.sequenceNumber == expectedSequenceNumber)

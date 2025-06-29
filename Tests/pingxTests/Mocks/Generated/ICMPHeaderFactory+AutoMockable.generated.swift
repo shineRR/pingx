@@ -15,20 +15,20 @@ final class ICMPHeaderFactoryMock: ICMPHeaderFactoryProtocol {
     var makeCalled: Bool {
         return makeCallsCount > 0
     }
-    var makeReceivedArguments: (type: ICMPType, requestIdentifier: Request.Identifier, sequenceNumber: UInt16)?
-    var makeReceivedInvocations: [(type: ICMPType, requestIdentifier: Request.Identifier, sequenceNumber: UInt16)] = []
+    var makeReceivedRequest: (Request)?
+    var makeReceivedInvocations: [(Request)] = []
     var makeReturnValue: ICMPHeader!
-    var makeClosure: ((ICMPType, Request.Identifier, UInt16) throws -> ICMPHeader)?
+    var makeClosure: ((Request) throws -> ICMPHeader)?
 
-    func make(type: ICMPType, requestIdentifier: Request.Identifier, sequenceNumber: UInt16) throws -> ICMPHeader {
+    func make(from request: Request) throws -> ICMPHeader {
         makeCallsCount += 1
-        makeReceivedArguments = (type: type, requestIdentifier: requestIdentifier, sequenceNumber: sequenceNumber)
-        makeReceivedInvocations.append((type: type, requestIdentifier: requestIdentifier, sequenceNumber: sequenceNumber))
+        makeReceivedRequest = request
+        makeReceivedInvocations.append(request)
         if let error = makeThrowableError {
             throw error
         }
         if let makeClosure = makeClosure {
-            return try makeClosure(type, requestIdentifier, sequenceNumber)
+            return try makeClosure(request)
         } else {
             return makeReturnValue
         }

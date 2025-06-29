@@ -30,11 +30,11 @@ public protocol PingerProtocol: AnyObject {
 public final class Pinger: PingerProtocol {
     @Atomic private var activeTasks: [Request.Identifier: Task<Void, Never>] = [:]
     private let asyncPinger: AsyncPingerProtocol
-    
+
     init(asyncPinger: AsyncPingerProtocol) {
         self.asyncPinger = asyncPinger
     }
-    
+
     public convenience init(
         configuration: PingConfiguration = .default
     ) {
@@ -42,27 +42,30 @@ public final class Pinger: PingerProtocol {
             asyncPinger: AsyncPinger(configuration: configuration)
         )
     }
-    
+
     deinit {
         cancelAllActiveRequests()
     }
-    
+
+    private func cancelAllActiveRequests() {
+        activeTasks.keys.forEach { cancel(requestId: $0) }
+        activeTasks.removeAll()
+    }
+
     public func ping(
         request: Request,
         completion: @escaping (PingResult) -> Void
     ) {
-        var task: Task<Void, Never>?
-
-        task = Task { [weak self] in
+        let task = Task { [weak self] in
             let sequence = self?.asyncPinger.ping(request: request)
 
             while !Task.isCancelled, let result = try? await sequence?.next() as? PingResult {
                 completion(result)
             }
-            
+
             self?.cancel(requestId: request.identifier)
         }
-        
+
         activeTasks[request.identifier] = task
     }
 
@@ -71,10 +74,5 @@ public final class Pinger: PingerProtocol {
 
         let task = activeTasks.removeValue(forKey: requestId)
         task?.cancel()
-    }
-    
-    private func cancelAllActiveRequests() {
-        activeTasks.keys.forEach { cancel(requestId: $0) }
-        activeTasks.removeAll()
     }
 }

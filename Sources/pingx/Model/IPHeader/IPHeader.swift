@@ -64,7 +64,7 @@ struct IPHeader: Equatable {
     }
     
     // MARK: Static
-
+    
     static func == (lhs: IPHeader, rhs: IPHeader) -> Bool {
         lhs.versionAndHeaderLength == rhs.versionAndHeaderLength &&
         lhs.serviceType == rhs.serviceType &&

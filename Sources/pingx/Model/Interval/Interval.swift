@@ -28,7 +28,7 @@ public enum Interval: Sendable, Hashable {
     case seconds(TimeInterval)
     case milliseconds(TimeInterval)
     case nanoseconds(TimeInterval)
-    
+
     public var seconds: TimeInterval {
         switch self {
         case .seconds(let value):
@@ -50,7 +50,7 @@ public enum Interval: Sendable, Hashable {
             return value / 1_000_000
         }
     }
-    
+
     public var nanoseconds: TimeInterval {
         switch self {
         case .seconds(let value):

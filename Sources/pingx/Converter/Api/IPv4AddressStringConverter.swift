@@ -23,7 +23,7 @@
 //
 
 public protocol IPv4AddressStringConverter {
-    
+
     /// Converts a string  to `IPv4Address`.
     func convert(address: String) throws -> IPv4Address
 }

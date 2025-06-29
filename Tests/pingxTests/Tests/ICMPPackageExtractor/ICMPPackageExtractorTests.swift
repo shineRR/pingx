@@ -31,65 +31,65 @@ import XCTest
 @Suite
 struct ICMPPackageExtractorTests {
     private let extractor: ICMPPacketExtractor
-    
+
     init () {
         self.extractor = ICMPPacketExtractor()
     }
-    
+
     @Test("When data is valid, it returns icmp packet")
     func extract_whenDataIsValid_returnsIcmpPacket() throws {
         let request = Request.sample()
         let data = try makeCorrectData(for: request)
-        
+
         let icmpPacket = try extractor.extract(from: data)
-        
+
         #expect(icmpPacket.icmpHeader.identifier == request.identifier.id)
         #expect(icmpPacket.ipHeader.sourceAddress == request.destination)
     }
-    
+
     @Test("When icmp type is not echo reply, it throws invalidType error")
     func extract_whenIcmpTypeIsNotEchoReply_throwsInvalidTypeError() async throws {
         let icmpHeader = ICMPHeader.sample(type: .addressMaskReply)
         let data = makeErrorData(icmpHeader: icmpHeader)
-        
+
         #expect(throws: ICMPResponseValidationError.invalidType(icmpHeader)) {
             try extractor.extract(from: data)
         }
     }
-    
+
     @Test("When code is not zero, it throws invalidType error")
     func extract_whenCodeIsNotZero_throwsInvalidCodeError() async throws {
         let icmpHeader = ICMPHeader.sample(code: .max)
         let data = makeErrorData(icmpHeader: icmpHeader)
-        
+
         #expect(throws: ICMPResponseValidationError.invalidCode(icmpHeader)) {
             try extractor.extract(from: data)
         }
     }
-    
+
     @Test("When checksum is wrong, it throws checksumMismatch error")
     func extract_whenChecksumIsWrong_throwsChecksumMismatchError() async throws {
         let icmpHeader = ICMPHeader.sample(checksum: .zero)
         let data = makeErrorData(icmpHeader: icmpHeader)
-        
+
         #expect(throws: ICMPResponseValidationError.checksumMismatch(icmpHeader)) {
             try extractor.extract(from: data)
         }
     }
-    
+
     @Test("When ip header is missing, it throws missedIpHeader error")
     func extract_whenIpHeaderIsMissing_throwsMissedIpHeaderError() async throws {
         let data = makeErrorData(shouldAddIpHeader: false)
-        
+
         #expect(throws: ICMPResponseValidationError.missedIpHeader) {
             try extractor.extract(from: data)
         }
     }
-    
+
     @Test("When icmp header is missing, it throws missedIcmpHeader error")
     func extract_whenIcmpHeaderIsMissing_throwsMissedIcmpHeaderError() async throws {
         let data = makeErrorData(icmpHeader: nil)
-        
+
         #expect(throws: ICMPResponseValidationError.missedIcmpHeader) {
             try extractor.extract(from: data)
         }
@@ -118,18 +118,18 @@ private extension ICMPPackageExtractorTests {
                 )
             )
         )
-        
+
         guard let checksum = try? ICMPChecksum()(icmpHeader: icmpHeader) else {
             throw NSError(domain: "Checksum calculation failed", code: .zero)
         }
         icmpHeader.setChecksum(checksum)
-        
+
         var icmpPacket = ICMPPacket(ipHeader: ipHeader, icmpHeader: icmpHeader)
         let data = withUnsafeBytes(of: &icmpPacket) { Data($0) }
-        
+
         return data
     }
-    
+
     func makeErrorData(
         for request: Request = .sample(),
         icmpHeader: ICMPHeader? = nil,
@@ -142,7 +142,7 @@ private extension ICMPPackageExtractorTests {
             destinationAddress: request.destination
         )
         let data: Data
-        
+
         if let icmpHeader {
             var icmp = ICMPPacket.sample(ipHeader: ipHeader, icmpHeader: icmpHeader)
             data = withUnsafeBytes(of: &icmp) { Data($0) }
@@ -152,7 +152,7 @@ private extension ICMPPackageExtractorTests {
         } else {
             data = Data()
         }
-        
+
         return data
     }
 }

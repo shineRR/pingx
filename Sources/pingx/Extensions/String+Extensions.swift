@@ -27,7 +27,6 @@ import Foundation
 extension String {
     var socketAddress: Data {
         var socketAddress = sockaddr_in()
-        
         socketAddress.sin_len = UInt8(MemoryLayout<sockaddr_in>.size)
         socketAddress.sin_family = UInt8(AF_INET)
         socketAddress.sin_port = .zero

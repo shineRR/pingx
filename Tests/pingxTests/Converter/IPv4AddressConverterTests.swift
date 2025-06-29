@@ -50,7 +50,10 @@ struct IPv4AddressConverterTests {
             "255.255.255.255.1",
             "abc",
             "abc.abc.abc.abc",
-            "abc1.ax3.4.5"
+            "abc1.ax3.4.5",
+            "123123",
+            "1=2=3=4",
+            "1-2-3-4"
         ]
     )
     func convert_whenAddressIsInvalid_throwsInvalidAddressError(address: String) {

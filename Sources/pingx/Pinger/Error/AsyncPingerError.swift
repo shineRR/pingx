@@ -25,7 +25,7 @@
 import Foundation
 
 enum AsyncPingerError: CustomNSError {
-    static var errorDomain: String { "pingx.PingerError" }
+    static let errorDomain: String = "pingx.AsyncPingerError"
 
     public var errorCode: Int {
         switch self {

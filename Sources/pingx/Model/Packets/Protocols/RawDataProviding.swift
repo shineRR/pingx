@@ -24,6 +24,12 @@
 
 import Foundation
 
-protocol Packet {
+protocol RawDataProviding {
     var data: Data { get }
+}
+
+extension RawDataProviding {
+    var data: Data {
+        withUnsafeBytes(of: self) { Data($0) }
+    }
 }

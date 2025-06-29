@@ -25,7 +25,7 @@
 import Foundation
 
 public struct IPv4Address: Hashable, Sendable {
-
+    
     // MARK: Properties
     
     public let address: (UInt8, UInt8, UInt8, UInt8)
@@ -61,11 +61,8 @@ public struct IPv4Address: Hashable, Sendable {
 // MARK: - Internal API
 
 extension IPv4Address {
-    var stringAddress: String {
-        "\(address.0).\(address.1).\(address.2).\(address.3)"
-    }
-    
     var socketAddress: Data {
-        stringAddress.socketAddress
+        let stringAddress = "\(address.0).\(address.1).\(address.2).\(address.3)"
+        return stringAddress.socketAddress
     }
 }

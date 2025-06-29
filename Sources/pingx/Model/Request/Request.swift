@@ -28,7 +28,7 @@ public struct Request: Hashable, Sendable {
     public struct Identifier: Hashable, Sendable {
         let id: UInt16
         let uniqueToken: UUID
-        
+
         init(
             id: UInt16,
             uniqueToken: UUID = UUID()
@@ -39,7 +39,7 @@ public struct Request: Hashable, Sendable {
     }
 
     // MARK: Properties
-    
+
     /// The unique identifier for the request.
     public let identifier: Identifier
 
@@ -48,18 +48,18 @@ public struct Request: Hashable, Sendable {
 
     /// The destination IP.
     public let destination: IPv4Address
-    
+
     /// Timeout interval.
     public let timeoutInterval: Interval
-    
+
     /// The desired quantity of ping requests to be sent.
     public private(set) var demand: Request.Demand
-    
+
     /// A sequence number  to help in matching Echo and Echo Reply messages.
     private(set) var sequenceNumber: UInt16
-    
+
     // MARK: Initializer
-    
+
     public init(
         destination: IPv4Address,
         timeoutInterval: Interval = .seconds(1),
@@ -85,7 +85,7 @@ public struct Request: Hashable, Sendable {
         self.demand = demand
         self.sequenceNumber = sequenceNumber
     }
-    
+
     // MARK: Methods
 
     public static func == (lhs: Request, rhs: Request) -> Bool {
@@ -108,7 +108,7 @@ public struct Request: Hashable, Sendable {
     mutating func decreaseDemand() {
         demand = demand - .max(1)
     }
-    
+
     mutating func incrementSequenceNumber() {
         let (result, overflow) = sequenceNumber.addingReportingOverflow(1)
         sequenceNumber = overflow ? .zero : result
@@ -119,35 +119,35 @@ public struct Request: Hashable, Sendable {
 
 public extension Request {
     struct Demand: Hashable, Sendable {
-        
+
         // MARK: Properties
-        
+
         /// Represents the current demand, which indicates the number of values requested.
         public let max: UInt?
-        
+
         // MARK: Initializer
-        
+
         init(max: UInt?) {
             self.max = max
         }
-        
+
         // MARK: Static
-        
+
         /// A request for as many values as the pinger can produce.
         public static let unlimited = Request.Demand(max: nil)
-        
+
         /// A request for no elements from the pinger.
         ///
         /// This is equivalent to `Demand.max(0)`.
         public static let none = Request.Demand(max: .zero)
-        
+
         /// Creates a demand for the given maximum number of elements.
         ///
         /// - Parameter value: The maximum number of elements.
         public static func max(_ max: UInt) -> Demand {
             Demand(max: max)
         }
-        
+
         static func - (lhs: Request.Demand, rhs: Request.Demand) -> Request.Demand {
             if lhs == .unlimited {
                 return lhs
@@ -156,18 +156,18 @@ public extension Request {
             } else {
                 let lValue = lhs.max ?? .zero
                 let rValue = rhs.max ?? .zero
-                
+
                 let (result, overflow) = lValue.subtractingReportingOverflow(rValue)
                 return overflow ? .none : .max(result)
             }
         }
-        
+
         static func + (lhs: Request.Demand, rhs: Request.Demand) -> Request.Demand {
             if lhs == .unlimited || rhs == .unlimited { return .unlimited }
-            
+
             let lValue = lhs.max ?? .zero
             let rValue = rhs.max ?? .zero
-            
+
             let (result, overflow) = lValue.addingReportingOverflow(rValue)
             return overflow ? .max(.max) : .max(result)
         }

@@ -26,7 +26,7 @@ import Foundation
 
 public struct PingConfiguration {
     public let intervalBetweenRequests: Interval
-    
+
     public init(intervalBetweenRequests: Interval) {
         self.intervalBetweenRequests = intervalBetweenRequests
     }

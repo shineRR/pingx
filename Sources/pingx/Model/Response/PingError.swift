@@ -25,8 +25,8 @@
 import Foundation
 
 public enum PingError: CustomNSError {
-    public static var errorDomain: String { "pingx.PingError" }
-    
+    public static let errorDomain: String = "pingx.PingError"
+
     public var errorDescription: String? {
         switch self {
         case .cancelled:
@@ -41,7 +41,7 @@ public enum PingError: CustomNSError {
             return "An internal error occurred: \(error.localizedDescription)"
         }
     }
-    
+
     public var errorCode: Int {
         switch self {
         case .cancelled:
@@ -56,7 +56,7 @@ public enum PingError: CustomNSError {
             105
         }
     }
-    
+
     public var underlyingError: CustomNSError? {
         guard case .internalError(let error) = self else { return nil }
         return error

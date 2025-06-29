@@ -33,7 +33,7 @@ enum ICMPResponseValidationError: Error {
             return nil
         }
     }
-    
+
     case checksumMismatch(ICMPHeader)
     case invalidType(ICMPHeader)
     case invalidCode(ICMPHeader)

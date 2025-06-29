@@ -26,27 +26,19 @@ import Foundation
 
 // sourcery: AutoMockable
 protocol ICMPHeaderFactoryProtocol {
-    func make(
-        type: ICMPType,
-        requestIdentifier: Request.Identifier,
-        sequenceNumber: UInt16
-    ) throws -> ICMPHeader
+    func make(from request: Request) throws -> ICMPHeader
 }
 
 struct ICMPHeaderFactory: ICMPHeaderFactoryProtocol {
-    func make(
-        type: ICMPType,
-        requestIdentifier: Request.Identifier,
-        sequenceNumber: UInt16
-    ) throws -> ICMPHeader {
+    func make(from request: Request) throws -> ICMPHeader {
         var icmpHeader = ICMPHeader(
-            type: type,
-            identifier: requestIdentifier.id,
-            sequenceNumber: sequenceNumber,
+            type: request.type,
+            identifier: request.identifier.id,
+            sequenceNumber: request.sequenceNumber,
             payload: Payload(
                 identifier: Payload.Identifier(
-                    id: requestIdentifier.id,
-                    uniqueToken: requestIdentifier.uniqueToken
+                    id: request.identifier.id,
+                    uniqueToken: request.identifier.uniqueToken
                 )
             )
         )

@@ -29,7 +29,7 @@ protocol SocketFactoryProtocol {
     func make(command: CommandBlock<Data>) throws -> any PingxSocketProtocol
 }
 
-final class SocketFactory: SocketFactoryProtocol {
+struct SocketFactory: SocketFactoryProtocol {
     func make(command: CommandBlock<Data>) throws -> any PingxSocketProtocol {
         let unmanaged = Unmanaged.passRetained(command)
         var context = CFSocketContext(

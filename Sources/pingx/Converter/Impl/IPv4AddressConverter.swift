@@ -26,20 +26,19 @@ import Foundation
 
 public struct IPv4AddressConverter: IPv4AddressStringConverter {
     private enum Constants {
-        static var ipv4OctetsCount: Int { 4 }
-        static var allowedCharacters: CharacterSet {
-            CharacterSet.decimalDigits.union(CharacterSet(charactersIn: ".-"))
-        }
+        static let ipv4OctetsCount = 4
+        static let separator = "."
+        static let allowedCharacters = CharacterSet.decimalDigits.union(CharacterSet(charactersIn: ".-"))
     }
 
     public init() {}
 
     public func convert(address: String) throws -> IPv4Address {
         let components = address.trimmingCharacters(in: Constants.allowedCharacters.inverted)
-            .components(separatedBy: ".")
+            .components(separatedBy: Constants.separator)
             .compactMap(Int.init)
         guard components.count == Constants.ipv4OctetsCount else { throw IPv4AddressConverterError.invalidAddress }
-        
+
         let ipv4Octets = components.compactMap(UInt8.init)
         guard ipv4Octets.count == Constants.ipv4OctetsCount else { throw IPv4AddressConverterError.octetOutOfRange }
 

@@ -31,7 +31,7 @@ struct PingSequence: PingSequenceProtocol {
     private let pinger: AsyncPinger
     private var request: Request
     private var shouldDelayNextPing = false
-    
+
     init(
         configuration: PingConfiguration,
         pinger: AsyncPinger,
@@ -44,28 +44,28 @@ struct PingSequence: PingSequenceProtocol {
 
     mutating func next() async throws -> PingResult? {
         guard request.demand != .none else { return nil }
+
         try Task.checkCancellation()
 
         if shouldDelayNextPing {
             try await Task.sleep(nanoseconds: UInt64(configuration.intervalBetweenRequests.nanoseconds))
-            try Task.checkCancellation()
         } else {
             shouldDelayNextPing = true
         }
-        
-        let result = await performPingWithTimeout()
-        
-        if case .cancelled = result?.error {
+
+        guard let result = await performPingWithTimeout() else { return nil }
+
+        if case .cancelled = result.error {
             request.setDemand(.none)
             return nil
-        } else {
-            request.decreaseDemand()
-            request.incrementSequenceNumber()
         }
-        
-        return result?.mapToPingResult()
+
+        request.decreaseDemand()
+        request.incrementSequenceNumber()
+
+        return result.mapToPingResult()
     }
-    
+
     private func performPingWithTimeout() async -> AsyncPingerResult? {
         await withTaskGroup(
             of: AsyncPingerResult.self,
@@ -75,10 +75,10 @@ struct PingSequence: PingSequenceProtocol {
                 do {
                     try await Task.sleep(nanoseconds: UInt64(request.timeoutInterval.nanoseconds))
                 } catch {}
-                
+
                 return .failure(.timeout)
             }
-            
+
             taskGroup.addTask {
                 return await withCheckedContinuation { continutaion in
                     pinger?.ping(request) { result in
@@ -86,16 +86,16 @@ struct PingSequence: PingSequenceProtocol {
                     }
                 }
             }
-            
+
             defer {
                 taskGroup.cancelAll()
                 pinger?.cancel(requestId: request.identifier)
             }
-            
+
             return await taskGroup.next()
         }
     }
-    
+
     func makeAsyncIterator() -> PingSequence { self }
 }
 

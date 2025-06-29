@@ -31,18 +31,18 @@ public protocol AsyncPingerProtocol: AnyObject {
 }
 
 public final class AsyncPinger: AsyncPingerProtocol {
-    
+
     // MARK: Properties
-    
+
     @Atomic private var pingxSocket: (any PingxSocketProtocol)!
     @Atomic private var completions = [Request.Identifier: (AsyncPingerResult) -> Void]()
     private let configuration: PingConfiguration
     private let icmpHeaderFactory: ICMPHeaderFactoryProtocol
     private let icmpPacketExtractor: ICMPPacketExtractorProtocol
     private let socketFactory: SocketFactoryProtocol
-    
+
     // MARK: Initializer
-    
+
     init(
         configuration: PingConfiguration,
         icmpHeaderFactory: ICMPHeaderFactoryProtocol,
@@ -54,7 +54,7 @@ public final class AsyncPinger: AsyncPingerProtocol {
         self.icmpPacketExtractor = icmpPacketExtractor
         self.socketFactory = socketFactory
     }
-    
+
     public convenience init(
         configuration: PingConfiguration = .default
     ) {
@@ -65,7 +65,7 @@ public final class AsyncPinger: AsyncPingerProtocol {
             socketFactory: SocketFactory()
         )
     }
-    
+
     public func ping(request: Request) -> AnyPingSequence {
         AnyPingSequence(
             sequence: PingSequence(
@@ -75,7 +75,7 @@ public final class AsyncPinger: AsyncPingerProtocol {
             )
         )
     }
-    
+
     public func cancel(requestId: Request.Identifier) {
         invokeCompletion(identifier: requestId, result: .failure(.cancelled))
     }
@@ -89,7 +89,7 @@ extension AsyncPinger {
         completion: @escaping (AsyncPingerResult) -> Void
     ) {
         completions[request.identifier] = completion
-        
+
         do {
             try checkSocketCreation()
         } catch {
@@ -97,23 +97,17 @@ extension AsyncPinger {
             return
         }
 
-        let packet = try? icmpHeaderFactory.make(
-            type: request.type,
-            requestIdentifier: request.identifier,
-            sequenceNumber: request.sequenceNumber
-        )
-
-        guard let packet else {
+        guard let icmpHeader = try? icmpHeaderFactory.make(from: request) else {
             invokeCompletion(identifier: request.identifier, result: .failure(.unableToCreatePacket))
             return
         }
-        
+
         let cfSocketError = pingxSocket.send(
             address: request.destination.socketAddress as CFData,
-            data: packet.data as CFData,
+            data: icmpHeader.data as CFData,
             timeout: request.timeoutInterval.milliseconds
         )
-        
+
         if let error = cfSocketError.mapToPingerError() {
             invokeCompletion(identifier: request.identifier, result: .failure(error))
         }
@@ -125,7 +119,7 @@ extension AsyncPinger {
 private extension AsyncPinger {
     func checkSocketCreation() throws {
         guard pingxSocket == nil else { return }
-        
+
         let command: CommandBlock<Data> = CommandBlock { [weak self] data in
             guard let self else { return }
 
@@ -139,15 +133,15 @@ private extension AsyncPinger {
                     return .failure(.unknown)
                 }
             }()
-            
+
             if let identifier = result.identifier {
                 invokeCompletion(identifier: identifier, result: result)
             }
         }
-        
+
         pingxSocket = try socketFactory.make(command: command)
     }
-    
+
     func invokeCompletion(identifier: Request.Identifier, result: AsyncPingerResult) {
         let completion = completions.removeValue(forKey: identifier)
         completion?(result)
