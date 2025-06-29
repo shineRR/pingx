@@ -47,10 +47,11 @@ final class CallbackPingViewModel: ObservableObject {
     
     func startPinging() {
         pingResultDisplayModels.removeAll()
-        
+
+        let demandCount = 5
         let request = Request(
             destination: Constants.destinationAddress,
-            demand: .max(5)
+            demand: .max(UInt(demandCount))
         )
         
         isPingActive = true
@@ -60,7 +61,7 @@ final class CallbackPingViewModel: ObservableObject {
                 let displayModel = PingResultDisplayModel(pingResult: result)
                 self?.pingResultDisplayModels.append(displayModel)
                 
-                if request.demand == .none {
+                if self?.pingResultDisplayModels.count == demandCount {
                     self?.isPingActive = false
                 }
             }

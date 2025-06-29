@@ -25,7 +25,7 @@
 import SwiftUI
 
 struct AsyncPingView: View {
-    @ObservedObject private var viewModel = AsyncPingViewModel()
+    @StateObject private var viewModel = AsyncPingViewModel()
 
     var body: some View {
         VStack {

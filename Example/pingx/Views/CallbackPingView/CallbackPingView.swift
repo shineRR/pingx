@@ -26,7 +26,7 @@ import SwiftUI
 import pingx
 
 struct CallbackPingView: View {
-    @ObservedObject private var viewModel = CallbackPingViewModel()
+    @StateObject private var viewModel = CallbackPingViewModel()
 
     var body: some View {
         VStack {

@@ -49,7 +49,6 @@ public final class Pinger: PingerProtocol {
 
     private func cancelAllActiveRequests() {
         activeTasks.keys.forEach { cancel(requestId: $0) }
-        activeTasks.removeAll()
     }
 
     public func ping(
