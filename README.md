@@ -53,6 +53,8 @@ let destination = try converter.convert(address: "8.8.8.8")
 The Request class represents a single ping request configuration. It encapsulates all necessary information to perform an ICMP ping to a specified IPv4 address.
 
 ```swift
+import pingx
+
 let destination = IPv4Address(address: (8, 8, 8, 8))
 let request = Request(
     destination: destination,       // Destination
