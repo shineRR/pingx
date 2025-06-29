@@ -25,18 +25,8 @@
 import Foundation
 
 public struct Request: Hashable, Sendable {
-    public struct Identifier: Hashable, Sendable {
-        let id: UInt16
-        let uniqueToken: UUID
 
-        init(
-            id: UInt16,
-            uniqueToken: UUID = UUID()
-        ) {
-            self.id = id
-            self.uniqueToken = uniqueToken
-        }
-    }
+    public typealias Identifier = PingxIdentifier
 
     // MARK: Properties
 

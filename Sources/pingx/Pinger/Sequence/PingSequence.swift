@@ -81,7 +81,7 @@ struct PingSequence: PingSequenceProtocol {
 
             taskGroup.addTask {
                 return await withCheckedContinuation { continutaion in
-                    pinger?.ping(request) { result in
+                    pinger?.ping(request: request) { result in
                         continutaion.resume(returning: result)
                     }
                 }

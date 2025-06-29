@@ -24,7 +24,7 @@
 
 import Foundation
 
-struct ICMPHeader: Equatable, RawDataProviding {
+struct ICMPHeader: Equatable {
     
     // MARK: Properties
     
@@ -68,5 +68,12 @@ struct ICMPHeader: Equatable, RawDataProviding {
     
     mutating func setChecksum(_ checksum: UInt16) {
         self.checksum = checksum
+    }
+}
+
+extension ICMPHeader {
+    var data: Data {
+        var packet = self
+        return Data(bytes: &packet, count: MemoryLayout<ICMPHeader>.size)
     }
 }

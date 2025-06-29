@@ -58,7 +58,7 @@ public final class Pinger: PingerProtocol {
         let task = Task { [weak self] in
             let sequence = self?.asyncPinger.ping(request: request)
 
-            while !Task.isCancelled, let result = try? await sequence?.next() as? PingResult {
+            while let result = try? await sequence?.next() as? PingResult, !Task.isCancelled {
                 completion(result)
             }
 
@@ -69,8 +69,6 @@ public final class Pinger: PingerProtocol {
     }
 
     public func cancel(requestId: Request.Identifier) {
-        asyncPinger.cancel(requestId: requestId)
-
         let task = activeTasks.removeValue(forKey: requestId)
         task?.cancel()
     }

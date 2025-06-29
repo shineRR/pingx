@@ -25,20 +25,16 @@
 import Foundation
 
 struct Payload: Equatable {
-    struct Identifier: Equatable {
-        let id: UInt16
-        let uniqueToken: UUID
-    }
 
     // MARK: Properties
 
-    let identifier: Identifier
+    let identifier: PingxIdentifier
     let timestamp: CFAbsoluteTime
 
     // MARK: Initializer
 
     init(
-        identifier: Identifier,
+        identifier: PingxIdentifier,
         timestamp: CFAbsoluteTime = CFAbsoluteTimeGetCurrent()
     ) {
         self.identifier = identifier

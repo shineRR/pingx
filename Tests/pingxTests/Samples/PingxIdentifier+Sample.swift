@@ -24,12 +24,23 @@
 
 import Foundation
 
-protocol RawDataProviding {
-    var data: Data { get }
-}
+@testable import pingx
 
-extension RawDataProviding {
-    var data: Data {
-        withUnsafeBytes(of: self) { Data($0) }
+extension PingxIdentifier {
+    static func sample(
+        id: UInt16 = .zero,
+        uniqueToken: UUID = UUID(
+            uuid: (
+                0x89, 0xA7, 0xD4, 0x8B,
+                0x38, 0x23, 0x4F, 0x1F,
+                0x9B, 0x1A, 0xA6, 0x1B,
+                0x3E, 0xD8, 0xE2, 0xA9
+            )
+        )
+    ) -> PingxIdentifier {
+        PingxIdentifier(
+            id: id,
+            uniqueToken: uniqueToken
+        )
     }
 }

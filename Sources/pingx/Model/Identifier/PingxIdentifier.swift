@@ -24,16 +24,15 @@
 
 import Foundation
 
-public struct Response: Sendable {
+public struct PingxIdentifier: Hashable, Sendable {
+    let id: UInt16
+    let uniqueToken: UUID
 
-    // MARK: Properties
-
-    /// Destination address.
-    public let destination: IPv4Address
-
-    /// Time elapsed between the request and the response.
-    public let duration: Interval
-
-    /// Sequence number to match request/response.
-    public let sequenceNumber: UInt16
+    init(
+        id: UInt16,
+        uniqueToken: UUID = UUID()
+    ) {
+        self.id = id
+        self.uniqueToken = uniqueToken
+    }
 }

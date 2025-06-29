@@ -27,7 +27,6 @@ import Foundation
 // sourcery: AutoMockable
 public protocol AsyncPingerProtocol: AnyObject {
     func ping(request: Request) -> AnyPingSequence
-    func cancel(requestId: Request.Identifier)
 }
 
 public final class AsyncPinger: AsyncPingerProtocol {
@@ -75,17 +74,13 @@ public final class AsyncPinger: AsyncPingerProtocol {
             )
         )
     }
-
-    public func cancel(requestId: Request.Identifier) {
-        invokeCompletion(identifier: requestId, result: .failure(.cancelled))
-    }
 }
 
 // MARK: - Internal API
 
 extension AsyncPinger {
     func ping(
-        _ request: Request,
+        request: Request,
         completion: @escaping (AsyncPingerResult) -> Void
     ) {
         completions[request.identifier] = completion
@@ -111,6 +106,10 @@ extension AsyncPinger {
         if let error = cfSocketError.mapToPingerError() {
             invokeCompletion(identifier: request.identifier, result: .failure(error))
         }
+    }
+
+    func cancel(requestId: Request.Identifier) {
+        invokeCompletion(identifier: requestId, result: .failure(.cancelled))
     }
 }
 

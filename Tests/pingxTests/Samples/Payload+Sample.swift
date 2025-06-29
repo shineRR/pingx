@@ -28,30 +28,12 @@ import Foundation
 
 extension Payload {
     static func sample(
-        identifier: Payload.Identifier = .sample(),
+        identifier: PingxIdentifier = .sample(),
         timestamp: CFAbsoluteTime = .zero
     ) -> Payload {
         Payload(
             identifier: identifier,
             timestamp: timestamp
-        )
-    }
-}
-
-extension Payload.Identifier {
-    static func sample(
-        id: UInt16 = .zero,
-        uniqueToken: UUID = UUID(uuid: (
-            0x89, 0xA7, 0xD4, 0x8B,
-            0x38, 0x23,
-            0x4F, 0x1F,
-            0x9B, 0x1A,
-            0xA6, 0x1B, 0x3E, 0xD8, 0xE2, 0xA9
-        ))
-    ) -> Payload.Identifier {
-        Payload.Identifier(
-            id: id,
-            uniqueToken: uniqueToken
         )
     }
 }

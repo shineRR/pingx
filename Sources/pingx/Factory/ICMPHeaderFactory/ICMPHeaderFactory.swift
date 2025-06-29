@@ -35,12 +35,7 @@ struct ICMPHeaderFactory: ICMPHeaderFactoryProtocol {
             type: request.type,
             identifier: request.identifier.id,
             sequenceNumber: request.sequenceNumber,
-            payload: Payload(
-                identifier: Payload.Identifier(
-                    id: request.identifier.id,
-                    uniqueToken: request.identifier.uniqueToken
-                )
-            )
+            payload: Payload(identifier: request.identifier)
         )
         let checksum = try ICMPChecksum()(icmpHeader: icmpHeader)
         

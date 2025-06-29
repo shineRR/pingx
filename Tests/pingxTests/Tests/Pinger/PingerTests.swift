@@ -78,43 +78,42 @@ struct PingerTests {
         #expect(completion.parameters.elementsEqual(pingResults, by: { $0.equals($1) }))
     }
 
-    @Test("When sequence completes, cancels request by id")
-    func ping_whenSequenceCompletes_cancelsRequestById() async {
+    @Test("When sequence completes, doesn't emit new events")
+    func ping_whenSequenceCompletes_doesNotEmitNewEvents() async {
         let request = Request.sample()
 
         pinger.ping(request: request)
         await pingSequence.finish()
 
-        await expectToEventuallyBeCalled(
-            actualCallsCount: asyncPinger.cancelCallsCount,
-            expectedCallsCount: 1
-        )
-        #expect(asyncPinger.cancelReceivedInvocations == [request.identifier])
+        await pingSequence.expectNextNotToEventuallyBeCalled()
     }
 
-    @Test("When request is cancelled, cancels request by id")
-    func cancel_cancelsRequestById() async {
+    @Test("When request is cancelled, does not emit events after cancellation")
+    func cancel_doesNotEmitEvents() async {
+        let completion = MockFunc<PingResult, Void>()
         let request = Request.sample()
 
-        pinger.cancel(requestId: request.identifier)
+        pinger.ping(request: request, completion: completion)
+        await pingSequence.expectNextToEventuallyBeCalled()
 
-        #expect(asyncPinger.cancelReceivedInvocations == [request.identifier])
+        pinger.cancel(requestId: request.identifier)
+        await pingSequence.send(.success(.sample()))
+
+        await expectNotToEventuallyBeCalled(actualCallsCount: completion.count)
     }
 
     @Test("When pinger is deinitialized, cancels all active requests")
-    mutating func cancel_cancelsAllActiveRequests() async {
-        let request1 = Request.sample(id: .sample(id: 0))
-        let request2 = Request.sample(id: .sample(id: 1))
+    mutating func deinit_cancelsAllActiveRequests() async {
+        let completion = MockFunc<PingResult, Void>()
+        let request = Request.sample()
 
-        pinger.ping(request: request1)
-        pinger.ping(request: request2)
+        pinger.ping(request: request)
+        await pingSequence.expectNextToEventuallyBeCalled()
+
         pinger = nil
+        await pingSequence.send(.success(.sample()))
 
-        #expect(
-            asyncPinger.cancelReceivedInvocations.sorted(by: { $0.id < $1.id }) == [
-                request1.identifier, request2.identifier
-            ]
-        )
+        await expectNotToEventuallyBeCalled(actualCallsCount: completion.count)
     }
 }
 
@@ -126,6 +125,22 @@ private extension Pinger {
         ping(
             request: request,
             completion: completion.call
+        )
+    }
+}
+
+private extension MockPingSequence {
+    func expectNextToEventuallyBeCalled() async {
+        await expectToEventuallyBeCalled(
+            actualCallsCount: self.nextCallsCount,
+            expectedCallsCount: nextCallsCount + 1
+        )
+    }
+
+    func expectNextNotToEventuallyBeCalled() async {
+        await expectNotToEventuallyBeCalled(
+            actualCallsCount: self.nextCallsCount,
+            expectedCallsCount: nextCallsCount + 1
         )
     }
 }
