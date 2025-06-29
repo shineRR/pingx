@@ -55,24 +55,24 @@ The Request class represents a single ping request configuration. It encapsulate
 ```swift
 let destination = IPv4Address(address: (8, 8, 8, 8))
 let request = Request(
-    destination: destination,   // Destination
-    timeoutInterval: 1500,      // 1.5 seconds timeout (1 second by default)
-    demand: .max(5)             // Send 5 ping requests (default is 1).
-)                               // Available options for demand:
-                                // - .none: send no requests
-                                // - .max(n): send up to n requests
-                                // - .unlimited: send unlimited requests
+    destination: destination,       // Destination
+    timeoutInterval: .seconds(1),   // Timeout interval. Available options for timeout interval: .seconds, .milliseconds, .nanoseconds
+    demand: .max(5)                 // Send 5 ping requests (default is 1).
+)                                   // Available options for demand:
+                                    // - .none: send no requests
+                                    // - .max(n): send up to n requests
+                                    // - .unlimited: send unlimited requests
 
 ```
 
 ### Asynchronous Pinging
 
+Ping example:
 ```swift
 import pingx
 
-let request = Request(destination: destination)
-
 let pinger = AsyncPinger()
+let request = Request(destination: destination)
 let sequence = pinger.ping(request: request)
 
 for try await result in sequence {
@@ -82,15 +82,29 @@ for try await result in sequence {
 
 ### Callback-based Pinging
 
+Ping example:
 ```swift
 import pingx
 
+let pinger = Pinger()
 let request = Request(destination: destination)
 
-let pinger = Pinger()
 pinger.ping(request: request) { result in
     print("Result: \(result)")
 }
+```
+
+Request cancellation example:
+```swift
+import pingx
+
+let pinger = Pinger()
+let request = Request(destination: destination)
+
+pinger.ping(request: request) { result in
+    print("Result: \(result)")
+}
+pinger.cancel(requestId: request.id)
 ```
 
 ## Example
