@@ -24,6 +24,7 @@
 
 import pingx
 
+@MainActor
 final class AsyncPingViewModel: ObservableObject {
     private enum Constants {
         static var destinationAddress: IPv4Address { IPv4Address(address: (8, 8, 8, 8)) }

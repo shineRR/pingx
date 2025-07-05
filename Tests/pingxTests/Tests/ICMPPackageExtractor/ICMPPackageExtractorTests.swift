@@ -112,10 +112,7 @@ private extension ICMPPackageExtractorTests {
             identifier: request.identifier.id,
             sequenceNumber: .zero,
             payload: .sample(
-                identifier: .sample(
-                    id: request.identifier.id,
-                    uniqueToken: request.identifier.uniqueToken
-                )
+                rawUniqueToken: request.identifier.uniqueToken.uuid
             )
         )
 

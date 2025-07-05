@@ -25,11 +25,11 @@
 import Foundation
 
 // sourcery: AutoMockable
-public protocol AsyncPingerProtocol: AnyObject {
+public protocol AsyncPingerProtocol: AnyObject, Sendable {
     func ping(request: Request) -> AnyPingSequence
 }
 
-public final class AsyncPinger: AsyncPingerProtocol {
+public final class AsyncPinger: AsyncPingerProtocol, @unchecked Sendable {
 
     // MARK: Properties
 
@@ -164,10 +164,10 @@ private extension Result<ICMPPacket, AsyncPingerError> {
     var identifier: Request.Identifier? {
         switch self {
         case .success(let icmpPacket):
-            return icmpPacket.icmpHeader.payload.toRequestIdentifier()
+            return icmpPacket.icmpHeader.toRequestIdentifier()
         case .failure(.responseStructureInconsistent(let validationError)):
             return validationError.icmpHeader.map { icmpHeader in
-                icmpHeader.payload.toRequestIdentifier()
+                icmpHeader.toRequestIdentifier()
             }
         case .failure:
             return nil
@@ -175,11 +175,11 @@ private extension Result<ICMPPacket, AsyncPingerError> {
     }
 }
 
-private extension Payload {
+private extension ICMPHeader {
     func toRequestIdentifier() -> Request.Identifier {
         Request.Identifier(
-            id: identifier.id,
-            uniqueToken: identifier.uniqueToken
+            id: identifier,
+            uniqueToken: UUID(uuid: payload.rawUniqueToken)
         )
     }
 }

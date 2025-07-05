@@ -28,16 +28,31 @@ struct Payload: Equatable {
 
     // MARK: Properties
 
-    let identifier: PingxIdentifier
+    let rawUniqueToken: uuid_t
     let timestamp: CFAbsoluteTime
 
     // MARK: Initializer
 
     init(
-        identifier: PingxIdentifier,
+        rawUniqueToken: uuid_t,
         timestamp: CFAbsoluteTime = CFAbsoluteTimeGetCurrent()
     ) {
-        self.identifier = identifier
+        self.rawUniqueToken = rawUniqueToken
         self.timestamp = timestamp
+    }
+
+    public static func == (lhs: Payload, rhs: Payload) -> Bool {
+        lhs.bytes == rhs.bytes
+    }
+}
+
+extension Payload {
+    var bytes: [UInt8] {
+        var result = [UInt8]()
+
+        withUnsafeBytes(of: rawUniqueToken) { result.append(contentsOf: $0) }
+        withUnsafeBytes(of: timestamp) { result.append(contentsOf: $0) }
+
+        return result
     }
 }

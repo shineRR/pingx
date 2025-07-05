@@ -25,11 +25,11 @@
 import Foundation
 
 // sourcery: AutoMockable
-protocol PingxSocketProtocol {
+protocol PingxSocketProtocol: Sendable {
     func send(address: CFData, data: CFData, timeout: CFTimeInterval) -> CFSocketError
 }
 
-final class PingxSocket<OutputType: AnyObject>: PingxSocketProtocol {
+final class PingxSocket<OutputType: AnyObject>: PingxSocketProtocol, @unchecked Sendable {
 
     // MARK: Properties
 

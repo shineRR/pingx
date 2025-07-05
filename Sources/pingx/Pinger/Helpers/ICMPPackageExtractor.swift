@@ -50,7 +50,7 @@ struct ICMPPacketExtractor: ICMPPacketExtractorProtocol {
 }
 
 private extension ICMPPacketExtractor {
-    private func validateICMPPackage(_ icmpPackage: ICMPPacket) throws(ICMPResponseValidationError) {
+    func validateICMPPackage(_ icmpPackage: ICMPPacket) throws(ICMPResponseValidationError) {
         guard icmpPackage.icmpHeader.type == ICMPType.echoReply.rawValue else {
             throw ICMPResponseValidationError.invalidType(icmpPackage.icmpHeader)
         }
