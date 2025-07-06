@@ -46,7 +46,6 @@ struct PingerTests {
         )
     }
 
-
     @Test("When ping is called, starts pinging using the async pinger")
     func ping_callsASyncPinger() async {
         pinger.ping()
@@ -59,15 +58,16 @@ struct PingerTests {
 
     @Test("When the sequence emits events, calls completion with received events")
     func ping_whenSequenceEmitsEvent_callsCompletionWithReceivedEvent() async {
-        let completion = MockFunc<PingResult, Void>()
+        let completion = ThreadSafeMockFunc<PingResult, Void>()
         let pingResults: [PingResult] = [
             .success(.sample()),
             .failure(.timeout),
             .success(.sample())
         ]
 
-        pinger.ping(completion: completion)
-        for pingResult in pingResults {
+        pinger.ping(completion: completion.call)
+        for (index, pingResult) in pingResults.enumerated() {
+            await pingSequence.expectNextToEventuallyBeCalled(count: index + 1)
             await pingSequence.send(pingResult)
         }
 
@@ -85,15 +85,15 @@ struct PingerTests {
         pinger.ping(request: request)
         await pingSequence.finish()
 
-        await pingSequence.expectNextNotToEventuallyBeCalled()
+        await pingSequence.expectNextNotToEventuallyBeCalled(count: 2)
     }
 
     @Test("When request is cancelled, does not emit events after cancellation")
     func cancel_doesNotEmitEvents() async {
-        let completion = MockFunc<PingResult, Void>()
+        let completion = ThreadSafeMockFunc<PingResult, Void>()
         let request = Request.sample()
 
-        pinger.ping(request: request, completion: completion)
+        pinger.ping(request: request, completion: completion.call)
         await pingSequence.expectNextToEventuallyBeCalled()
 
         pinger.cancel(requestId: request.identifier)
@@ -104,8 +104,8 @@ struct PingerTests {
 
     @Test("When pinger is deinitialized, cancels all active requests")
     mutating func deinit_cancelsAllActiveRequests() async {
-        let completion = MockFunc<PingResult, Void>()
-        let request = Request.sample()
+        let completion = ThreadSafeMockFunc<PingResult, Void>()
+        let request = Request.sample(demand: .unlimited)
 
         pinger.ping(request: request)
         await pingSequence.expectNextToEventuallyBeCalled()
@@ -118,29 +118,33 @@ struct PingerTests {
 }
 
 private extension Pinger {
-    func ping(
-        request: Request = .sample(),
-        completion: MockFunc<PingResult, Void> = MockFunc()
-    ) {
+    func ping(request: Request = .sample()) {
         ping(
             request: request,
-            completion: completion.call
+            completion: { _ in }
+        )
+    }
+
+    func ping(completion: @escaping (PingResult) -> Void) {
+        ping(
+            request: .sample(),
+            completion: completion
         )
     }
 }
 
 private extension MockPingSequence {
-    func expectNextToEventuallyBeCalled() async {
+    func expectNextToEventuallyBeCalled(count: Int = 1) async {
         await expectToEventuallyBeCalled(
             actualCallsCount: self.nextCallsCount,
-            expectedCallsCount: nextCallsCount + 1
+            expectedCallsCount: count
         )
     }
 
-    func expectNextNotToEventuallyBeCalled() async {
+    func expectNextNotToEventuallyBeCalled(count: Int = 1) async {
         await expectNotToEventuallyBeCalled(
             actualCallsCount: self.nextCallsCount,
-            expectedCallsCount: nextCallsCount + 1
+            expectedCallsCount: count
         )
     }
 }

@@ -35,8 +35,7 @@ func expectTo(
     
     let task = Task {
         while !expression() {
-            try Task.checkCancellation()
-            try? await Task.sleep(nanoseconds: 20_000_000) // 20ms
+            try await Task.sleep(nanoseconds: 20_000_000) // 20ms
         }
 
         expectation.fulfill()
@@ -63,8 +62,7 @@ func expectNotTo(
 
     let task = Task {
         while !expression() {
-            try Task.checkCancellation()
-            try? await Task.sleep(nanoseconds: 20_000_000) // 20ms
+            try await Task.sleep(nanoseconds: 20_000_000) // 20ms
         }
 
         expectation.fulfill()
@@ -89,7 +87,7 @@ func expectToEventuallyBeCalled(
     await expectTo(
         expression: { actualCallsCount() == expectedCallsCount },
         timeout: timeout,
-        description: "Wait for actualCallsCount to reach \(expectedCallsCount)",
+        description: "Wait for actualCallsCount to reach \(expectedCallsCount), got: \((actualCallsCount()))",
         sourceLocation: sourceLocation
     )
 }
@@ -103,7 +101,7 @@ func expectNotToEventuallyBeCalled(
     await expectNotTo(
         expression: { actualCallsCount() >= expectedCallsCount },
         timeout: timeout,
-        description: "Wait for actualCallsCount to not reach \(expectedCallsCount)",
+        description: "Wait for actualCallsCount to not reach \(expectedCallsCount), got: \((actualCallsCount()))",
         sourceLocation: sourceLocation
     )
 }

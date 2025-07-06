@@ -22,33 +22,42 @@
 // SOFTWARE.
 //
 
-import Testing
+import Foundation
 
 @testable import pingx
 
-actor MockPingSequence: PingSequenceProtocol {
-    private var continuation: CheckedContinuation<PingResult?, Never>?
-    private(set) var nextCallsCount = 0
-    
-    func next() async throws -> PingResult? {
-        nextCallsCount += 1
-        
-        return await withCheckedContinuation { continuation in
-            self.continuation = continuation
-        }
-    }
-    
-    nonisolated func makeAsyncIterator() -> MockPingSequence { self }
-}
+final class ThreadSafeMockFunc<Input, Output> {
+    @Atomic private(set) var parameters: [Input] = []
+    @Atomic private(set) var result: (Input) -> Output = { _ in fatalError() }
 
-extension MockPingSequence {
-    func send(_ result: PingResult) async {
-        continuation?.resume(returning: result)
-        continuation = nil
+    init() {}
+
+    init(result: @escaping (Input) -> Output) {
+        self.result = result
     }
 
-    func finish() async {
-        continuation?.resume(returning: nil)
-        continuation = nil
+    var count: Int {
+        return parameters.count
+    }
+
+    var called: Bool {
+        return !parameters.isEmpty
+    }
+
+    var output: Output {
+        return result(input)
+    }
+
+    var input: Input {
+        return parameters[count - 1]
+    }
+
+    func call(with input: Input) {
+        parameters.append(input)
+    }
+
+    func callAndReturn(_ input: Input) -> Output {
+        call(with: input)
+        return output
     }
 }
