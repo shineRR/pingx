@@ -22,20 +22,20 @@
 // SOFTWARE.
 //
 
-public struct IPHeader {
+struct IPHeader: Equatable {
     
     // MARK: Properties
     
-    public let versionAndHeaderLength: UInt8
-    public let serviceType: UInt8
-    public let totalLength: UInt16 // Total length of the header and data portion of the packet, counted in octets.
-    public let identifier: UInt16
-    public let flagsAndFragmentOffset: UInt16 // Ripped from the IP protocol.
-    public let timeToLive: UInt8
-    public let `protocol`: UInt8
-    public let headerChecksum: UInt16
-    public let sourceAddress: IPv4Address
-    public let destinationAddress: IPv4Address
+    let versionAndHeaderLength: UInt8
+    let serviceType: UInt8
+    let totalLength: UInt16 // Total length of the header and data portion of the packet, counted in octets.
+    let identifier: UInt16
+    let flagsAndFragmentOffset: UInt16 // Ripped from the IP protocol.
+    let timeToLive: UInt8
+    let `protocol`: UInt8
+    let headerChecksum: UInt16
+    let sourceAddress: IPv4Address
+    let destinationAddress: IPv4Address
     
     // MARK: Initializer
     

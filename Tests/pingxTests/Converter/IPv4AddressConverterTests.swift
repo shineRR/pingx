@@ -28,7 +28,7 @@ import Testing
 @Suite
 struct IPv4AddressConverterTests {
     @Test(
-        "Convert a string value to an IPv4 address",
+        "Converts a string value to an IPv4 address",
         arguments: [
             (address: "0.0.0.0", expectedResult: IPv4Address(address: (0, 0, 0, 0))),
             (address: "255.0.1.255", expectedResult: IPv4Address(address: (255, 0, 1, 255))),
@@ -42,7 +42,7 @@ struct IPv4AddressConverterTests {
     }
     
     @Test(
-        "Convert a string value to an IPv4 address when the address is invalid",
+        "Converts a string value to an IPv4 address when the address is invalid",
         arguments: [
             "",
             "0.0.0",
@@ -50,7 +50,10 @@ struct IPv4AddressConverterTests {
             "255.255.255.255.1",
             "abc",
             "abc.abc.abc.abc",
-            "abc1.ax3.4.5"
+            "abc1.ax3.4.5",
+            "123123",
+            "1=2=3=4",
+            "1-2-3-4"
         ]
     )
     func convert_whenAddressIsInvalid_throwsInvalidAddressError(address: String) {
@@ -60,7 +63,7 @@ struct IPv4AddressConverterTests {
     }
     
     @Test(
-        "Convert a string value to an IPv4 address when an octet is out of range",
+        "Converts a string value to an IPv4 address when an octet is out of range",
         arguments: [
             "-1.0.0.1",
             "1.256.999.1",

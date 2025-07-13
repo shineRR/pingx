@@ -1,4 +1,4 @@
-import UIKit
+import SwiftUI
 
 // MARK: - AppDelegate
 
@@ -11,11 +11,8 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
-        let presenter = PresenterImpl()
-        let viewController = ViewController(presenter: presenter)
-        
         window = UIWindow(frame: UIScreen.main.bounds)
-        window?.rootViewController = viewController
+        window?.rootViewController = UIHostingController(rootView: HomeView())
         window?.makeKeyAndVisible()
         
         return true

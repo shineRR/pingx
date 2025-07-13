@@ -24,13 +24,16 @@
 
 import Foundation
 
-public struct Response {
-    
+public struct Response: Sendable {
+
     // MARK: Properties
-    
+
     /// Destination address.
     public let destination: IPv4Address
-    
-    /// Time elapsed between the request and the response. (ms)
-    public let duration: TimeInterval
+
+    /// Time elapsed between the request and the response.
+    public let duration: Interval
+
+    /// Sequence number to match request/response.
+    public let sequenceNumber: UInt16
 }

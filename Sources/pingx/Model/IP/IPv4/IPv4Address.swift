@@ -24,8 +24,8 @@
 
 import Foundation
 
-public struct IPv4Address {
-
+public struct IPv4Address: Hashable, Sendable {
+    
     // MARK: Properties
     
     public let address: (UInt8, UInt8, UInt8, UInt8)
@@ -40,11 +40,9 @@ public struct IPv4Address {
         let converter = IPv4AddressConverter()
         self.address = try converter.convert(address: address).address
     }
-}
-
-// MARK: - Hashable
-
-extension IPv4Address: Hashable {
+    
+    // MARK: Methods
+    
     public static func == (lhs: IPv4Address, rhs: IPv4Address) -> Bool {
         lhs.address.0 == rhs.address.0 &&
         lhs.address.1 == rhs.address.1 &&
@@ -57,18 +55,14 @@ extension IPv4Address: Hashable {
         hasher.combine(address.1)
         hasher.combine(address.2)
         hasher.combine(address.3)
-        _ = hasher.finalize()
     }
 }
 
 // MARK: - Internal API
 
 extension IPv4Address {
-    var stringAddress: String {
-        "\(address.0).\(address.1).\(address.2).\(address.3)"
-    }
-    
     var socketAddress: Data {
-        stringAddress.socketAddress
+        let stringAddress = "\(address.0).\(address.1).\(address.2).\(address.3)"
+        return stringAddress.socketAddress
     }
 }

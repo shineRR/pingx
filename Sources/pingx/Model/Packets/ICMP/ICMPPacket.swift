@@ -22,10 +22,10 @@
 // SOFTWARE.
 //
 
-struct ICMPPacket {
-    
+struct ICMPPacket: Equatable {
+
     // MARK: Properties
-    
+
     let ipHeader: IPHeader
     let icmpHeader: ICMPHeader
 }

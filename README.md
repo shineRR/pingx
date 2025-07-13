@@ -9,7 +9,7 @@
 
 ## Introduction
 
- This ultralight and easy-to-use library is designed to help developers accurately measure and analyze network ping latency in their applications. Whether you're working on a project that requires real-time communication, online gaming, or network performance monitoring, this library provides a seamless solution to assess and optimize ping times.
+**pingx** is a lightweight Swift library for determining network latency between a client and server using ICMP (Internet Control Message Protocol) packets. It provides a simple and flexible API for sending and managing ping requests to IPv4 addresses.
 
 ## Installation
 
@@ -33,29 +33,85 @@ To integrate pingx into your Xcode project using Swift Package Manager, add the 
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/shineRR/pingx", .upToNextMajor(from: "1.0.0"))
+    .package(url: "https://github.com/shineRR/pingx", .upToNextMajor(from: "1.1.0"))
 ]
+```
+
+## Usage
+
+### IPv4 Address Conversion
+
+```swift
+import pingx
+
+let converter = IPv4AddressStringConverter()
+let destination = try converter.convert(address: "8.8.8.8")
+```
+
+### Request
+
+The Request class represents a single ping request configuration. It encapsulates all necessary information to perform an ICMP ping to a specified IPv4 address.
+
+```swift
+import pingx
+
+let destination = IPv4Address(address: (8, 8, 8, 8))
+let request = Request(
+    destination: destination,       // Destination
+    timeoutInterval: .seconds(1),   // Timeout interval. Available options for timeout interval: .seconds, .milliseconds, .nanoseconds
+    demand: .max(5)                 // Send 5 ping requests (default is 1).
+)                                   // Available options for demand:
+                                    // - .none: send no requests
+                                    // - .max(n): send up to n requests
+                                    // - .unlimited: send unlimited requests
+
+```
+
+### Asynchronous Pinging
+
+Ping example:
+```swift
+import pingx
+
+let pinger = AsyncPinger()
+let request = Request(destination: destination)
+let sequence = pinger.ping(request: request)
+
+for try await result in sequence {
+    print("Result: \(result)")
+}
+```
+
+### Callback-based Pinging
+
+Ping example:
+```swift
+import pingx
+
+let pinger = Pinger()
+let request = Request(destination: destination)
+
+pinger.ping(request: request) { result in
+    print("Result: \(result)")
+}
+```
+
+Request cancellation example:
+```swift
+import pingx
+
+let pinger = Pinger()
+let request = Request(destination: destination)
+
+pinger.ping(request: request) { result in
+    print("Result: \(result)")
+}
+pinger.cancel(requestId: request.id)
 ```
 
 ## Example
 
 To run the example project, clone the repo, and run `pod install` from the Example directory first.
-
-## Integration
-
-Import the pingx module into your Swift code and initialize the Pinger instance.
-
-```swift
-import pingx
-
-let pinger = ContinuousPinger()
-pinger.delegate = self
-
-let destination = IPv4Address(address: (8, 8, 8, 8))
-let request = Request(destination: destination, demand: .unlimited)
-
-pinger.ping(request: request)
-```
 
 ## Author
 

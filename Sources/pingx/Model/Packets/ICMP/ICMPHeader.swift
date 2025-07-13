@@ -24,7 +24,7 @@
 
 import Foundation
 
-struct ICMPHeader {
+struct ICMPHeader: Equatable {
     
     // MARK: Properties
     
@@ -60,9 +60,7 @@ struct ICMPHeader {
     }
 }
 
-// MARK: - Packet
-
-extension ICMPHeader: Packet {
+extension ICMPHeader {
     var data: Data {
         var packet = self
         return Data(bytes: &packet, count: MemoryLayout<ICMPHeader>.size)

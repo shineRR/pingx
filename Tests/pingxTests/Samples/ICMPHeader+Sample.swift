@@ -31,7 +31,7 @@ extension ICMPHeader {
         checksum: UInt16 = .zero,
         identifier: UInt16 = .zero,
         sequenceNumber: UInt16 = .zero,
-        payload: Payload = Payload()
+        payload: Payload = .sample()
     ) -> ICMPHeader {
         ICMPHeader(
             type: type,

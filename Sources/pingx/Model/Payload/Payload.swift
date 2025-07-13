@@ -24,25 +24,35 @@
 
 import Foundation
 
-struct Payload {
-    
-    // MARK: Typealias
-    
-    typealias PayloadID = (UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8, UInt8)
-    
+struct Payload: Equatable {
+
     // MARK: Properties
-    
-    // "pingx"
-    let identifier: PayloadID
+
+    let rawUniqueToken: uuid_t
     let timestamp: CFAbsoluteTime
-    
+
     // MARK: Initializer
-    
+
     init(
-        identifier: PayloadID = (112, 105, 110, 103, 120, 0, 0, 0),
+        rawUniqueToken: uuid_t,
         timestamp: CFAbsoluteTime = CFAbsoluteTimeGetCurrent()
     ) {
-        self.identifier = identifier
+        self.rawUniqueToken = rawUniqueToken
         self.timestamp = timestamp
+    }
+
+    static func == (lhs: Payload, rhs: Payload) -> Bool {
+        lhs.bytes == rhs.bytes
+    }
+}
+
+extension Payload {
+    var bytes: [UInt8] {
+        var result = [UInt8]()
+
+        withUnsafeBytes(of: rawUniqueToken) { result.append(contentsOf: $0) }
+        withUnsafeBytes(of: timestamp) { result.append(contentsOf: $0) }
+
+        return result
     }
 }

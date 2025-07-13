@@ -6,31 +6,31 @@ import Foundation
 
 @testable import pingx
 
-class SocketFactoryMock: SocketFactory {
+final class SocketFactoryMock: SocketFactoryProtocol {
 
-    // MARK: - create
+    // MARK: - make
 
-    var createThrowableError: (any Error)?
-    var createCallsCount = 0
-    var createCalled: Bool {
-        return createCallsCount > 0
+    var makeThrowableError: (any Error)?
+    var makeCallsCount = 0
+    var makeCalled: Bool {
+        return makeCallsCount > 0
     }
-    var createReceivedCommand: (CommandBlock<Data>)?
-    var createReceivedInvocations: [(CommandBlock<Data>)] = []
-    var createReturnValue: (any PingxSocket)!
-    var createClosure: ((CommandBlock<Data>) throws -> any PingxSocket)?
+    var makeReceivedCommand: (CommandBlock<Data>)?
+    var makeReceivedInvocations: [(CommandBlock<Data>)] = []
+    var makeReturnValue: (any PingxSocketProtocol)!
+    var makeClosure: ((CommandBlock<Data>) throws -> any PingxSocketProtocol)?
 
-    func create(command: CommandBlock<Data>) throws -> any PingxSocket {
-        createCallsCount += 1
-        createReceivedCommand = command
-        createReceivedInvocations.append(command)
-        if let error = createThrowableError {
+    func make(command: CommandBlock<Data>) throws -> any PingxSocketProtocol {
+        makeCallsCount += 1
+        makeReceivedCommand = command
+        makeReceivedInvocations.append(command)
+        if let error = makeThrowableError {
             throw error
         }
-        if let createClosure = createClosure {
-            return try createClosure(command)
+        if let makeClosure = makeClosure {
+            return try makeClosure(command)
         } else {
-            return createReturnValue
+            return makeReturnValue
         }
     }
 
