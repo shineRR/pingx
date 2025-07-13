@@ -30,8 +30,11 @@ struct ICMPChecksum {
         var sum = UInt64(typecode) + UInt64(icmpHeader.identifier) + UInt64(icmpHeader.sequenceNumber)
         let payloadBytes = icmpHeader.payload.bytes
 
-        for i in stride(from: 0, to: payloadBytes.count, by: 2) {
-            sum += Data([payloadBytes[i], payloadBytes[i + 1]]).withUnsafeBytes { UInt64($0.load(as: UInt16.self)) }
+        for offset in stride(from: 0, to: payloadBytes.count, by: 2) {
+            sum += Data([
+                payloadBytes[offset],
+                payloadBytes[offset + 1]
+            ]).withUnsafeBytes { UInt64($0.load(as: UInt16.self)) }
         }
 
         sum = (sum >> 16) + (sum & 0xFFFF)

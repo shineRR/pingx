@@ -34,7 +34,7 @@ final class AsyncPingViewModel: ObservableObject {
     @Published private(set) var pingResultDisplayModels: [PingResultDisplayModel] = []
 
     private let pinger: AsyncPingerProtocol
-    private var pingTask: Task<Void, Error>? = nil
+    private var pingTask: Task<Void, Error>?
 
     init(pinger: AsyncPingerProtocol) {
         self.pinger = pinger
@@ -59,7 +59,7 @@ final class AsyncPingViewModel: ObservableObject {
             let sequence = pinger.ping(request: request)
             
             for try await result in sequence {
-                guard !Task.isCancelled else  { break }
+                guard !Task.isCancelled else { break }
 
                 DispatchQueue.main.async { [weak self] in
                     let displayModel = PingResultDisplayModel(pingResult: result)

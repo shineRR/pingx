@@ -72,12 +72,10 @@ struct SocketFactory: SocketFactoryProtocol {
             throw AsyncPingerError.socketCreationError
         }
         
-        guard let socketSource = CFSocketCreateRunLoopSource(
-            kCFAllocatorDefault,
-            socket,
-            .zero
-        ) else { throw AsyncPingerError.socketCreationError }
-        
+        guard let socketSource = CFSocketCreateRunLoopSource(kCFAllocatorDefault, socket, .zero) else {
+            throw AsyncPingerError.socketCreationError
+        }
+
         CFRunLoopAddSource(
             CFRunLoopGetMain(),
             socketSource,

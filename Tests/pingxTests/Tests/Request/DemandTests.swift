@@ -35,7 +35,7 @@ struct DemandTests {
         arguments: [
             (demand: Demand.none, expectedValue: UInt(0)),
             (demand: Demand.unlimited, expectedValue: nil),
-            (demand: Demand.max(2), expectedValue: UInt(2)),
+            (demand: Demand.max(2), expectedValue: UInt(2))
         ]
     )
     func demand_initialization(demand: Demand, expectedValue: UInt?) {
