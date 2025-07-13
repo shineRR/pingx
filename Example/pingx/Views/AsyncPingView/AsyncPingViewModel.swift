@@ -30,8 +30,8 @@ final class AsyncPingViewModel: ObservableObject {
         static var destinationAddress: IPv4Address { IPv4Address(address: (8, 8, 8, 8)) }
     }
 
-    @Published var isPingActive = false
-    @Published var pingResultDisplayModels: [PingResultDisplayModel] = []
+    @Published private(set) var isPingActive = false
+    @Published private(set) var pingResultDisplayModels: [PingResultDisplayModel] = []
 
     private let pinger: AsyncPingerProtocol
     private var pingTask: Task<Void, Error>? = nil

@@ -45,7 +45,7 @@ public struct Request: Hashable, Sendable {
     /// The desired quantity of ping requests to be sent.
     public private(set) var demand: Request.Demand
 
-    /// A sequence number  to help in matching Echo and Echo Reply messages.
+    /// A sequence number to help in matching Echo and Echo Reply messages.
     private(set) var sequenceNumber: UInt16
 
     // MARK: Initializer
@@ -79,7 +79,10 @@ public struct Request: Hashable, Sendable {
     // MARK: Methods
 
     public static func == (lhs: Request, rhs: Request) -> Bool {
-        lhs.identifier == rhs.identifier && lhs.destination == rhs.destination
+        lhs.identifier == rhs.identifier &&
+        lhs.type == rhs.type &&
+        lhs.destination == rhs.destination &&
+        lhs.timeoutInterval == rhs.timeoutInterval
     }
 
     public func hash(into hasher: inout Hasher) {

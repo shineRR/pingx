@@ -62,19 +62,4 @@ struct IPHeader: Equatable {
         self.sourceAddress = sourceAddress
         self.destinationAddress = destinationAddress
     }
-    
-    // MARK: Static
-    
-    static func == (lhs: IPHeader, rhs: IPHeader) -> Bool {
-        lhs.versionAndHeaderLength == rhs.versionAndHeaderLength &&
-        lhs.serviceType == rhs.serviceType &&
-        lhs.totalLength == rhs.totalLength &&
-        lhs.identifier == rhs.identifier &&
-        lhs.flagsAndFragmentOffset == rhs.flagsAndFragmentOffset &&
-        lhs.timeToLive == rhs.timeToLive &&
-        lhs.`protocol` == rhs.`protocol` &&
-        lhs.headerChecksum == rhs.headerChecksum &&
-        lhs.sourceAddress == rhs.sourceAddress &&
-        lhs.destinationAddress == rhs.destinationAddress
-    }
 }

@@ -41,7 +41,7 @@ struct Payload: Equatable {
         self.timestamp = timestamp
     }
 
-    public static func == (lhs: Payload, rhs: Payload) -> Bool {
+    static func == (lhs: Payload, rhs: Payload) -> Bool {
         lhs.bytes == rhs.bytes
     }
 }

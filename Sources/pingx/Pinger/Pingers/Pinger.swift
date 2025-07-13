@@ -39,7 +39,9 @@ public final class Pinger: PingerProtocol {
         configuration: PingConfiguration = .default
     ) {
         self.init(
-            asyncPinger: AsyncPinger(configuration: configuration)
+            asyncPinger: AsyncPinger(
+                configuration: configuration
+            )
         )
     }
 

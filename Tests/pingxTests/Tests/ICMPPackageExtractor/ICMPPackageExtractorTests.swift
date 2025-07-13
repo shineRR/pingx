@@ -121,8 +121,8 @@ private extension ICMPPackageExtractorTests {
         }
         icmpHeader.setChecksum(checksum)
 
-        var icmpPacket = ICMPPacket(ipHeader: ipHeader, icmpHeader: icmpHeader)
-        let data = withUnsafeBytes(of: &icmpPacket) { Data($0) }
+        let icmpPacket = ICMPPacket(ipHeader: ipHeader, icmpHeader: icmpHeader)
+        let data = withUnsafeBytes(of: icmpPacket) { Data($0) }
 
         return data
     }
@@ -138,19 +138,18 @@ private extension ICMPPackageExtractorTests {
             sourceAddress: request.destination,
             destinationAddress: request.destination
         )
-        let data: Data
 
         if let icmpHeader {
-            var icmp = ICMPPacket.sample(ipHeader: ipHeader, icmpHeader: icmpHeader)
-            data = withUnsafeBytes(of: &icmp) { Data($0) }
-        } else if shouldAddIpHeader {
-            var ipHeader = ipHeader
-            data = Data(bytes: &ipHeader, count: MemoryLayout<IPHeader>.size)
-        } else {
-            data = Data()
+            let icmpPacket = ICMPPacket.sample(ipHeader: ipHeader, icmpHeader: icmpHeader)
+            return withUnsafeBytes(of: icmpPacket) { Data($0) }
         }
 
-        return data
+        if shouldAddIpHeader {
+            var ipHeader = ipHeader
+            return Data(bytes: &ipHeader, count: MemoryLayout<IPHeader>.size)
+        }
+
+        return Data()
     }
 }
 

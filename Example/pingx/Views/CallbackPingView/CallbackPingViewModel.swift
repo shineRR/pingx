@@ -47,6 +47,7 @@ final class CallbackPingViewModel: ObservableObject {
     }
     
     func startPinging() {
+        isPingActive = true
         pingResultDisplayModels.removeAll()
 
         let demandCount = 5
@@ -54,8 +55,7 @@ final class CallbackPingViewModel: ObservableObject {
             destination: Constants.destinationAddress,
             demand: .max(UInt(demandCount))
         )
-        
-        isPingActive = true
+
         activeRequest = request
         pinger.ping(request: request) { [weak self] result in
             DispatchQueue.main.async {
@@ -72,9 +72,9 @@ final class CallbackPingViewModel: ObservableObject {
     func stopPinging() {
         isPingActive = false
 
-        guard let activeRequest else { return }
-        pinger.cancel(requestId: activeRequest.identifier)
+        guard let activeRequestId = activeRequest?.identifier else { return }
+        pinger.cancel(requestId: activeRequestId)
 
-        self.activeRequest = nil
+        activeRequest = nil
     }
 }

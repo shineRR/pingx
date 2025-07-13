@@ -61,7 +61,6 @@
 		146766482DE31BC200B89B10 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				145E71752E0FFF5400F92C01 /* DisplayModels */,
 				146766532DE322AE00B89B10 /* AsyncPingView */,
 				1467664A2DE31BD400B89B10 /* HomeView */,
 				146766492DE31BCD00B89B10 /* CallbackPingView */,
@@ -116,6 +115,7 @@
 		146872502D23313B00373862 /* pingx */ = {
 			isa = PBXGroup;
 			children = (
+				145E71752E0FFF5400F92C01 /* DisplayModels */,
 				146766482DE31BC200B89B10 /* Views */,
 				146872472D23313B00373862 /* AppDelegate.swift */,
 				146872482D23313B00373862 /* Images.xcassets */,

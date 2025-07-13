@@ -25,11 +25,7 @@
 import pingx
 
 struct PingResultDisplayModel {
-    private let pingResult: PingResult
-
-    init(pingResult: PingResult) {
-        self.pingResult = pingResult
-    }
+    let pingResult: PingResult
 
     func makeUserFriendlyMessage() -> String {
         switch pingResult {
