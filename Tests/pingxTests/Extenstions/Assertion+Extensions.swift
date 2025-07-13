@@ -114,7 +114,7 @@ func expectNotToEventuallyBeNil<T>(
     await expectTo(
         expression: { actualValue() != nil },
         timeout: timeout,
-        description: "Wait for actualCallsCount not to be nil",
+        description: "Wait for actualValue not to be nil",
         sourceLocation: sourceLocation
     )
 }

@@ -1,6 +1,6 @@
 use_frameworks!
 
-platform :ios, '10.0'
+platform :ios, '16.0'
 
 target 'pingx_Example' do
   pod 'pingx', :path => '../'

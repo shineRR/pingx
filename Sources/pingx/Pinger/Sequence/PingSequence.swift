@@ -45,8 +45,6 @@ struct PingSequence: PingSequenceProtocol {
     mutating func next() async throws -> PingResult? {
         guard request.demand != .none else { return nil }
 
-        try Task.checkCancellation()
-
         if shouldDelayNextPing {
             try await Task.sleep(nanoseconds: UInt64(configuration.intervalBetweenRequests.nanoseconds))
         } else {
@@ -54,6 +52,8 @@ struct PingSequence: PingSequenceProtocol {
         }
 
         guard let result = await performPingWithTimeout() else { return nil }
+
+        try Task.checkCancellation()
 
         if case .cancelled = result.error {
             request.setDemand(.none)
@@ -67,32 +67,22 @@ struct PingSequence: PingSequenceProtocol {
     }
 
     private func performPingWithTimeout() async -> AsyncPingerResult? {
-        await withTaskGroup(
-            of: AsyncPingerResult.self,
-            returning: Optional<AsyncPingerResult>.self
-        ) { [weak pinger, request] taskGroup in
-            taskGroup.addTask {
-                do {
-                    try await Task.sleep(nanoseconds: UInt64(request.timeoutInterval.nanoseconds))
-                } catch {}
+        await withCheckedContinuation { [weak pinger, request] continuation in
+            let safeContinuation = SafeCheckedContinuation(continuation: continuation)
 
-                return .failure(.timeout)
+            let timeoutTask = Task {
+                try? await Task.sleep(nanoseconds: UInt64(request.timeoutInterval.nanoseconds))
+
+                guard !Task.isCancelled else { return }
+
+                pinger?.removeCompletion(for: request.identifier)
+                safeContinuation.resume(returning: .failure(.timeout))
             }
 
-            taskGroup.addTask {
-                return await withCheckedContinuation { continutaion in
-                    pinger?.ping(request: request) { result in
-                        continutaion.resume(returning: result)
-                    }
-                }
+            pinger?.ping(request: request) { result in
+                timeoutTask.cancel()
+                safeContinuation.resume(returning: result)
             }
-
-            defer {
-                taskGroup.cancelAll()
-                pinger?.cancel(requestId: request.identifier)
-            }
-
-            return await taskGroup.next()
         }
     }
 

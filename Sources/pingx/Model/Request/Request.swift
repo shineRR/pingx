@@ -55,7 +55,7 @@ public struct Request: Hashable, Sendable {
         timeoutInterval: Interval = .seconds(1),
         demand: Request.Demand = .max(1)
     ) {
-        self.identifier = Identifier(id: CFSwapInt16HostToBig(UInt16.random(in: 0..<UInt16.max)))
+        self.identifier = Identifier()
         self.destination = destination
         self.timeoutInterval = timeoutInterval
         self.demand = demand

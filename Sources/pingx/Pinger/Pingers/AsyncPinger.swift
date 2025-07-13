@@ -111,6 +111,10 @@ extension AsyncPinger {
     func cancel(requestId: Request.Identifier) {
         invokeCompletion(identifier: requestId, result: .failure(.cancelled))
     }
+
+    func removeCompletion(for requestId: Request.Identifier) {
+        completions.removeValue(forKey: requestId)
+    }
 }
 
 // MARK: - Private API

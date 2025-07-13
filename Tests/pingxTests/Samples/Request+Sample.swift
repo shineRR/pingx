@@ -30,7 +30,7 @@ extension Request {
     static func sample(
         id: Request.Identifier = .sample(),
         destination: IPv4Address = .sample(),
-        timeoutInterval: Interval = .seconds(1),
+        timeoutInterval: Interval = .milliseconds(50),
         demand: Demand = .max(1),
         sequenceNumber: UInt16 = .zero
     ) -> Request {

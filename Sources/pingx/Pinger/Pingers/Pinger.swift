@@ -55,6 +55,8 @@ public final class Pinger: PingerProtocol {
         request: Request,
         completion: @escaping (PingResult) -> Void
     ) {
+        cancel(requestId: request.identifier)
+
         let task = Task { [weak self] in
             let sequence = self?.asyncPinger.ping(request: request)
 

@@ -47,7 +47,7 @@ struct PingerTests {
     }
 
     @Test("When ping is called, starts pinging using the async pinger")
-    func ping_callsASyncPinger() async {
+    func ping_callsAsyncPinger() async {
         pinger.ping()
 
         await expectToEventuallyBeCalled(

@@ -24,15 +24,30 @@
 
 import Foundation
 
-public struct PingxIdentifier: Hashable, Sendable {
-    let id: UInt16
-    let uniqueToken: UUID
+final class SafeCheckedContinuation<T, E: Error>: @unchecked Sendable {
+    private let continuation: CheckedContinuation<T, E>
+    private let lock = NSLock()
+    private var isResumed = false
 
-    init(
-        id: UInt16 = CFSwapInt16HostToBig(UInt16.random(in: 0..<UInt16.max)),
-        uniqueToken: UUID = UUID()
-    ) {
-        self.id = id
-        self.uniqueToken = uniqueToken
+    init(continuation: CheckedContinuation<T, E>) {
+        self.continuation = continuation
+    }
+
+    func resume(returning value: sending T) {
+        resume(with: .success(value))
+    }
+
+    func resume(throwing error: E) {
+        resume(with: .failure(error))
+    }
+
+    func resume(with result: Result<T, E>) {
+        lock.lock()
+        defer { lock.unlock() }
+
+        guard !isResumed else { return }
+        isResumed = true
+
+        continuation.resume(with: result)
     }
 }
