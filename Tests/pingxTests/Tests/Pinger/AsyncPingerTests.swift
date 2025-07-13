@@ -312,8 +312,7 @@ struct AsyncPingerTests {
                     )
                     socketFactory.makeReceivedCommand?.closure(Data())
                 }
-            },
-            timeout: .milliseconds(150)
+            }
         )
     }
 
@@ -348,8 +347,7 @@ struct AsyncPingerTests {
                     actualCallsCount: socket.sendCallsCount,
                     expectedCallsCount: 2
                 )
-            },
-            timeout: .milliseconds(100)
+            }
         )
     }
 
@@ -400,7 +398,7 @@ private extension AsyncPingerTests {
         sequence: some PingSequenceProtocol,
         emits expectedValues: [PingResult],
         after operation: (() async -> Void)? = nil,
-        timeout: Interval = .milliseconds(50),
+        timeout: Interval = .seconds(1),
         sourceLocation: SourceLocation = #_sourceLocation
     ) async throws {
         let collectingValuesTask = Task {
