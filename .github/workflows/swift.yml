@@ -14,7 +14,7 @@ jobs:
     runs-on: macos-latest
     steps:
     - name: 🔨 Select Xcode
-      run: xcodes select 26.2
+      run: xcodes select 26.1.1
     - name: Checkout Code
       uses: actions/checkout@v4
     - name: 🛠️ Build
@@ -24,7 +24,7 @@ jobs:
     runs-on: macos-latest
     steps:
     - name: 🔨 Select Xcode
-      run: xcodes select 26.2
+      run: xcodes select 26.1.1
     - name: Checkout Code
       uses: actions/checkout@v4
     - name: 🧪 Run tests
