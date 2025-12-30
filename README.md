@@ -1,11 +1,11 @@
 # pingx
 
 [![CI](https://github.com/shineRR/pingx/actions/workflows/swift.yml/badge.svg)](https://github.com/shineRR/pingx/actions/workflows/swift.yml)
-[![Version](https://img.shields.io/cocoapods/v/pingx.svg?style=flat)](https://cocoapods.org/pods/pingx)
+[![Platform](https://img.shields.io/cocoapods/p/pingx.svg?style=flat)](https://cocoapods.org/pods/pingx)
 [![License](https://img.shields.io/cocoapods/l/pingx.svg?style=flat)](https://cocoapods.org/pods/pingx)
+[![Version](https://img.shields.io/cocoapods/v/pingx.svg?style=flat)](https://cocoapods.org/pods/pingx)
 [![codecov](https://codecov.io/gh/shineRR/pingx/graph/badge.svg?token=OJSHN8KMHJ)](https://codecov.io/gh/shineRR/pingx)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/98fb2f3d80c64d7d88ee725e3038a6db)](https://app.codacy.com/gh/shineRR/pingx/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
-[![Platform](https://img.shields.io/cocoapods/p/pingx.svg?style=flat)](https://cocoapods.org/pods/pingx)
 
 ## Introduction
 
