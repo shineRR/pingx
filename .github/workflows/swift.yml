@@ -28,7 +28,7 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v4
     - name: 🧪 Run tests
-      run: xcodebuild test -scheme "pingx" -testPlan "pingx" -destination "OS=26.2,name=iPhone 17"
+      run: xcodebuild test -scheme "pingx" -testPlan "pingx" -destination "OS=26.1,name=iPhone 17"
     - name: Upload coverage reports to Codecov
       uses: codecov/codecov-action@v4.0.1
       with:
